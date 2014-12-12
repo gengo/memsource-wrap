@@ -42,6 +42,11 @@ class BaseApi(object):
                 'errorCode': 'Internal',
                 'errorDescription': 'The request timed out, timeout is {}'.format(timeout),
             }, url, params)
+        except requests.exceptions.ConnectionError:
+            raise exceptions.MemsourceApiException(None, {
+                'errorCode': 'Internal',
+                'errorDescription': 'Could not connect',
+            }, url, params)
 
         if BaseApi.is_success(response.status_code):
             return response.json()
