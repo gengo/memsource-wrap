@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.4"
+
+install:
+  - pip install -r requirements.txt --use-mirrors
+
+script: bash test_runner.sh
