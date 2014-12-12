@@ -26,5 +26,3 @@ class TestMemsource(unittest.TestCase):
 
         for api in ('client', 'domain', 'project', ):
             self.assertEqual(getattr(m, api).token, token)
-
-
