@@ -33,7 +33,7 @@ class BaseApi(object):
             path
         )
 
-        # If it is successful, returns responce json
+        # If it is successful, returns response json
         try:
             response = requests.get(url, params=params, timeout=timeout)
         except requests.exceptions.Timeout:
