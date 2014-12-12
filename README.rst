@@ -10,6 +10,6 @@ Examples
 
     import memsource
 
-    m = memsource.Memsource('your user ame', 'your password')
+    m = memsource.Memsource('your user name', 'your password')
     print(m.client.create('test client'))
     # will return id of the client
