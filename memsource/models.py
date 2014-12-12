@@ -9,6 +9,14 @@ class BaseModel(dict):
         del self[key]
 
 
+class User(BaseModel):
+    pass
+
+
+class Authentication(BaseModel):
+    pass
+
+
 class Client(BaseModel):
     pass
 

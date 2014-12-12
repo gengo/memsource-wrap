@@ -10,6 +10,16 @@ Examples
 
     import memsource
 
-    m = memsource.Memsource('your user name', 'your password')
+    m = memsource.Memsource(user_name='your user name', password='your password')
+    print(m.client.create('test client'))
+    # will return id of the client
+
+If you already have token, you can omit user_name and password. In this case, this SDK can skip authentication, so it's bit faster.
+
+::
+
+    import memsource
+
+    m = memsource.Memsource(token='your token')
     print(m.client.create('test client'))
     # will return id of the client
