@@ -5,7 +5,8 @@ from . import constants, exceptions, models
 
 class Auth(object):
     def login(self, user_name, password):
-        return requests.get(
+        # TODO: error handling
+        return requests.post(
             '{}/v3/auth/login'.format(constants.Base.url.value),
             params={
                 'userName': user_name,
@@ -24,7 +25,11 @@ class BaseApi(object):
 
         self.token = token
 
-    def _request(self, path, params, timeout=constants.Base.timeout.value):
+    # Should be public, it is conflict with memsource endpoint.
+    def _post(self, path, params, timeout=constants.Base.timeout.value):
+        return self._request('post', path, params, timeout)
+
+    def _request(self, method, path, params, timeout):
         params['token'] = self.token
 
         url = '{}/{}/{}'.format(
@@ -35,7 +40,7 @@ class BaseApi(object):
 
         # If it is successful, returns response json
         try:
-            response = requests.get(url, params=params, timeout=timeout)
+            response = requests.request(method, url, params=params, timeout=timeout)
         except requests.exceptions.Timeout:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',
@@ -71,18 +76,18 @@ class Client(BaseApi):
     api_version = constants.ApiVersion.v2
 
     def create(self, name):
-        return self._request('client/create', {
+        return self._post('client/create', {
             'name': name,
         })['id']
 
     def get(self, client):
-        return models.Client(self._request('client/get', {
+        return models.Client(self._post('client/get', {
             'client': client,
         }))
 
     def list(self, page=0):
         return [
-            models.Client(client) for client in self._request('client/list', {
+            models.Client(client) for client in self._post('client/list', {
                 'page': page,
             })
         ]
@@ -95,18 +100,18 @@ class Domain(BaseApi):
     api_version = constants.ApiVersion.v2
 
     def create(self, name):
-        return self._request('domain/create', {
+        return self._post('domain/create', {
             'name': name,
         })
 
     def get(self, domain):
-        return models.Domain(self._request('domain/get', {
+        return models.Domain(self._post('domain/get', {
             'domain': domain,
         }))
 
     def list(self, page=0):
         return [
-            models.Domain(domain) for domain in self._request('domain/list', {
+            models.Domain(domain) for domain in self._post('domain/list', {
                 'page': page,
             })
         ]
@@ -120,7 +125,7 @@ class Project(BaseApi):
 
     def create(self, name, source_lang, target_lang,
                client, domain, due=0, machine_translation_type=0):
-        return self._request('project/create', {
+        return self._post('project/create', {
             'token': self.token,
             'name': name,
             'sourceLang': source_lang,

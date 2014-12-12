@@ -9,9 +9,10 @@ class TestApiClient(unittest.TestCase):
         self.url_base = 'https://cloud1.memsource.com/web/api/v2/client'
         self.client = api.Client(None)
 
-    @patch.object(requests, 'get')
-    def test_create(self, mock_get):
-        test = lambda: mock_get.assert_called_with(
+    @patch.object(requests, 'request')
+    def test_create(self, mock_request):
+        test = lambda: mock_request.assert_called_with(
+            'post',
             '{}/create'.format(self.url_base),
             params={
                 'token': self.client.token,
@@ -20,7 +21,7 @@ class TestApiClient(unittest.TestCase):
             timeout=5
         )
 
-        type(mock_get()).status_code = PropertyMock(return_value=200)
+        type(mock_request()).status_code = PropertyMock(return_value=200)
 
         client = 'test client'
         self.client.token = 'token'
@@ -32,9 +33,10 @@ class TestApiClient(unittest.TestCase):
         self.client.create(client)
         test()
 
-    @patch.object(requests, 'get')
-    def test_get(self, mock_get):
-        test_called = lambda: mock_get.assert_called_with(
+    @patch.object(requests, 'request')
+    def test_get(self, mock_request):
+        test_called = lambda: mock_request.assert_called_with(
+            'post',
             '{}/get'.format(self.url_base),
             params={
                 'token': self.client.token,
@@ -43,11 +45,11 @@ class TestApiClient(unittest.TestCase):
             timeout=5
         )
 
-        type(mock_get()).status_code = PropertyMock(return_value=200)
+        type(mock_request()).status_code = PropertyMock(return_value=200)
 
         client_id = 1
         client_name = 'test name'
-        mock_get().json.return_value = {
+        mock_request().json.return_value = {
             'id': client_id,
             'name': client_name,
         }
@@ -58,7 +60,7 @@ class TestApiClient(unittest.TestCase):
         self.assertEqual(r.id, client_id)
         self.assertEqual(r.name, client_name)
 
-        mock_get().json.return_value = {
+        mock_request().json.return_value = {
             'id': client_id,
             'name': client_name,
         }
@@ -69,9 +71,10 @@ class TestApiClient(unittest.TestCase):
         self.assertEqual(r.id, client_id)
         self.assertEqual(r.name, client_name)
 
-    @patch.object(requests, 'get')
-    def test_list(self, mock_get):
-        test = lambda: mock_get.assert_called_with(
+    @patch.object(requests, 'request')
+    def test_list(self, mock_request):
+        test = lambda: mock_request.assert_called_with(
+            'post',
             '{}/list'.format(self.url_base),
             params={
                 'token': self.client.token,
@@ -80,7 +83,7 @@ class TestApiClient(unittest.TestCase):
             timeout=5
         )
 
-        type(mock_get()).status_code = PropertyMock(return_value=200)
+        type(mock_request()).status_code = PropertyMock(return_value=200)
 
         self.client.token = 'token'
         self.client.list()
@@ -90,14 +93,14 @@ class TestApiClient(unittest.TestCase):
         self.client.list()
         test()
 
-    @patch.object(requests, 'get')
-    def test_error_response(self, mock_get):
-        type(mock_get()).status_code = PropertyMock(return_value=400)
+    @patch.object(requests, 'request')
+    def test_error_response(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=400)
 
         error_code = 'test error code'
         error_description = 'test error description'
 
-        mock_get().json.return_value = {
+        mock_request().json.return_value = {
             'errorCode': error_code,
             'errorDescription': error_description,
         }
