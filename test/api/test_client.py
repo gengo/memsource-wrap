@@ -16,7 +16,9 @@ class TestApiClient(unittest.TestCase):
             params={
                 'token': self.client.token,
                 'name': client
-            })
+            },
+            timeout=5
+        )
 
         type(mock_get()).status_code = PropertyMock(return_value=200)
 
@@ -37,7 +39,9 @@ class TestApiClient(unittest.TestCase):
             params={
                 'token': self.client.token,
                 'client': client
-            })
+            },
+            timeout=5
+        )
 
         type(mock_get()).status_code = PropertyMock(return_value=200)
 
@@ -72,7 +76,9 @@ class TestApiClient(unittest.TestCase):
             params={
                 'token': self.client.token,
                 'page': 0
-            })
+            },
+            timeout=5
+        )
 
         type(mock_get()).status_code = PropertyMock(return_value=200)
 

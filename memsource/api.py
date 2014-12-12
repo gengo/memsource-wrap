@@ -24,7 +24,7 @@ class BaseApi(object):
 
         self.token = token
 
-    def _request(self, path, params):
+    def _request(self, path, params, timeout=constants.Base.timeout.value):
         params['token'] = self.token
 
         url = '{}/{}/{}'.format(
@@ -34,7 +34,15 @@ class BaseApi(object):
         )
 
         # If it is successful, returns responce json
-        response = requests.get(url, params=params)
+        #response = requests.get(url, params=params, timeout=)
+        try:
+            response = requests.get(url, params=params, timeout=timeout)
+        except requests.exceptions.Timeout:
+            raise exceptions.MemsourceApiException(None, {
+                'errorCode': 'Internal',
+                'errorDescription': 'The request timed out, timeout is {}'.format(timeout),
+            }, url, params)
+
         if BaseApi.is_success(response.status_code):
             return response.json()
 

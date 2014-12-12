@@ -16,7 +16,9 @@ class TestApiDomain(unittest.TestCase):
             params={
                 'token': self.domain.token,
                 'name': domain
-            })
+            },
+            timeout=5
+        )
 
         type(mock_get()).status_code = PropertyMock(return_value=200)
 
@@ -37,7 +39,9 @@ class TestApiDomain(unittest.TestCase):
             params={
                 'token': self.domain.token,
                 'domain': domain
-            })
+            },
+            timeout=5
+        )
 
         type(mock_get()).status_code = PropertyMock(return_value=200)
 
@@ -58,7 +62,9 @@ class TestApiDomain(unittest.TestCase):
             params={
                 'token': self.domain.token,
                 'page': 0
-            })
+            },
+            timeout=5
+        )
 
         type(mock_get()).status_code = PropertyMock(return_value=200)
 
