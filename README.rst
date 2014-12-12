@@ -1,6 +1,6 @@
 memsource-wrap
 ##############
-Memosource API Wrap Library for Python
+Memsource API Wrap Library for Python
 
 
 Examples
