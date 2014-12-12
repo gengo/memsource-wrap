@@ -118,4 +118,4 @@ class Project(Api):
             'domain': domain,
             'due': due,
             'machineTranslationType': machine_translation_type,
-        })
+        })['id']
