@@ -3,7 +3,7 @@ memsource-wrap
 Memosource API Wrap Library for Python
 
 
-Ecamples
+Examples
 ========
 
 ::
