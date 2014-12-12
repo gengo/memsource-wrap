@@ -8,10 +8,3 @@ class Memsource(object):
 
         for c in (api.Client, api.Domain, api.Project):
             setattr(self, c.__name__.lower(), c(token))
-
-
-
-
-
-
-

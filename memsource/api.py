@@ -34,7 +34,6 @@ class BaseApi(object):
         )
 
         # If it is successful, returns responce json
-        #response = requests.get(url, params=params, timeout=)
         try:
             response = requests.get(url, params=params, timeout=timeout)
         except requests.exceptions.Timeout:
