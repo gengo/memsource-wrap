@@ -20,8 +20,7 @@ class Api(object):
     def __init__(self, token):
         if self.api_version is None:
             raise NotImplementedError(
-                'api_version is not set in {}'.format(
-                    self.__class__.__name__))
+                'api_version is not set in {}'.format(self.__class__.__name__))
 
         self.token = token
 

@@ -3,4 +3,4 @@ ujson
 nose
 coverage
 rednose
-pep8
+flake8

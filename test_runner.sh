@@ -1,7 +1,7 @@
 #! /bin/bash
 EXIT_STATUSES=()
 
-pep8 .
+flake8 .
 EXIT_STATUSES=(${EXIT_STATUSES[@]} $?)
 
 nosetests --with-coverage --cover-package=memsource --rednose
