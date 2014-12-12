@@ -1,0 +1,6 @@
+requests
+ujson
+nose
+coverage
+rednose
+pep8
