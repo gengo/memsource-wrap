@@ -55,12 +55,7 @@ class BaseApi(object):
         if BaseApi.is_success(response.status_code):
             return response.json()
 
-        raise exceptions.MemsourceApiException(
-            response.status_code,
-            response.json(),
-            url,
-            params
-        )
+        raise exceptions.MemsourceApiException(response.status_code, response.json(), url, params)
 
     @staticmethod
     def is_success(status_code):
