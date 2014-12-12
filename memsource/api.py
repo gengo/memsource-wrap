@@ -14,7 +14,7 @@ class Auth(object):
         ).json()
 
 
-class Api(object):
+class BaseApi(object):
     api_version = None
 
     def __init__(self, token):
@@ -35,7 +35,7 @@ class Api(object):
 
         # If it is successful, returns responce json
         response = requests.get(url, params=params)
-        if Api.is_success(response.status_code):
+        if BaseApi.is_success(response.status_code):
             return response.json()
 
         raise exceptions.MemsourceApiException(
@@ -52,7 +52,7 @@ class Api(object):
         return 200 <= status_code < 300
 
 
-class Client(Api):
+class Client(BaseApi):
     """
     You can see the document http://wiki.memsource.com/wiki/Client_API_v2
     """
@@ -76,7 +76,7 @@ class Client(Api):
         ]
 
 
-class Domain(Api):
+class Domain(BaseApi):
     """
     You can see the document http://wiki.memsource.com/wiki/Domain_API_v2
     """
@@ -100,7 +100,7 @@ class Domain(Api):
         ]
 
 
-class Project(Api):
+class Project(BaseApi):
     """
     You can see the document http://wiki.memsource.com/wiki/Project_API_v3
     """
