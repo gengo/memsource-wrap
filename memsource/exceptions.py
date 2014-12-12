@@ -15,14 +15,14 @@ class MemsourceApiException(Exception):
 
     def get_error_code(self):
         """
-        returns errorCode from API resopond JSON.
+        returns errorCode from API response JSON.
         If it is unavailable, it returns None.
         """
         return self.result_json.get('errorCode')
 
     def get_error_description(self):
         """
-        returns errorDescription from API resopond JSON.
+        returns errorDescription from API response JSON.
         If it is unavailable, it returns None.
         """
         return self.result_json.get('errorDescription')
