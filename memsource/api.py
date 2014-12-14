@@ -6,13 +6,17 @@ from . import constants, exceptions, models
 class Auth(object):
     def login(self, user_name, password):
         # TODO: error handling
-        return requests.post(
+        r = requests.post(
             '{}/v3/auth/login'.format(constants.Base.url.value),
             params={
                 'userName': user_name,
                 'password': password,
             }
         ).json()
+
+        r['user'] = models.User(r.pop('user'))
+
+        return models.Authentication(r)
 
 
 class BaseApi(object):
@@ -55,12 +59,7 @@ class BaseApi(object):
         if BaseApi.is_success(response.status_code):
             return response.json()
 
-        raise exceptions.MemsourceApiException(
-            response.status_code,
-            response.json(),
-            url,
-            params
-        )
+        raise exceptions.MemsourceApiException(response.status_code, response.json(), url, params)
 
     @staticmethod
     def is_success(status_code):
