@@ -5,6 +5,19 @@ memsource-wrap
 ##############
 Memsource API Wrap Library for Python
 
+Install
+=======
+
+::
+
+    pip install -e 'git+https://github.com/gengo/memsource-wrap.git@master#egg=Package'
+
+Uninstall
+=========
+
+::
+
+    pip uninstall memsource-wrap
 
 Examples
 ========
