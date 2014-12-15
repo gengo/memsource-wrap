@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/gengo/memsource-wrap.svg?branch=master
+    :target: https://travis-ci.org/gengo/memsource-wrap
+
 memsource-wrap
 ##############
 Memsource API Wrap Library for Python
