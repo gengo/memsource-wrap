@@ -13,8 +13,8 @@ class TestApiJob(api_test.ApiTestCase):
         self.job = api.Job(None)
         self.test_file_path = '/tmp/test_file.txt'
         self.test_file_copy_path = '/var/tmp/test_file.txt'
-        self.test_file_uuid4_name = 'test-file-uuid4'
-        self.test_file_uuid4_path = '/var/tmp/{}'.format(self.test_file_uuid4_name)
+        self.test_file_uuid1_name = 'test-file-uuid1'
+        self.test_file_uuid1_path = '/var/tmp/{},txt'.format(self.test_file_uuid1_name)
 
         with open(self.test_file_path, 'w+') as f:
             f.write('This is test file.')
@@ -44,7 +44,7 @@ class TestApiJob(api_test.ApiTestCase):
         [remove_if_exists(f) for f in (
             self.test_file_path,
             self.test_file_copy_path,
-            self.test_file_uuid4_path,
+            self.test_file_uuid1_path,
         )]
 
     @patch.object(requests, 'request')
@@ -92,12 +92,12 @@ class TestApiJob(api_test.ApiTestCase):
         # Check the copy exists
         self.assertTrue(os.path.isfile(self.test_file_copy_path))
 
-    @patch.object(uuid, 'uuid4')
+    @patch.object(uuid, 'uuid1')
     @patch.object(requests, 'request')
-    def test_create_from_text(self, mock_request, mock_uuid4):
+    def test_create_from_text(self, mock_request, mock_uuid1):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = self.create_return_value
-        mock_uuid4.return_value = self.test_file_uuid4_name
+        mock_uuid1().hex.return_value = PropertyMock(return_value=self.test_file_uuid1_name)
 
         target_lang = 'ja'
         project_id = self.gen_random_int()

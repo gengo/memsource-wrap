@@ -190,7 +190,7 @@ class Job(BaseApi):
         Make temporary file and make a job. The temporary file will be removed automatically.
         See: Job.create
         """
-        file_path = '/tmp/{}.txt'.format(str(uuid.uuid4))
+        file_path = '/tmp/{}.txt'.format(uuid.uuid1().hex)
         with open(file_path, 'w+') as f:
             f.write(text)
 
