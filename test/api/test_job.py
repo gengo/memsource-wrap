@@ -2,6 +2,7 @@ from unittest.mock import patch, PropertyMock
 from memsource import api, models, exceptions
 import requests
 import os
+import os.path
 import api as api_test
 
 
@@ -10,6 +11,7 @@ class TestApiJob(api_test.ApiTestCase):
         self.url_base = 'https://cloud1.memsource.com/web/api/v6/job'
         self.job = api.Job(None)
         self.test_file_path = '/tmp/test_file.txt'
+        self.test_file_copy_path = '/var/tmp/test_file.txt'
         with open(self.test_file_path, 'w+') as f:
             f.write('This is test file.')
 
@@ -35,6 +37,8 @@ class TestApiJob(api_test.ApiTestCase):
 
     def tearDonw(self):
         os.remove(self.test_file_path)
+        if os.path.isfile(self.test_file_copy_path):
+            os.remove(self.test_file_copy_path)
 
     @patch.object(requests, 'request')
     def test_create(self, mock_request):
@@ -77,3 +81,6 @@ class TestApiJob(api_test.ApiTestCase):
             exceptions.MemsourceUnsupportedFileException,
             lambda: self.job.create(self.gen_random_int(), self.test_file_path, 'ja')
         )
+
+        # Check the copy exists
+        self.assertTrue(os.path.isfile(self.test_file_copy_path))
