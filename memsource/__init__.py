@@ -1,6 +1,11 @@
 from . import api
 
 
+__author__ = 'Gengo'
+__version__ = '0.0.1'
+__license__ = 'MIT'
+
+
 class Memsource(object):
     def __init__(self, user_name=None, password=None, token=None):
         """
