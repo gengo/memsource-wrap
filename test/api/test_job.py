@@ -1,5 +1,5 @@
 from unittest.mock import patch, PropertyMock
-from memsource import api, models
+from memsource import api, models, exceptions
 import requests
 import os
 import api as api_test
@@ -65,3 +65,15 @@ class TestApiJob(api_test.ApiTestCase):
         self.assertEqual(2, len(returned_value))
         for job_part in returned_value:
             self.assertIsInstance(job_part, models.JobPart)
+
+    @patch.object(requests, 'request')
+    def test_create_with_unsupported_file(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = {
+            'unsupportedFiles': ['test_file.txt'],
+        }
+
+        self.assertRaises(
+            exceptions.MemsourceUnsupportedFileException,
+            lambda: self.job.create(self.gen_random_int(), self.test_file_path, 'ja')
+        )
