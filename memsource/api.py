@@ -70,9 +70,9 @@ class Auth(BaseApi):
 
     def login(self, user_name, password):
         r = self._post('auth/login', {
-                'userName': user_name,
-                'password': password,
-            })
+            'userName': user_name,
+            'password': password,
+        })
 
         r['user'] = models.User(r.pop('user'))
 
