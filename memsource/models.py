@@ -35,3 +35,7 @@ class Project(BaseModel):
     @property
     def date_created(self):
         return self._iso8601_to_datetime(self.dateCreated)
+
+
+class JobPart(BaseModel):
+    pass

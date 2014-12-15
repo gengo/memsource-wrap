@@ -46,7 +46,7 @@ class TestMemsource(unittest.TestCase):
         token = 'test_token'
         m = Memsource(user_name='test user name', password='test password', token=token)
 
-        for api in ('client', 'domain', 'project', ):
+        for api in ('client', 'domain', 'project', 'job', ):
             self.assertEqual(getattr(m, api).token, token)
 
         # When token is given as parameter, never send http request.

@@ -18,6 +18,7 @@ class TestApiClient(unittest.TestCase):
                 'token': self.client.token,
                 'name': client
             },
+            files={},
             timeout=5
         )
 
@@ -42,6 +43,7 @@ class TestApiClient(unittest.TestCase):
                 'token': self.client.token,
                 'client': client
             },
+            files={},
             timeout=5
         )
 
@@ -80,6 +82,7 @@ class TestApiClient(unittest.TestCase):
                 'token': self.client.token,
                 'page': 0
             },
+            files={},
             timeout=5
         )
 
