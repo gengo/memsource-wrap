@@ -1,4 +1,6 @@
 requests
+# Memsource API returns datetime as iso8601
+iso8601
 nose
 coverage
 rednose

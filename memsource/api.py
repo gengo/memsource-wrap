@@ -122,8 +122,10 @@ class Project(BaseApi):
     """
     api_version = constants.ApiVersion.v3
 
-    def create(self, name, source_lang, target_lang,
-               client, domain, due=0, machine_translation_type=0):
+    def create(self, name, source_lang, target_lang, client, domain):
+        """
+        Return project id.
+        """
         return self._post('project/create', {
             'token': self.token,
             'name': name,
@@ -131,6 +133,7 @@ class Project(BaseApi):
             'targetLang': target_lang,
             'client': client,
             'domain': domain,
-            'due': due,
-            'machineTranslationType': machine_translation_type,
         })['id']
+
+    def list(self):
+        return [models.Project(project) for project in self._post('project/list', {})]
