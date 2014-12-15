@@ -1,22 +1,10 @@
 import requests
+import uuid
+import os
 
 from . import constants, exceptions, models
 
-
-class Auth(object):
-    def login(self, user_name, password):
-        # TODO: error handling
-        r = requests.post(
-            '{}/v3/auth/login'.format(constants.Base.url.value),
-            params={
-                'userName': user_name,
-                'password': password,
-            }
-        ).json()
-
-        r['user'] = models.User(r.pop('user'))
-
-        return models.Authentication(r)
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', )
 
 
 class BaseApi(object):
@@ -30,10 +18,10 @@ class BaseApi(object):
         self.token = token
 
     # Should be public, it is conflict with memsource endpoint.
-    def _post(self, path, params, timeout=constants.Base.timeout.value):
-        return self._request('post', path, params, timeout)
+    def _post(self, path, params, files={}, timeout=constants.Base.timeout.value):
+        return self._request('post', path, files, params, timeout)
 
-    def _request(self, method, path, params, timeout):
+    def _request(self, method, path, files, params, timeout):
         params['token'] = self.token
 
         url = '{}/{}/{}'.format(
@@ -42,9 +30,12 @@ class BaseApi(object):
             path
         )
 
+        self.last_params = params
+        self.last_url = url
+
         # If it is successful, returns response json
         try:
-            response = requests.request(method, url, params=params, timeout=timeout)
+            response = requests.request(method, url, params=params, files=files, timeout=timeout)
         except requests.exceptions.Timeout:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',
@@ -66,6 +57,30 @@ class BaseApi(object):
         # if status_code is float type, we will get unexpected result.
         # but I think it is not big deal.
         return 200 <= status_code < 300
+
+
+class Auth(BaseApi):
+    """
+    You can see the document http://wiki.memsource.com/wiki/Authentication_API_v3
+    """
+    api_version = constants.ApiVersion.v3
+
+    def __init__(self, token=None):
+        super(Auth, self).__init__(token)
+
+    def login(self, user_name, password):
+        # TODO: error handling
+        r = requests.post(
+            '{}/v3/auth/login'.format(constants.Base.url.value),
+            params={
+                'userName': user_name,
+                'password': password,
+            }
+        ).json()
+
+        r['user'] = models.User(r.pop('user'))
+
+        return models.Authentication(r)
 
 
 class Client(BaseApi):
@@ -137,3 +152,49 @@ class Project(BaseApi):
 
     def list(self):
         return [models.Project(project) for project in self._post('project/list', {})]
+
+
+class Job(BaseApi):
+    """
+    You can see the document http://wiki.memsource.com/wiki/Job_API_v6
+    """
+    api_version = constants.ApiVersion.v6
+
+    def create(self, project_id, file_path, target_langs):
+        """
+        return: [JobPart]
+
+        If returning JSON has `unsupportedFiles`,
+        this method raise MemsourceUnsupportedFileException
+        """
+        with open(file_path, 'r') as f:
+            result = self._post('job/create', {
+                'project': project_id,
+                'targetLang': target_langs,
+            }, {
+                'file': f,
+            })
+
+        if 'unsupportedFiles' in result:
+            raise exceptions.MemsourceUnsupportedFileException(
+                result['unsupportedFiles'],
+                file_path,
+                self.last_url,
+                self.last_params
+            )
+
+        return [models.JobPart(job_parts) for job_parts in result['jobParts']]
+
+    def createFromText(self, project_id, text, target_langs):
+        """
+        Make temporary file and make a job. The temporary file will be removed automatically.
+        See: Job.create
+        """
+        file_path = '/tmp/{}.txt'.format(uuid.uuid1().hex)
+        with open(file_path, 'w+') as f:
+            f.write(text)
+
+        try:
+            return self.create(project_id, file_path, target_langs)
+        finally:
+            os.remove(file_path)

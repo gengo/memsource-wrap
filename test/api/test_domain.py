@@ -18,6 +18,7 @@ class TestApiDomain(unittest.TestCase):
                 'token': self.domain.token,
                 'name': domain
             },
+            files={},
             timeout=5
         )
 
@@ -42,6 +43,7 @@ class TestApiDomain(unittest.TestCase):
                 'token': self.domain.token,
                 'domain': domain
             },
+            files={},
             timeout=5
         )
 
@@ -66,6 +68,7 @@ class TestApiDomain(unittest.TestCase):
                 'token': self.domain.token,
                 'page': 0
             },
+            files={},
             timeout=5
         )
 

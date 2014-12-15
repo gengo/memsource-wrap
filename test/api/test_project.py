@@ -1,18 +1,14 @@
-import unittest
 from unittest.mock import patch, PropertyMock
 from memsource import api, models
 import requests
-import random
 import datetime
+import api as api_test
 
 
-class TestApiDomain(unittest.TestCase):
+class TestApiDomain(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud1.memsource.com/web/api/v3/project'
         self.project = api.Project(None)
-
-    def gen_random_int(self):
-        return random.randint(-100, 100)
 
     @patch.object(requests, 'request')
     def test_create(self, mock_request):
@@ -44,6 +40,7 @@ class TestApiDomain(unittest.TestCase):
                 'client': client,
                 'domain': domain,
             },
+            files={},
             timeout=5
         )
 
@@ -75,8 +72,8 @@ class TestApiDomain(unittest.TestCase):
         ]
 
         for project in self.project.list():
-            self.assertTrue(isinstance(project, models.Project))
-            self.assertTrue(isinstance(project.date_created, datetime.datetime))
+            self.assertIsInstance(project, models.Project)
+            self.assertIsInstance(project.date_created, datetime.datetime)
 
         mock_request.assert_called_with(
             'post',
@@ -84,5 +81,6 @@ class TestApiDomain(unittest.TestCase):
             params={
                 'token': self.project.token,
             },
+            files={},
             timeout=5
         )

@@ -9,3 +9,4 @@ class Base(enum.Enum):
 class ApiVersion(enum.Enum):
     v2 = 'v2'
     v3 = 'v3'
+    v6 = 'v6'
