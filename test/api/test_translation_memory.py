@@ -1,5 +1,5 @@
 from unittest.mock import patch, PropertyMock
-from memsource import api
+from memsource import api, constants
 import requests
 import api as api_test
 
@@ -32,5 +32,5 @@ class TestApiJob(api_test.ApiTestCase):
                 'targetLang': target_langs,
             },
             files={},
-            timeout=10
+            timeout=constants.Base.timeout.value
         )
