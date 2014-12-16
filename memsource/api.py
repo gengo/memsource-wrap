@@ -4,7 +4,7 @@ import os
 
 from . import constants, exceptions, models
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', )
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory')
 
 
 class BaseApi(object):
@@ -12,6 +12,7 @@ class BaseApi(object):
 
     def __init__(self, token):
         if self.api_version is None:
+            # This exception is for development this library.
             raise NotImplementedError(
                 'api_version is not set in {}'.format(self.__class__.__name__))
 
@@ -194,3 +195,17 @@ class Job(BaseApi):
             return self.create(project_id, file_path, target_langs)
         finally:
             os.remove(file_path)
+
+
+class TranslationMemory(BaseApi):
+    """
+    You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
+    """
+    api_version = constants.ApiVersion.v4
+
+    def create(self, name, source_lang, target_langs):
+        return self._post('transMemory/create', {
+            'name': name,
+            'sourceLang': source_lang,
+            'targetLang': target_langs,
+        })['id']

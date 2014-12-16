@@ -1,5 +1,5 @@
 from unittest.mock import patch, PropertyMock
-from memsource import api, models, exceptions
+from memsource import api, models, exceptions, constants
 import requests
 import os
 import os.path
@@ -70,7 +70,7 @@ class TestApiJob(api_test.ApiTestCase):
                 'project': project_id,
                 'targetLang': target_lang,
             },
-            'timeout': 5,
+            'timeout': constants.Base.timeout.value,
         }, called_kwargs)
 
         self.assertEqual(2, len(returned_value))
@@ -117,7 +117,7 @@ class TestApiJob(api_test.ApiTestCase):
                 'project': project_id,
                 'targetLang': target_lang,
             },
-            'timeout': 5,
+            'timeout': constants.Base.timeout.value,
         }, called_kwargs)
 
         self.assertEqual(2, len(returned_value))

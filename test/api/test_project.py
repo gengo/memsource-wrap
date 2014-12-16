@@ -1,5 +1,5 @@
 from unittest.mock import patch, PropertyMock
-from memsource import api, models
+from memsource import api, models, constants
 import requests
 import datetime
 import api as api_test
@@ -41,7 +41,7 @@ class TestApiDomain(api_test.ApiTestCase):
                 'domain': domain,
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
     @patch.object(requests, 'request')
@@ -82,5 +82,5 @@ class TestApiDomain(api_test.ApiTestCase):
                 'token': self.project.token,
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )

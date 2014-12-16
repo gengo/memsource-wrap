@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, PropertyMock
-from memsource import api
+from memsource import api, constants
 import requests
 
 
@@ -19,7 +19,7 @@ class TestApiDomain(unittest.TestCase):
                 'name': domain
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -44,7 +44,7 @@ class TestApiDomain(unittest.TestCase):
                 'domain': domain
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -69,7 +69,7 @@ class TestApiDomain(unittest.TestCase):
                 'page': 0
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
         type(mock_request()).status_code = PropertyMock(return_value=200)
