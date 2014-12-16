@@ -69,14 +69,10 @@ class Auth(BaseApi):
         super(Auth, self).__init__(token)
 
     def login(self, user_name, password):
-        # TODO: error handling
-        r = requests.post(
-            '{}/v3/auth/login'.format(constants.Base.url.value),
-            params={
-                'userName': user_name,
-                'password': password,
-            }
-        ).json()
+        r = self._post('auth/login', {
+            'userName': user_name,
+            'password': password,
+        })
 
         r['user'] = models.User(r.pop('user'))
 
