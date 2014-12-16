@@ -209,3 +209,9 @@ class TranslationMemory(BaseApi):
             'sourceLang': source_lang,
             'targetLang': target_langs,
         })['id']
+
+    def list(self):
+        return [
+            models.TranslationMemory(translation_memory)
+            for translation_memory in self._post('transMemory/list', {})
+        ]

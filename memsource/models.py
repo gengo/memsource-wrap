@@ -33,3 +33,7 @@ class Project(BaseModel):
 
 class JobPart(BaseModel):
     pass
+
+
+class TranslationMemory(BaseModel):
+    pass

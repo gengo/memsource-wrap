@@ -1,5 +1,5 @@
 from unittest.mock import patch, PropertyMock
-from memsource import api, constants
+from memsource import api, constants, models
 import requests
 import api as api_test
 
@@ -30,6 +30,31 @@ class TestApiJob(api_test.ApiTestCase):
                 'name': name,
                 'sourceLang': source_lang,
                 'targetLang': target_langs,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests, 'request')
+    def test_list(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = [{
+            'id': 1,
+            'targetLangs': [
+                'ja'
+            ],
+            'sourceLang': 'en',
+            'name': 'transMem'
+        }]
+
+        for translation_memory in self.translation_memory.list():
+            self.assertIsInstance(translation_memory, models.TranslationMemory)
+
+        mock_request.assert_called_with(
+            'post',
+            '{}/list'.format(self.url_base),
+            params={
+                'token': self.translation_memory.token,
             },
             files={},
             timeout=constants.Base.timeout.value
