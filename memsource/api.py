@@ -4,7 +4,7 @@ import os
 
 from . import constants, exceptions, models
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory')
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', )
 
 
 class BaseApi(object):
@@ -150,6 +150,9 @@ class Project(BaseApi):
     def list(self):
         return [models.Project(project) for project in self._post('project/list', {})]
 
+    def getTransMemories(self, project_id):
+        return self._post('project/getTransMemories', {'project': project_id})
+
 
 class Job(BaseApi):
     """
@@ -172,9 +175,10 @@ class Job(BaseApi):
                 'file': f,
             })
 
-        if 'unsupportedFiles' in result:
+        unsupportedFiles = result.get('unsupportedFiles', [])
+        if len(unsupportedFiles) > 0:
             raise exceptions.MemsourceUnsupportedFileException(
-                result['unsupportedFiles'],
+                unsupportedFiles,
                 file_path,
                 self.last_url,
                 self.last_params
@@ -221,3 +225,19 @@ class TranslationMemory(BaseApi):
             models.TranslationMemory(translation_memory)
             for translation_memory in self._post('transMemory/list', {})
         ]
+
+    def import_(self, translation_memory_id, file_path):
+        """
+        This method name is `_import` because `import` is keyword of Python.
+        We cannot use `import` as method name.
+
+        return int accepted segments count
+        """
+
+        # Casting because acceptedSegmentsCount seems always number, but it string type.
+        with open(file_path, 'rb') as f:
+            return int(self._post('transMemory/import', {
+                'transMemory': translation_memory_id,
+            }, {
+                'file': f
+            })['acceptedSegmentsCount'])

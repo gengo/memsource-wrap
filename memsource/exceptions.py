@@ -42,7 +42,7 @@ class MemsourceUnsupportedFileException(MemsourceException):
     def __init__(self, unsupported_files, original_file_path, url, params):
         # I don't know why Memsource API is returning unsupported_file as array type.
         # It seems always one element.
-        unsupported_file = unsupported_files[0]
+        unsupported_file = ', '.join(unsupported_files)
 
         # Make a copy the unsupported file. It is helpful for debugging.
         file_path = shutil.copy(original_file_path, '/var/tmp/{}'.format(unsupported_file))

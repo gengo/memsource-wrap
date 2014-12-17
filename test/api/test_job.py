@@ -16,6 +16,12 @@ class TestApiJob(api_test.ApiTestCase):
         self.test_file_uuid1_name = 'test-file-uuid1'
         self.test_file_uuid1_path = '/var/tmp/{},txt'.format(self.test_file_uuid1_name)
 
+        self.setCleanUpFiles((
+            self.test_file_path,
+            self.test_file_copy_path,
+            self.test_file_uuid1_path,
+        ))
+
         with open(self.test_file_path, 'w+') as f:
             f.write('This is test file.')
 
@@ -39,14 +45,6 @@ class TestApiJob(api_test.ApiTestCase):
             }]
         }
 
-    def tearDonw(self):
-        remove_if_exists = lambda f: os.remove(f) if os.path.isfile(f) else None
-        [remove_if_exists(f) for f in (
-            self.test_file_path,
-            self.test_file_copy_path,
-            self.test_file_uuid1_path,
-        )]
-
     @patch.object(requests, 'request')
     def test_create(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -61,6 +59,7 @@ class TestApiJob(api_test.ApiTestCase):
         self.assertTrue(mock_request.called)
         (called_args, called_kwargs) = mock_request.call_args
 
+        # hard to test
         del called_kwargs['files']
         self.assertEqual(('post', '{}/create'.format(self.url_base)), called_args)
 
