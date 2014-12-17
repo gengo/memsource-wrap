@@ -196,6 +196,12 @@ class Job(BaseApi):
         finally:
             os.remove(file_path)
 
+    def listByProject(self, project_id):
+        # TODO: wrap inner project
+        return [models.JobPart(job_part) for job_part in self._post('job/listByProject', {
+            'project': project_id
+        })]
+
 
 class TranslationMemory(BaseApi):
     """

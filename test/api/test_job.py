@@ -123,3 +123,66 @@ class TestApiJob(api_test.ApiTestCase):
         self.assertEqual(2, len(returned_value))
         for job_part in returned_value:
             self.assertIsInstance(job_part, models.JobPart)
+
+    @patch.object(requests, 'request')
+    def test_list_by_project(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        project_id = self.gen_random_int()
+
+        mock_request().json.return_value = [{
+            'targetLang': 'de',
+            'endIndex': 14,
+            'project': {
+                'domain': None,
+                'machineTranslateSettings': None,
+                'status': 'NEW',
+                'name': 'project',
+                'note': None,
+                'dateDue': None,
+                'sourceLang': 'en',
+                'client': None,
+                'subDomain': None,
+                'id': project_id,
+                'targetLangs': ['ja'],
+                'workflowSteps': [],
+                'dateCreated': '2013-10-31T10:15:05Z'
+            },
+            'isParentJobSplit': False,
+            'beginIndex': 0,
+            'task': 'U8llA7UOMiKGJ8Dk',
+            'dateDue': None,
+            'fileName': 'small.properties',
+            'assignedTo': {
+                'email': 'test@test.com',
+                'firstName': 'linguist',
+                'id': 2,
+                'lastName': 'test',
+                'role': 'LINGUIST',
+                'userName': 'linguist',
+                'active': True
+            },
+            'id': 1,
+            'wordsCount': 331,
+            'status': 'NEW',
+            'dateCreated': '2013-10-31T10:15:06Z',
+            'workflowLevel': 1
+        }]
+
+        returned_value = self.job.listByProject(project_id)
+
+        for job_part in returned_value:
+            self.assertIsInstance(job_part, models.JobPart)
+
+        mock_request.assert_called_with(
+            'post',
+            '{}/listByProject'.format(self.url_base),
+            params={
+                'token': self.job.token,
+                'project': project_id
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+        self.assertEqual(len(returned_value), len(mock_request().json()))
