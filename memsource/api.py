@@ -151,7 +151,12 @@ class Project(BaseApi):
         return [models.Project(project) for project in self._post('project/list', {})]
 
     def getTransMemories(self, project_id):
-        return self._post('project/getTransMemories', {'project': project_id})
+        return [
+            models.TranslationMemory(translation_memory)
+            for translation_memory in self._post('project/getTransMemories', {
+                'project': project_id
+            })
+        ]
 
 
 class Job(BaseApi):

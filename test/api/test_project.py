@@ -84,3 +84,40 @@ class TestApiDomain(api_test.ApiTestCase):
             files={},
             timeout=constants.Base.timeout.value
         )
+
+    @patch.object(requests, 'request')
+    def test_get_trans_memories(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        project_id = self.gen_random_int()
+
+        mock_request().json.return_value = [{
+            'writeMode': True,
+            'transMemory': {
+                'id': 1,
+                'targetLangs': ['ja'],
+                'sourceLang': 'en',
+                'name': 'transMem'
+            },
+            'targetLang': 'ja',
+            'penalty': 0,
+            'readMode': True,
+            'workflowStep': None
+        }]
+
+        returned_values = self.project.getTransMemories(project_id)
+
+        mock_request.assert_called_with(
+            'post',
+            '{}/getTransMemories'.format(self.url_base),
+            params={
+                'token': self.project.token,
+                'project': project_id
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+        self.assertEqual(len(returned_values), len(mock_request().json()))
+
+        for translation_memory in returned_values:
+            self.assertIsInstance(translation_memory, models.TranslationMemory)
