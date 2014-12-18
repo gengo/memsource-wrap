@@ -231,10 +231,10 @@ class TranslationMemory(BaseApi):
             for translation_memory in self._post('transMemory/list', {})
         ]
 
-    def import_(self, translation_memory_id, file_path):
+    def upload(self, translation_memory_id, file_path):
         """
-        This method name is `_import` because `import` is keyword of Python.
-        We cannot use `import` as method name.
+        This method calls import endpoint, but method name is `upload`,
+        because `import` is keyword of Python. We cannot use `import` as method name.
 
         return int accepted segments count
         """
