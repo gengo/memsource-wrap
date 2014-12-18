@@ -8,9 +8,7 @@ __all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'A
 
 
 class BaseApi(object):
-    """
-    Children of this class are have to have api_version.
-    """
+    """Inheriting classes must have the api_version attribute"""
     def __init__(self, token):
         if not hasattr(self, 'api_version'):
             # This exception is for development this library.
