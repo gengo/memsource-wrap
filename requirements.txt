@@ -5,3 +5,4 @@ nose
 coverage
 rednose
 flake8
+inflection

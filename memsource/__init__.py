@@ -1,4 +1,5 @@
 from . import api
+import inflection
 
 
 __author__ = 'Gengo'
@@ -15,5 +16,5 @@ class Memsource(object):
         self.auth = api.Auth()
 
         (lambda token: [
-            setattr(self, c.lower(), getattr(api, c)(token)) for c in api.__all__
+            setattr(self, inflection.underscore(c), getattr(api, c)(token)) for c in api.__all__
         ])(self.auth.login(user_name, password).token if token is None else token)

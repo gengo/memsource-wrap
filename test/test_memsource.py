@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, PropertyMock
-from memsource import Memsource
+from memsource import Memsource, constants
 import requests
 
 
@@ -35,7 +35,7 @@ class TestMemsource(unittest.TestCase):
                 'token': None,
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
     @patch.object(requests, 'request')

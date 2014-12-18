@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, PropertyMock
-from memsource import api, exceptions
+from memsource import api, exceptions, constants
 import requests
 
 
@@ -19,7 +19,7 @@ class TestApiClient(unittest.TestCase):
                 'name': client
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -44,7 +44,7 @@ class TestApiClient(unittest.TestCase):
                 'client': client
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -83,7 +83,7 @@ class TestApiClient(unittest.TestCase):
                 'page': 0
             },
             files={},
-            timeout=5
+            timeout=constants.Base.timeout.value
         )
 
         type(mock_request()).status_code = PropertyMock(return_value=200)

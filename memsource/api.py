@@ -4,7 +4,7 @@ import os
 
 from . import constants, exceptions, models
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', )
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', )
 
 
 class BaseApi(object):
@@ -12,6 +12,7 @@ class BaseApi(object):
 
     def __init__(self, token):
         if self.api_version is None:
+            # This exception is for development this library.
             raise NotImplementedError(
                 'api_version is not set in {}'.format(self.__class__.__name__))
 
@@ -149,6 +150,14 @@ class Project(BaseApi):
     def list(self):
         return [models.Project(project) for project in self._post('project/list', {})]
 
+    def getTransMemories(self, project_id):
+        return [
+            models.TranslationMemory(translation_memory)
+            for translation_memory in self._post('project/getTransMemories', {
+                'project': project_id
+            })
+        ]
+
 
 class Job(BaseApi):
     """
@@ -171,9 +180,10 @@ class Job(BaseApi):
                 'file': f,
             })
 
-        if 'unsupportedFiles' in result:
+        unsupportedFiles = result.get('unsupportedFiles', [])
+        if len(unsupportedFiles) > 0:
             raise exceptions.MemsourceUnsupportedFileException(
-                result['unsupportedFiles'],
+                unsupportedFiles,
                 file_path,
                 self.last_url,
                 self.last_params
@@ -194,3 +204,45 @@ class Job(BaseApi):
             return self.create(project_id, file_path, target_langs)
         finally:
             os.remove(file_path)
+
+    def listByProject(self, project_id):
+        # TODO: wrap inner project
+        return [models.JobPart(job_part) for job_part in self._post('job/listByProject', {
+            'project': project_id
+        })]
+
+
+class TranslationMemory(BaseApi):
+    """
+    You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
+    """
+    api_version = constants.ApiVersion.v4
+
+    def create(self, name, source_lang, target_langs):
+        return self._post('transMemory/create', {
+            'name': name,
+            'sourceLang': source_lang,
+            'targetLang': target_langs,
+        })['id']
+
+    def list(self):
+        return [
+            models.TranslationMemory(translation_memory)
+            for translation_memory in self._post('transMemory/list', {})
+        ]
+
+    def upload(self, translation_memory_id, file_path):
+        """
+        This method calls import endpoint, but method name is `upload`,
+        because `import` is keyword of Python. We cannot use `import` as method name.
+
+        return int accepted segments count
+        """
+
+        # Casting because acceptedSegmentsCount seems always number, but it string type.
+        with open(file_path, 'rb') as f:
+            return int(self._post('transMemory/import', {
+                'transMemory': translation_memory_id,
+            }, {
+                'file': f
+            })['acceptedSegmentsCount'])
