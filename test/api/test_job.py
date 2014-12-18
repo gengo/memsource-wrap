@@ -15,11 +15,13 @@ class TestApiJob(api_test.ApiTestCase):
         self.test_file_copy_path = '/var/tmp/test_file.txt'
         self.test_file_uuid1_name = 'test-file-uuid1'
         self.test_file_uuid1_path = '/var/tmp/{},txt'.format(self.test_file_uuid1_name)
+        self.test_mxllif_file_path = '/tmp/test.mxliff'
 
         self.setCleanUpFiles((
             self.test_file_path,
             self.test_file_copy_path,
             self.test_file_uuid1_path,
+            self.test_mxllif_file_path,
         ))
 
         with open(self.test_file_path, 'w+') as f:
@@ -206,3 +208,34 @@ class TestApiJob(api_test.ApiTestCase):
         )
 
         self.assertIsNone(returned_value)
+
+    @patch.object(requests, 'request')
+    def test_get_bilingual_file(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        mxliff_contents = ['test mxliff content', 'second']
+
+        mock_request().iter_content.return_value = [
+            bytes(content, 'utf-8') for content in mxliff_contents]
+        job_part_ids = [self.gen_random_int()]
+
+        self.assertFalse(os.path.isfile(self.test_mxllif_file_path))
+        returned_value = self.job.getBilingualFile(job_part_ids, self.test_mxllif_file_path)
+        self.assertTrue(os.path.isfile(self.test_mxllif_file_path))
+
+        self.assertIsNone(returned_value)
+
+        with open(self.test_mxllif_file_path) as f:
+            self.assertEqual(''.join(mxliff_contents), f.read())
+
+        mock_request.assert_called_with(
+            'get',
+            'https://cloud1.memsource.com/web/api/v6/job/getBilingualFile',
+            params={
+                'token': self.job.token,
+                'jobPart': job_part_ids,
+            },
+            files={},
+            timeout=constants.Base.timeout.value * 5,
+            stream=True
+        )
