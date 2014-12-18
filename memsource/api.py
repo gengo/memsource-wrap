@@ -4,19 +4,23 @@ import os
 
 from . import constants, exceptions, models
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', )
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous', )
 
 
 class BaseApi(object):
-    api_version = None
-
+    """
+    Children of this class are have to have api_version.
+    """
     def __init__(self, token):
-        if self.api_version is None:
+        if not hasattr(self, 'api_version'):
             # This exception is for development this library.
             raise NotImplementedError(
                 'api_version is not set in {}'.format(self.__class__.__name__))
 
         self.token = token
+
+    def _make_url(self, *args, **kwargs):
+        return kwargs.get('format', '{base}/{api_version}/{path}').format(**kwargs)
 
     # Should be public, it is conflict with memsource endpoint.
     def _post(self, path, params, files={}, timeout=constants.Base.timeout.value):
@@ -24,11 +28,10 @@ class BaseApi(object):
 
     def _request(self, method, path, files, params, timeout):
         params['token'] = self.token
-
-        url = '{}/{}/{}'.format(
-            constants.Base.url.value,
-            self.api_version.value,
-            path
+        url = self._make_url(
+            base=constants.Base.url.value,
+            api_version=self.api_version.value,
+            path=path
         )
 
         self.last_params = params
@@ -252,3 +255,36 @@ class TranslationMemory(BaseApi):
             }, {
                 'file': f
             })['acceptedSegmentsCount'])
+
+
+class Asynchronous(BaseApi):
+    """
+    You can see the documents:
+    * http://wiki.memsource.com/wiki/Asynchronous_API_v2
+    * http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
+    * http://wiki.memsource.com/wiki/Analysis_Asynchronous_API_v2
+    """
+    api_version = constants.ApiVersion.v2
+
+    def _make_url(self, *args, **kwargs):
+        """
+        Because only this endpoint has different format with other endpoints.
+        like these:
+        * https://cloud1.memsource.com/web/api/async/v2/job/preTranslate
+        * https://cloud1.memsource.com/web/api/v2/async/getAsyncRequest
+
+        This is example of other endpoints
+        * https://cloud1.memsource.com/web/api/v3/project/create
+        """
+        if kwargs['path'] != 'async/getAsyncRequest':
+            kwargs['format'] = '{base}/async/{api_version}/{path}'
+
+        return super(Asynchronous, self)._make_url(**kwargs)
+
+    def preTranslate(self, job_parts):
+        """
+        return models.AsynchronousRequest
+        """
+        return models.AsynchronousRequest(self._post('job/preTranslate', {
+            'jobPart': job_parts,
+        })['asyncRequest'])
