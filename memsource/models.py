@@ -49,3 +49,9 @@ class AsynchronousRequest(BaseModel):
 class AsynchronousResponse(BaseModel):
     def __init__(self, source):
         super(AsynchronousResponse, self).__init__({} if source is None else source)
+
+    def is_complete(self):
+        return 'error' in self
+
+    def has_error(self):
+        return self.is_complete() and self.error is not None
