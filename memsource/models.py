@@ -37,3 +37,21 @@ class JobPart(BaseModel):
 
 class TranslationMemory(BaseModel):
     pass
+
+
+class AsynchronousRequest(BaseModel):
+    """
+    You can know progress when hit api.Asynchronous.getAsyncRequest with id of this class instance.
+    """
+    pass
+
+
+class AsynchronousResponse(BaseModel):
+    def __init__(self, source):
+        super(AsynchronousResponse, self).__init__({} if source is None else source)
+
+    def is_complete(self):
+        return 'error' in self
+
+    def has_error(self):
+        return self.is_complete() and self.error is not None

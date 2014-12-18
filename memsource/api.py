@@ -4,54 +4,90 @@ import os
 
 from . import constants, exceptions, models
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', )
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous', )
 
 
 class BaseApi(object):
-    api_version = None
-
+    """Inheriting classes must have the api_version attribute"""
     def __init__(self, token):
-        if self.api_version is None:
+        if not hasattr(self, 'api_version'):
             # This exception is for development this library.
             raise NotImplementedError(
                 'api_version is not set in {}'.format(self.__class__.__name__))
 
         self.token = token
 
+    def _make_url(self, *args, **kwargs):
+        return kwargs.get('format', '{base}/{api_version}/{path}').format(**kwargs)
+
     # Should be public, it is conflict with memsource endpoint.
     def _post(self, path, params, files={}, timeout=constants.Base.timeout.value):
+        """
+        return response as dict
+
+        If you want to raw response, you can use _get_stream method.
+        TODO: implements _post_stream.
+        """
         return self._request('post', path, files, params, timeout)
 
-    def _request(self, method, path, files, params, timeout):
+    def _get_stream(self, path, params, files={}, timeout=constants.Base.timeout.value * 5):
+        """
+        return response object of requests library
+
+        This method returns response object of requests library,
+        because XML parse or save to file or etc are different will call different method.
+
+        We can switch response by value of stream, but it is not good, I think,
+        because type of returning value is only one is easy to use, easy to understand.
+        """
+        return self._request_stream('get', path, files, params, timeout)
+
+    def _pre_request(self, path, params):
+        url = self._make_url(
+            base=constants.Base.url.value,
+            api_version=self.api_version.value,
+            path=path
+        )
         params['token'] = self.token
 
-        url = '{}/{}/{}'.format(
-            constants.Base.url.value,
-            self.api_version.value,
-            path
-        )
-
-        self.last_params = params
         self.last_url = url
+        self.last_params = params
 
-        # If it is successful, returns response json
+        return (url, params, )
+
+    def _request_stream(self, method, path, files, params, timeout):
+        (url, params_with_token) = self._pre_request(path, params)
+
+        return self._get_response(
+            method, url, params=params_with_token, files=files, timeout=timeout, stream=True)
+
+    def _get_response(self, *args, **kwargs):
         try:
-            response = requests.request(method, url, params=params, files=files, timeout=timeout)
+            response = requests.request(*args, **kwargs)
         except requests.exceptions.Timeout:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',
-                'errorDescription': 'The request timed out, timeout is {}'.format(timeout),
-            }, url, params)
+                'errorDescription': 'The request timed out, timeout is {}'.format(
+                    kwargs['timeout'] if 'timeout' in kwargs else 'default'),
+            }, self.last_url, self.last_params)
         except requests.exceptions.ConnectionError:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',
                 'errorDescription': 'Could not connect',
-            }, url, params)
+            }, self.last_url, self.last_params)
 
         if BaseApi.is_success(response.status_code):
-            return response.json()
+            return response
 
-        raise exceptions.MemsourceApiException(response.status_code, response.json(), url, params)
+        raise exceptions.MemsourceApiException(
+            response.status_code, response.json(), self.last_url, self.last_params)
+
+    def _request(self, method, path, files, params, timeout):
+        (url, params_with_token) = self._pre_request(path, params)
+
+        # If it is successful, returns response json
+        return self._get_response(
+            method, url, params=params_with_token, files=files, timeout=timeout).json()
 
     @staticmethod
     def is_success(status_code):
@@ -211,6 +247,20 @@ class Job(BaseApi):
             'project': project_id
         })]
 
+    def preTranslate(self, job_parts):
+        """
+        This API takes long time. you might timed out. You can use Asynchronous.preTranslate
+        """
+        self._post('job/preTranslate', {'jobPart': job_parts})
+
+    def getBilingualFile(self, job_parts, dest_file_path):
+        response = self._get_stream('job/getBilingualFile', {
+            'jobPart': job_parts,
+        })
+        with open(dest_file_path, 'wb') as f:
+            for chunk in response.iter_content(1024):
+                f.write(chunk)
+
 
 class TranslationMemory(BaseApi):
     """
@@ -246,3 +296,44 @@ class TranslationMemory(BaseApi):
             }, {
                 'file': f
             })['acceptedSegmentsCount'])
+
+
+class Asynchronous(BaseApi):
+    """
+    You can see the documents:
+    * http://wiki.memsource.com/wiki/Asynchronous_API_v2
+    * http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
+    * http://wiki.memsource.com/wiki/Analysis_Asynchronous_API_v2
+    """
+    api_version = constants.ApiVersion.v2
+
+    def _make_url(self, *args, **kwargs):
+        """
+        Because only this endpoint has different format with other endpoints.
+        like these:
+        * https://cloud1.memsource.com/web/api/async/v2/job/preTranslate
+        * https://cloud1.memsource.com/web/api/v2/async/getAsyncRequest
+
+        This is example of other endpoints
+        * https://cloud1.memsource.com/web/api/v3/project/create
+        """
+        if kwargs['path'] != 'async/getAsyncRequest':
+            kwargs['format'] = '{base}/async/{api_version}/{path}'
+
+        return super(Asynchronous, self)._make_url(**kwargs)
+
+    def preTranslate(self, job_parts):
+        """
+        return models.AsynchronousRequest
+        """
+        return models.AsynchronousRequest(self._post('job/preTranslate', {
+            'jobPart': job_parts,
+        })['asyncRequest'])
+
+    def getAsyncRequest(self, asynchronous_request_id):
+        asyncRequest = self._post('async/getAsyncRequest', {
+            'asyncRequest': asynchronous_request_id,
+        })
+        asyncRequest['asyncResponse'] = models.AsynchronousResponse(asyncRequest['asyncResponse'])
+
+        return models.AsynchronousRequest(asyncRequest)
