@@ -288,3 +288,8 @@ class Asynchronous(BaseApi):
         return models.AsynchronousRequest(self._post('job/preTranslate', {
             'jobPart': job_parts,
         })['asyncRequest'])
+
+    def getAsyncRequest(self, asynchronous_request_id):
+        return models.AsynchronousRequest(self._post('async/getAsyncRequest', {
+            'asyncRequest': asynchronous_request_id,
+        }))
