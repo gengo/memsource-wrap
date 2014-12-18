@@ -55,21 +55,19 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         asynchronous_request_id = self.gen_random_int()
 
         mock_request().json.return_value = {
-            'asyncRequest': {
-                'id': asynchronous_request_id,
-                'createdBy': {
-                    'id': 1,
-                    'firstName': 'admin',
-                    'email': 'test@test.com',
-                    'active': True,
-                    'userName': 'admin',
-                    'lastName': 'test',
-                    'role': 'ADMIN'
-                },
-                'asyncResponse': None,
-                'action': 'PRE_TRANSLATE',
-                'dateCreated': '2014-11-03T16:03:11Z'
-            }
+            'id': asynchronous_request_id,
+            'createdBy': {
+                'id': 1,
+                'firstName': 'admin',
+                'email': 'test@test.com',
+                'active': True,
+                'userName': 'admin',
+                'lastName': 'test',
+                'role': 'ADMIN'
+            },
+            'asyncResponse': None,
+            'action': 'PRE_TRANSLATE',
+            'dateCreated': '2014-11-03T16:03:11Z'
         }
 
         retuned_value = self.asynchronous.getAsyncRequest(asynchronous_request_id)

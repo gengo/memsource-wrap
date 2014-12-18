@@ -288,6 +288,10 @@ class Asynchronous(BaseApi):
         })['asyncRequest'])
 
     def getAsyncRequest(self, asynchronous_request_id):
-        return models.AsynchronousRequest(self._post('async/getAsyncRequest', {
+        asyncRequest = self._post('async/getAsyncRequest', {
             'asyncRequest': asynchronous_request_id,
-        }))
+        })
+        a = models.AsynchronousResponse(asyncRequest['asyncResponse'])
+        asyncRequest['asyncResponse'] = a
+
+        return models.AsynchronousRequest(asyncRequest)

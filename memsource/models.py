@@ -44,3 +44,8 @@ class AsynchronousRequest(BaseModel):
     You can know progress when hit api.Asynchronous.getAsyncRequest with id of this class instance.
     """
     pass
+
+
+class AsynchronousResponse(BaseModel):
+    def __init__(self, source):
+        super(AsynchronousResponse, self).__init__({} if source is None else source)
