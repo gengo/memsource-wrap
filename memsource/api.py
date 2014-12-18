@@ -211,6 +211,12 @@ class Job(BaseApi):
             'project': project_id
         })]
 
+    def preTranslate(self, job_parts):
+        """
+        This API takes long time. you might timed out. You can use Asynchronous.preTranslate
+        """
+        self._post('job/preTranslate', {'jobPart': job_parts})
+
 
 class TranslationMemory(BaseApi):
     """

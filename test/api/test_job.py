@@ -185,3 +185,24 @@ class TestApiJob(api_test.ApiTestCase):
         )
 
         self.assertEqual(len(returned_value), len(mock_request().json()))
+
+    @patch.object(requests, 'request')
+    def test_pre_translate(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = {}
+        job_part_ids = [self.gen_random_int()]
+
+        returned_value = self.job.preTranslate(job_part_ids)
+
+        mock_request.assert_called_with(
+            'post',
+            '{}/preTranslate'.format(self.url_base),
+            params={
+                'token': self.job.token,
+                'jobPart': job_part_ids
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+        self.assertIsNone(returned_value)
