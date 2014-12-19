@@ -63,7 +63,8 @@ class TestApiJob(api_test.ApiTestCase):
 
         # hard to test
         del called_kwargs['files']
-        self.assertEqual(('post', '{}/create'.format(self.url_base)), called_args)
+        self.assertEqual(
+            (constants.HttpMethod.post.value, '{}/create'.format(self.url_base)), called_args)
 
         self.assertEqual({
             'params': {
@@ -110,7 +111,8 @@ class TestApiJob(api_test.ApiTestCase):
         (called_args, called_kwargs) = mock_request.call_args
 
         del called_kwargs['files']
-        self.assertEqual(('post', '{}/create'.format(self.url_base)), called_args)
+        self.assertEqual(
+            (constants.HttpMethod.post.value, '{}/create'.format(self.url_base)), called_args)
 
         self.assertEqual({
             'params': {
@@ -176,7 +178,7 @@ class TestApiJob(api_test.ApiTestCase):
             self.assertIsInstance(job_part, models.JobPart)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/listByProject'.format(self.url_base),
             params={
                 'token': self.job.token,
@@ -197,7 +199,7 @@ class TestApiJob(api_test.ApiTestCase):
         returned_value = self.job.preTranslate(job_part_ids)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/preTranslate'.format(self.url_base),
             params={
                 'token': self.job.token,
@@ -229,7 +231,7 @@ class TestApiJob(api_test.ApiTestCase):
             self.assertEqual(''.join(mxliff_contents), f.read())
 
         mock_request.assert_called_with(
-            'get',
+            constants.HttpMethod.get.value,
             'https://cloud1.memsource.com/web/api/v6/job/getBilingualFile',
             params={
                 'token': self.job.token,

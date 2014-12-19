@@ -11,3 +11,8 @@ class ApiVersion(enum.Enum):
     v3 = 'v3'
     v4 = 'v4'
     v6 = 'v6'
+
+
+class HttpMethod(enum.Enum):
+    get = 'get'
+    post = 'post'

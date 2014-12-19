@@ -29,7 +29,7 @@ class TestApiJob(api_test.ApiTestCase):
         self.assertEqual(returning_id, returned_id)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/create'.format(self.url_base),
             params={
                 'token': self.translation_memory.token,
@@ -57,7 +57,7 @@ class TestApiJob(api_test.ApiTestCase):
             self.assertIsInstance(translation_memory, models.TranslationMemory)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
             params={
                 'token': self.translation_memory.token,
@@ -82,7 +82,8 @@ class TestApiJob(api_test.ApiTestCase):
 
         # hard to test
         del called_kwargs['files']
-        self.assertEqual(('post', '{}/import'.format(self.url_base)), called_args)
+        self.assertEqual(
+            (constants.HttpMethod.post.value, '{}/import'.format(self.url_base)), called_args)
 
         self.assertEqual({
             'params': {

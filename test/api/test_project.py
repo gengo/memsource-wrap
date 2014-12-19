@@ -30,7 +30,7 @@ class TestApiDomain(api_test.ApiTestCase):
             "create function returns id value of JSON"
         )
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/create'.format(self.url_base),
             params={
                 'token': self.project.token,
@@ -76,7 +76,7 @@ class TestApiDomain(api_test.ApiTestCase):
             self.assertIsInstance(project.date_created, datetime.datetime)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
             params={
                 'token': self.project.token,
@@ -107,7 +107,7 @@ class TestApiDomain(api_test.ApiTestCase):
         returned_values = self.project.getTransMemories(project_id)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/getTransMemories'.format(self.url_base),
             params={
                 'token': self.project.token,
