@@ -315,11 +315,24 @@ class TranslationMemory(BaseApi):
                 'file': f
             })['acceptedSegmentsCount'])
 
-    def searchSegmentByTask(self, task, segment):
-        return self._post('transMemory/searchSegmentByTask', {
-            'task': task,
-            'segment': segment,
-        })
+    def searchSegmentByTask(self, task, segment_source, score_threshold=0.6):
+        """
+        You can get translation memory that related with segment_source.
+
+        :param task :task :str
+        :param segment_source :Segment.source :str
+        :param score_threshold :optional(0.6) :return only high score than this value :double
+
+        :return [models.SegmentSearchResult]
+        """
+        return [
+            models.SegmentSearchResult(segment)
+            for segment in self._post('transMemory/searchSegmentByTask', {
+                'task': task,
+                'segment': segment_source,
+                'scoreThreshold': score_threshold,
+            })
+        ]
 
 
 class Asynchronous(BaseApi):
