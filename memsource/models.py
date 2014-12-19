@@ -55,3 +55,7 @@ class AsynchronousResponse(BaseModel):
 
     def has_error(self):
         return self.is_complete() and self.error is not None
+
+
+class Segment(BaseModel):
+    pass
