@@ -1,6 +1,5 @@
 import requests
 import uuid
-import os
 
 from . import constants, exceptions, models
 
@@ -227,19 +226,21 @@ class Job(BaseApi):
 
         return [models.JobPart(job_parts) for job_parts in result['jobParts']]
 
-    def createFromText(self, project_id, text, target_langs):
+    def createFromText(self, project_id, text, target_langs, file_name=None):
         """
-        Make temporary file and make a job. The temporary file will be removed automatically.
+        You can create a job without a file.
         See: Job.create
-        """
-        file_path = '/tmp/{}.txt'.format(uuid.uuid1().hex)
-        with open(file_path, 'w+') as f:
-            f.write(text)
 
-        try:
-            return self.create(project_id, file_path, target_langs)
-        finally:
-            os.remove(file_path)
+        Create file name by uuid1() when file_name parameter is None.
+        """
+        return [
+            models.JobPart(job_parts) for job_parts in self._post('job/create', {
+                'project': project_id,
+                'targetLang': target_langs,
+            }, {
+                'file': (uuid.uuid1().hex if file_name is None else file_name, text),
+            })['jobParts']
+        ]
 
     def listByProject(self, project_id):
         # TODO: wrap inner project
