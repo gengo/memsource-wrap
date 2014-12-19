@@ -241,3 +241,52 @@ class TestApiJob(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value * 5,
             stream=True
         )
+
+    @patch.object(requests, 'request')
+    def test_get_segments(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        task = 'this is test task'
+        begin_index = self.gen_random_int()
+        end_index = self.gen_random_int()
+
+        mock_request().json.return_value = [[{
+            'createdAt': 0,
+            'source': 'Hello World.',
+            # I don't know why createdBy is None, but I got it.
+            'createdBy': None,
+            'workflowStep': None,
+            'translation': '',
+            'modifiedAt': 0,
+            'id': '1wHy5zBpxBsb1omg1:0',
+            'modifiedBy': None
+        }], [{
+            'createdAt': 0,
+            'source': 'Hello World second.',
+            'createdBy': None,
+            'workflowStep': None,
+            'translation': '',
+            'modifiedAt': 0,
+            'id': '1wHy5zBpxBsb1omg1:1',
+            'modifiedBy': None
+        }]]
+
+        returned_value = self.job.getSegments(task, begin_index, end_index)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/v6/job/getSegments',
+            params={
+                'token': self.job.token,
+                'task': task,
+                'beginIndex': begin_index,
+                'endIndex': end_index,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+        for segment in returned_value:
+            self.assertIsInstance(segment, models.Segment)
+
+        self.assertEqual('Hello World.', returned_value[0].source)
