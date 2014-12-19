@@ -38,7 +38,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         self.assertIsInstance(retuned_value, models.AsynchronousRequest)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             'https://cloud1.memsource.com/web/api/async/v2/job/preTranslate',
             params={
                 'token': self.asynchronous.token,
@@ -75,7 +75,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         self.assertIsInstance(retuned_value, models.AsynchronousRequest)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             'https://cloud1.memsource.com/web/api/v2/async/getAsyncRequest',
             params={
                 'token': self.asynchronous.token,

@@ -27,7 +27,7 @@ class TestMemsource(unittest.TestCase):
         self.check_token(Memsource(user_name=username, password=password), token)
 
         mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             self.url_base,
             params={
                 'userName': username,

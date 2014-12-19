@@ -28,7 +28,7 @@ class BaseApi(object):
         If you want to raw response, you can use _get_stream method.
         TODO: implements _post_stream.
         """
-        return self._request('post', path, files, params, timeout)
+        return self._request(constants.HttpMethod.post, path, files, params, timeout)
 
     def _get_stream(self, path, params, files={}, timeout=constants.Base.timeout.value * 5):
         """
@@ -40,7 +40,7 @@ class BaseApi(object):
         We can switch response by value of stream, but it is not good, I think,
         because type of returning value is only one is easy to use, easy to understand.
         """
-        return self._request_stream('get', path, files, params, timeout)
+        return self._request_stream(constants.HttpMethod.get, path, files, params, timeout)
 
     def _pre_request(self, path, params):
         url = self._make_url(
@@ -55,15 +55,15 @@ class BaseApi(object):
 
         return (url, params, )
 
-    def _request_stream(self, method, path, files, params, timeout):
+    def _request_stream(self, http_method, path, files, params, timeout):
         (url, params_with_token) = self._pre_request(path, params)
 
         return self._get_response(
-            method, url, params=params_with_token, files=files, timeout=timeout, stream=True)
+            http_method, url, params=params_with_token, files=files, timeout=timeout, stream=True)
 
-    def _get_response(self, *args, **kwargs):
+    def _get_response(self, http_method, url, **kwargs):
         try:
-            response = requests.request(*args, **kwargs)
+            response = requests.request(http_method.value, url, **kwargs)
         except requests.exceptions.Timeout:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',
@@ -82,12 +82,12 @@ class BaseApi(object):
         raise exceptions.MemsourceApiException(
             response.status_code, response.json(), self.last_url, self.last_params)
 
-    def _request(self, method, path, files, params, timeout):
+    def _request(self, http_method, path, files, params, timeout):
         (url, params_with_token) = self._pre_request(path, params)
 
         # If it is successful, returns response json
         return self._get_response(
-            method, url, params=params_with_token, files=files, timeout=timeout).json()
+            http_method, url, params=params_with_token, files=files, timeout=timeout).json()
 
     @staticmethod
     def is_success(status_code):

@@ -12,7 +12,7 @@ class TestApiDomain(unittest.TestCase):
     @patch.object(requests, 'request')
     def test_create(self, mock_request):
         test = lambda: mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/create'.format(self.url_base),
             params={
                 'token': self.domain.token,
@@ -37,7 +37,7 @@ class TestApiDomain(unittest.TestCase):
     @patch.object(requests, 'request')
     def test_get(self, mock_request):
         test = lambda: mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/get'.format(self.url_base),
             params={
                 'token': self.domain.token,
@@ -62,7 +62,7 @@ class TestApiDomain(unittest.TestCase):
     @patch.object(requests, 'request')
     def test_list(self, mock_request):
         test = lambda: mock_request.assert_called_with(
-            'post',
+            constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
             params={
                 'token': self.domain.token,
