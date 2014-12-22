@@ -1,7 +1,8 @@
 import unittest
-from unittest.mock import patch, PropertyMock
-from memsource import Memsource, constants
 import requests
+from memsource import  constants
+from memsource.memsource import Memsource
+from unittest.mock import patch, PropertyMock
 
 
 class TestMemsource(unittest.TestCase):
