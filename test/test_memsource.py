@@ -1,6 +1,6 @@
 import unittest
 import requests
-from memsource import  constants
+from memsource import constants
 from memsource.memsource import Memsource
 from unittest.mock import patch, PropertyMock
 
