@@ -143,10 +143,12 @@ class TestApiDomain(api_test.ApiTestCase):
 
         read_trans_memory_ids = (self.gen_random_int(), )
         write_trans_memory_id = self.gen_random_int()
+        penalties = (self.gen_random_int(), )
         target_lang = 'ja'
         self.project.setTransMemories(project_id,
                                       read_trans_memory_ids=read_trans_memory_ids,
                                       write_trans_memory_id=write_trans_memory_id,
+                                      penalties=penalties,
                                       target_lang=target_lang)
 
         mock_request.assert_called_with(
@@ -157,6 +159,7 @@ class TestApiDomain(api_test.ApiTestCase):
                 'project': project_id,
                 'readTransMemory': read_trans_memory_ids,
                 'writeTransMemory': write_trans_memory_id,
+                'penalty': penalties,
                 'targetLang': target_lang,
             },
             files={},
