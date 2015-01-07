@@ -4,7 +4,7 @@ import requests
 import api as api_test
 
 
-class TestApiJob(api_test.ApiTestCase):
+class TestApiTranslationMemory(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud1.memsource.com/web/api/v4/transMemory'
         self.translation_memory = api.TranslationMemory(None)
