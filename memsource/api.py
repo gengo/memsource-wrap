@@ -193,6 +193,43 @@ class Project(BaseApi):
             })
         ]
 
+    def setTransMemories(self, project_id, read_trans_memory_ids=[], write_trans_memory_id=None,
+                         penalties=[], target_lang=None):
+        """
+        You can set translation memory to a project.
+
+        :param project_id :set translation memory to this id of project :int
+        :param read_trans_memory_ids :Read these translation memories :[int]
+        :param write_trans_memory_id :Write to this translation memory.
+        write translation memory must be included in the read translation memories, too :int
+        :param penalties :a list of penalties for each read translation memory :[double]
+        :param target_lang :set translation memories only for the specific project target language
+        :str
+
+        :return :None
+        """
+        params = {
+            'project': project_id,
+        }
+
+        # Check the parameters. If the parameter is None or empty list, we ignore it.
+        if len(read_trans_memory_ids) != 0:
+            params['readTransMemory'] = read_trans_memory_ids
+
+        if write_trans_memory_id is not None:
+            params['writeTransMemory'] = write_trans_memory_id
+
+        if len(penalties) != 0:
+            params['penalty'] = penalties
+
+        if target_lang is not None:
+            params['targetLang'] = target_lang
+
+        # This end-point return nothing.
+        self._post('project/setTransMemories', params)
+
+        return None
+
 
 class Job(BaseApi):
     """

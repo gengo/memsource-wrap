@@ -121,3 +121,47 @@ class TestApiDomain(api_test.ApiTestCase):
 
         for translation_memory in returned_values:
             self.assertIsInstance(translation_memory, models.TranslationMemory)
+
+    @patch.object(requests, 'request')
+    def test_set_trans_memories(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        project_id = self.gen_random_int()
+
+        self.project.setTransMemories(project_id)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/setTransMemories'.format(self.url_base),
+            params={
+                'token': self.project.token,
+                'project': project_id
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+        read_trans_memory_ids = (self.gen_random_int(), )
+        write_trans_memory_id = self.gen_random_int()
+        penalties = (self.gen_random_int(), )
+        target_lang = 'ja'
+        self.project.setTransMemories(project_id,
+                                      read_trans_memory_ids=read_trans_memory_ids,
+                                      write_trans_memory_id=write_trans_memory_id,
+                                      penalties=penalties,
+                                      target_lang=target_lang)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/setTransMemories'.format(self.url_base),
+            params={
+                'token': self.project.token,
+                'project': project_id,
+                'readTransMemory': read_trans_memory_ids,
+                'writeTransMemory': write_trans_memory_id,
+                'penalty': penalties,
+                'targetLang': target_lang,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
