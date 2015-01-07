@@ -262,6 +262,24 @@ class Job(BaseApi):
             for chunk in response.iter_content(1024):
                 f.write(chunk)
 
+    def getSegments(self, task, begin_index, end_index):
+        """
+        TODO: If first argument is JobPart type,
+        get task, begin_index and end_index from first argument.
+
+        NOTE: I don't know why this endpoint returns list of list.
+        It seems always one item in outer list.
+
+        return [models.Segment]
+        """
+        return [
+            models.Segment(segment[0]) for segment in self._post('job/getSegments', {
+                'task': task,
+                'beginIndex': begin_index,
+                'endIndex': end_index,
+            })
+        ]
+
 
 class TranslationMemory(BaseApi):
     """
@@ -297,6 +315,25 @@ class TranslationMemory(BaseApi):
             }, {
                 'file': f
             })['acceptedSegmentsCount'])
+
+    def searchSegmentByTask(self, task, segment_source, score_threshold=0.6):
+        """
+        You can get translation memory that related with segment_source.
+
+        :param task :task :str
+        :param segment_source :Segment.source :str
+        :param score_threshold :optional(0.6) :return only high score than this value :double
+
+        :return [models.SegmentSearchResult]
+        """
+        return [
+            models.SegmentSearchResult(segment)
+            for segment in self._post('transMemory/searchSegmentByTask', {
+                'task': task,
+                'segment': segment_source,
+                'scoreThreshold': score_threshold,
+            })
+        ]
 
 
 class Asynchronous(BaseApi):

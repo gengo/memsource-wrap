@@ -55,3 +55,16 @@ class AsynchronousResponse(BaseModel):
 
     def has_error(self):
         return self.is_complete() and self.error is not None
+
+
+class Segment(BaseModel):
+    pass
+
+
+class SegmentSearchResult(BaseModel):
+    """
+    Sometime segment has more data. It is for it. Give me a good name for this class.
+    http://wiki.memsource.com/wiki/Job_API_v6#Get_Segments is for Segment.
+    http://wiki.memsource.com/wiki/Translation_Memory_API_v4#Search_Segment_By_Task is for this.
+    """
+    pass

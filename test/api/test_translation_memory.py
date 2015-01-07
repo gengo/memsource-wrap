@@ -94,3 +94,93 @@ class TestApiJob(api_test.ApiTestCase):
         }, called_kwargs)
 
         self.assertEqual(accepted_segments_count, returned_value)
+
+    @patch.object(requests, 'request')
+    def test_search_segment_by_task(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        segment_source = 'Hello'
+        task = 'test task'
+
+        mock_request().json.return_value = [{
+            'score': 1.01,
+            'grossScore': 1.01,
+            'segmentId': '5023cd08e4b015e0656c4a8f',
+            'source': {
+                'fileName': None,
+                'modifiedAt': 1418972812301,
+                'project': None,
+                'rtl': False,
+                'previousSegment': None,
+                'createdAt': 1418972812301,
+                'createdBy': None,
+                'modifiedBy': None,
+                'domain': None,
+                'id': None,
+                'nextSegment': None,
+                'text': segment_source,
+                'tagMetadata': [],
+                'subDomain': None,
+                'lang': 'en',
+                'client': None
+            },
+            'subSegment': False,
+            'translations': [{
+                'fileName': None,
+                'modifiedAt': 1340641766000,
+                'project': None,
+                'rtl': False,
+                'previousSegment': None,
+                'createdAt': 1336380000000,
+                'createdBy': {
+                    'role': None,
+                    'email': None,
+                    # Because I got null as string.
+                    'userName': 'null',
+                    'lastName': None,
+                    'active': False,
+                    'firstName': None,
+                    'id': 0
+                },
+                'modifiedBy': {
+                    'role': None,
+                    'email': None,
+                    'userName': 'null',
+                    'lastName': None,
+                    'active': False,
+                    'firstName': None,
+                    'id': 0
+                },
+                'domain': None,
+                'id': None,
+                'nextSegment': None,
+                'text': 'こんにちは',
+                'tagMetadata': [],
+                'subDomain': None,
+                'lang': 'ja',
+                'client': None
+            }],
+            'transMemory': {
+                'name': 'Test translation memory',
+                'id': '5023cb2ee4b015e0656c4a8e',
+                'reverse': False
+            }
+        }]
+
+        returned_value = self.translation_memory.searchSegmentByTask(task, segment_source)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/v4/transMemory/searchSegmentByTask',
+            params={
+                'token': self.translation_memory.token,
+                'task': task,
+                'segment': segment_source,
+                'scoreThreshold': 0.6,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+        for segment_search_result in returned_value:
+            self.assertIsInstance(segment_search_result, models.SegmentSearchResult)
