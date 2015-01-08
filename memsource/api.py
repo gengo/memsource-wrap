@@ -372,6 +372,34 @@ class TranslationMemory(BaseApi):
             })
         ]
 
+    def insert(self, translation_memory_id, target_lang, source_segment, target_segment,
+               previous_source_segment=None, next_source_segment=None):
+        """
+        :param translation_memory_id :Insert new translation to this translation memory :int
+        :param target_lang :target_segment is this language :str
+        :param source_segment :source text of the translated text :str
+        :param target_segment :translated text :str
+        :previous_source_segment :optional This is for 101% match :str
+        :next_source_segment :optional This is for 101% match :str
+
+        :return :None
+        """
+        params = {
+            'transMemory': translation_memory_id,
+            'targetLang': target_lang,
+            'sourceSegment': source_segment,
+            'targetSegment': target_segment,
+        }
+
+        # If optional parameter is passed, include those into post parameter
+        if previous_source_segment is not None:
+            params['previousSourceSegment'] = previous_source_segment
+
+        if next_source_segment is not None:
+            params['nextSourceSegment'] = next_source_segment
+
+        self._post('transMemory/insert', params)
+
 
 class Asynchronous(BaseApi):
     """
