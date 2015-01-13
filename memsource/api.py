@@ -426,12 +426,13 @@ class Asynchronous(BaseApi):
 
         return super(Asynchronous, self)._make_url(**kwargs)
 
-    def preTranslate(self, job_parts):
+    def preTranslate(self, job_parts, translation_memory_threshold=0.7):
         """
         return models.AsynchronousRequest
         """
         return models.AsynchronousRequest(self._post('job/preTranslate', {
             'jobPart': job_parts,
+            'translationMemoryThreshold': translation_memory_threshold,
         })['asyncRequest'])
 
     def createAnalysis(self, job_parts):

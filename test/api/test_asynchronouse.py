@@ -43,6 +43,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             params={
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
+                'translationMemoryThreshold': 0.7,
             },
             files={},
             timeout=constants.Base.timeout.value
