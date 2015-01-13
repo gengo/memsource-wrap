@@ -451,3 +451,15 @@ class Asynchronous(BaseApi):
         asyncRequest['asyncResponse'] = models.AsynchronousResponse(asyncRequest['asyncResponse'])
 
         return models.AsynchronousRequest(asyncRequest)
+
+
+class Analysis(BaseApi):
+    """
+    You can see the document http://wiki.memsource.com/wiki/Analysis_API_v2
+    """
+    api_version = constants.ApiVersion.v2
+
+    def get(self, analysis_id: {'Get analysis of this id', int}) -> models.Analysis:
+        return models.Analysis(self._post('analyse/get', {
+            'analyse': analysis_id,
+        }))
