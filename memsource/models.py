@@ -68,3 +68,7 @@ class SegmentSearchResult(BaseModel):
     http://wiki.memsource.com/wiki/Translation_Memory_API_v4#Search_Segment_By_Task is for this.
     """
     pass
+
+
+class Analysis(BaseModel):
+    pass

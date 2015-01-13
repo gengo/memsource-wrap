@@ -3,7 +3,8 @@ import uuid
 
 from . import constants, exceptions, models
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous', )
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
+           'Analysis')
 
 
 class BaseApi(object):
@@ -432,6 +433,16 @@ class Asynchronous(BaseApi):
         return models.AsynchronousRequest(self._post('job/preTranslate', {
             'jobPart': job_parts,
         })['asyncRequest'])
+
+    def createAnalysis(self, job_parts):
+        """
+        return models.AsynchronousRequest
+        """
+        res = self._post('analyse/create', {
+            'jobPart': job_parts,
+        })
+
+        return models.AsynchronousRequest(res['asyncRequest']), models.Analysis(res['analyse'])
 
     def getAsyncRequest(self, asynchronous_request_id):
         asyncRequest = self._post('async/getAsyncRequest', {

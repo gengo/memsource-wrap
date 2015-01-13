@@ -10,6 +10,7 @@ class Memsource(object):
         """
         self.auth = api.Auth()
 
+        # make api class instances
         (lambda token: [
             setattr(self, inflection.underscore(c), getattr(api, c)(token)) for c in api.__all__
         ])(self.auth.login(user_name, password).token if token is None else token)
