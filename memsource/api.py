@@ -9,7 +9,7 @@ __all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'A
 
 class BaseApi(object):
     """Inheriting classes must have the api_version attribute"""
-    def __init__(self, token):
+    def __init__(self, token: {'Authentication token for using APIs': str}):
         if not hasattr(self, 'api_version'):
             # This exception is for development this library.
             raise NotImplementedError(
@@ -21,19 +21,31 @@ class BaseApi(object):
         return kwargs.get('format', '{base}/{api_version}/{path}').format(**kwargs)
 
     # Should be public, it is conflict with memsource endpoint.
-    def _post(self, path, params, files={}, timeout=constants.Base.timeout.value):
+    def _post(
+            self,
+            path: {'Send request to this path': str},
+            params: {'Send request with this parameters': dict},
+            files: {'Upload this files. Key is filename, value is file object': dict}={},
+            timeout: {
+                'When takes over this time in one request, raise timeout': (int, float)
+            }=constants.Base.timeout.value
+    ) -> {'Reponse body': dict}:
         """
-        return response as dict
-
         If you want to raw response, you can use _get_stream method.
         TODO: implements _post_stream.
         """
         return self._request(constants.HttpMethod.post, path, files, params, timeout)
 
-    def _get_stream(self, path, params, files={}, timeout=constants.Base.timeout.value * 5):
+    def _get_stream(
+            self,
+            path: {'Send request to this path': str},
+            params: {'Send request with this parameters': dict},
+            files: {'Upload this files. Key is filename, value is file object': dict}={},
+            timeout: {
+                'When takes over this time in one request, raise timeout': (int, float)
+            }=constants.Base.timeout.value * 5
+    ) -> 'Response object of Requests library':
         """
-        return response object of requests library
-
         This method returns response object of requests library,
         because XML parse or save to file or etc are different will call different method.
 
@@ -90,7 +102,7 @@ class BaseApi(object):
             http_method, url, params=params_with_token, files=files, timeout=timeout).json()
 
     @staticmethod
-    def is_success(status_code):
+    def is_success(status_code: {int}):
         # if status_code is float type, we will get unexpected result.
         # but I think it is not big deal.
         return 200 <= status_code < 300
