@@ -43,6 +43,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             params={
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
+                'translationMemoryThreshold': 0.7,
             },
             files={},
             timeout=constants.Base.timeout.value
@@ -80,6 +81,51 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             params={
                 'token': self.asynchronous.token,
                 'asyncRequest': asynchronous_request_id,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests, 'request')
+    def test_create_analysis(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        asynchronous_request_id = self.gen_random_int()
+        analysis_id = self.gen_random_int()
+        mock_request().json.return_value = {
+            'asyncRequest': {
+                'createdBy': {
+                    'lastName': 'test',
+                    'id': 1,
+                    'firstName': 'admin',
+                    'role': 'ADMIN',
+                    'email': 'test@test.com',
+                    'userName': 'admin',
+                    'active': True
+                },
+                'action': 'PRE_TRANSLATE',
+                'id': asynchronous_request_id,
+                'dateCreated': '2014-11-03T16:03:11Z',
+                'asyncResponse': None
+            },
+            'analyse': {
+                'id': analysis_id,
+            },
+        }
+
+        job_part_ids = [self.gen_random_int() for i in range(0, 2)]
+
+        async_request, analysis = self.asynchronous.createAnalysis(job_part_ids)
+
+        self.assertEqual(async_request.id, asynchronous_request_id)
+        self.assertEqual(analysis.id, analysis_id)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/async/v2/analyse/create',
+            params={
+                'token': self.asynchronous.token,
+                'jobPart': job_part_ids,
             },
             files={},
             timeout=constants.Base.timeout.value

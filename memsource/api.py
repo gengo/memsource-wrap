@@ -3,7 +3,8 @@ import uuid
 
 from . import constants, exceptions, models
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous', )
+__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
+           'Analysis')
 
 
 class BaseApi(object):
@@ -372,6 +373,34 @@ class TranslationMemory(BaseApi):
             })
         ]
 
+    def insert(self, translation_memory_id, target_lang, source_segment, target_segment,
+               previous_source_segment=None, next_source_segment=None):
+        """
+        :param translation_memory_id :Insert new translation to this translation memory :int
+        :param target_lang :target_segment is this language :str
+        :param source_segment :source text of the translated text :str
+        :param target_segment :translated text :str
+        :previous_source_segment :optional This is for 101% match :str
+        :next_source_segment :optional This is for 101% match :str
+
+        :return :None
+        """
+        params = {
+            'transMemory': translation_memory_id,
+            'targetLang': target_lang,
+            'sourceSegment': source_segment,
+            'targetSegment': target_segment,
+        }
+
+        # If optional parameter is passed, include those into post parameter
+        if previous_source_segment is not None:
+            params['previousSourceSegment'] = previous_source_segment
+
+        if next_source_segment is not None:
+            params['nextSourceSegment'] = next_source_segment
+
+        self._post('transMemory/insert', params)
+
 
 class Asynchronous(BaseApi):
     """
@@ -397,13 +426,24 @@ class Asynchronous(BaseApi):
 
         return super(Asynchronous, self)._make_url(**kwargs)
 
-    def preTranslate(self, job_parts):
+    def preTranslate(self, job_parts, translation_memory_threshold=0.7):
         """
         return models.AsynchronousRequest
         """
         return models.AsynchronousRequest(self._post('job/preTranslate', {
             'jobPart': job_parts,
+            'translationMemoryThreshold': translation_memory_threshold,
         })['asyncRequest'])
+
+    def createAnalysis(self, job_parts):
+        """
+        return models.AsynchronousRequest
+        """
+        res = self._post('analyse/create', {
+            'jobPart': job_parts,
+        })
+
+        return models.AsynchronousRequest(res['asyncRequest']), models.Analysis(res['analyse'])
 
     def getAsyncRequest(self, asynchronous_request_id):
         asyncRequest = self._post('async/getAsyncRequest', {
@@ -412,3 +452,15 @@ class Asynchronous(BaseApi):
         asyncRequest['asyncResponse'] = models.AsynchronousResponse(asyncRequest['asyncResponse'])
 
         return models.AsynchronousRequest(asyncRequest)
+
+
+class Analysis(BaseApi):
+    """
+    You can see the document http://wiki.memsource.com/wiki/Analysis_API_v2
+    """
+    api_version = constants.ApiVersion.v2
+
+    def get(self, analysis_id: {'Get analysis of this id', int}) -> models.Analysis:
+        return models.Analysis(self._post('analyse/get', {
+            'analyse': analysis_id,
+        }))

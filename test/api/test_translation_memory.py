@@ -184,3 +184,39 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
 
         for segment_search_result in returned_value:
             self.assertIsInstance(segment_search_result, models.SegmentSearchResult)
+
+    @patch.object(requests, 'request')
+    def test_insert(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        translation_memory_id = self.gen_random_int()
+        target_lang = 'ja'
+        source_segment = 'this is source segment'
+        target_segment = 'this is target segment'
+        previous_source_segment = 'this is previous source segment'
+        next_source_segment = 'this is next source segment'
+
+        self.translation_memory.insert(
+            translation_memory_id,
+            target_lang=target_lang,
+            source_segment=source_segment,
+            target_segment=target_segment,
+            previous_source_segment=previous_source_segment,
+            next_source_segment=next_source_segment
+        )
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/v4/transMemory/insert',
+            params={
+                'token': self.translation_memory.token,
+                'transMemory': translation_memory_id,
+                'targetLang': target_lang,
+                'sourceSegment': source_segment,
+                'targetSegment': target_segment,
+                'previousSourceSegment': previous_source_segment,
+                'nextSourceSegment': next_source_segment
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
