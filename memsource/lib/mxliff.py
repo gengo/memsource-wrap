@@ -36,5 +36,3 @@ class MxliffParser(object):
             source[alt_trans.attrib['origin'].replace('-', '_')] = alt_trans.target
 
         return models.MxliffUnit(source)
-
-# memsource.lib.mxliff.MxliffParser().parse(open('a.mxliff').read().encode())
