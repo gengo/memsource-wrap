@@ -72,3 +72,7 @@ class SegmentSearchResult(BaseModel):
 
 class Analysis(BaseModel):
     pass
+
+
+class MxliffUnit(BaseModel):
+    pass

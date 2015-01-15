@@ -6,3 +6,4 @@ coverage
 rednose
 flake8
 inflection
+lxml
