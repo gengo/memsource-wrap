@@ -1,7 +1,11 @@
 import requests
 import uuid
+import io
+import types
 
 from . import constants, exceptions, models
+from .lib import mxliff
+
 
 __all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
            'Analysis')
@@ -54,7 +58,14 @@ class BaseApi(object):
         """
         return self._request_stream(constants.HttpMethod.get, path, files, params, timeout)
 
-    def _pre_request(self, path, params):
+    def _pre_request(
+            self,
+            path: {'{api_name}/{method}': str},
+            params: {'Insert token in this dict.': dict}
+    ) -> (str, dict):
+        """
+        Create request url and extend param with token for authentication.
+        """
         url = self._make_url(
             base=constants.Base.url.value,
             api_version=self.api_version.value,
@@ -67,13 +78,25 @@ class BaseApi(object):
 
         return (url, params, )
 
-    def _request_stream(self, http_method, path, files, params, timeout):
+    def _request_stream(
+            self,
+            http_method: {constants.HttpMethod, 'Use this http method'},
+            path: {'Send request with this parameters': dict},
+            files: {'Upload this files. Key is filename, value is file object': dict},
+            params: {'Send request with this parameters': dict},
+            timeout: {'When takes over this time in one request, raise timeout': (int, float)}
+    ) -> requests.models.Response:
         (url, params_with_token) = self._pre_request(path, params)
 
         return self._get_response(
             http_method, url, params=params_with_token, files=files, timeout=timeout, stream=True)
 
-    def _get_response(self, http_method, url, **kwargs):
+    def _get_response(
+            self,
+            http_method: {'Use this http method': constants.HttpMethod},
+            url: {'access to this url': str},
+            **kwargs
+    ) -> requests.models.Response:
         try:
             response = requests.request(http_method.value, url, **kwargs)
         except requests.exceptions.Timeout:
@@ -94,7 +117,14 @@ class BaseApi(object):
         raise exceptions.MemsourceApiException(
             response.status_code, response.json(), self.last_url, self.last_params)
 
-    def _request(self, http_method, path, files, params, timeout):
+    def _request(
+            self,
+            http_method: {constants.HttpMethod, 'Use this http method'},
+            path: {'Send request with this parameters': dict},
+            files: {'Upload this files. Key is filename, value is file object': dict},
+            params: {'Send request with this parameters': dict},
+            timeout: {'When takes over this time in one request, raise timeout': (int, float)}
+    ) -> {'Parsed esponse body as JSON': dict}:
         (url, params_with_token) = self._pre_request(path, params)
 
         # If it is successful, returns response json
@@ -304,13 +334,40 @@ class Job(BaseApi):
         """
         self._post('job/preTranslate', {'jobPart': job_parts})
 
-    def getBilingualFile(self, job_parts, dest_file_path):
-        response = self._get_stream('job/getBilingualFile', {
+    def _getBillingualStream(
+            self,
+            job_parts: {'Lsit of job_part id': (list, tuple)},
+    ) -> types.GeneratorType:
+        """
+        Common process of billingualFile.
+        """
+        return self._get_stream('job/getBilingualFile', {
             'jobPart': job_parts,
-        })
+        }).iter_content(1024)
+
+    def getBilingualFile(
+            self,
+            job_parts: {'Lsit of job_part id': (list, tuple)},
+            dest_file_path: {'Save XML to this file path': str}
+    ) -> None:
+        """
+        Get billingual file and save it as file.
+        """
         with open(dest_file_path, 'wb') as f:
-            for chunk in response.iter_content(1024):
-                f.write(chunk)
+            [f.write(chunk) for chunk in self._getBillingualStream(job_parts)]
+
+    def getBillingualAsMxliffUnits(
+            self,
+            job_parts: {'Lsit of job_part id': (list, tuple)},
+    ) -> models.MxliffUnit:
+        """
+        Get billingual file and parse it as [models.MxliffUnit]
+        """
+        # Store billingual file in buffer, and parse it!
+        buffer = io.BytesIO()
+        [buffer.write(chunk) for chunk in self._getBillingualStream(job_parts)]
+
+        return mxliff.MxliffParser().parse(buffer.getvalue())
 
     def getSegments(self, task, begin_index, end_index):
         """

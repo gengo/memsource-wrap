@@ -243,6 +243,55 @@ class TestApiJob(api_test.ApiTestCase):
         )
 
     @patch.object(requests, 'request')
+    def test_get_bilingual_as_mxliff_units(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(base_dir, '..', 'lib', 'mxliff', 'test.mxliff')) as f:
+            mxliff = f.read().encode('utf-8')
+
+        mock_request().iter_content.return_value = [
+            mxliff[i: i + 100] for i in range(0, len(mxliff), 100)
+        ]
+        job_part_ids = [self.gen_random_int()]
+
+        returned_value = self.job.getBillingualAsMxliffUnits(job_part_ids)
+
+        self.assertEqual(len(returned_value), 2)
+
+        self.assertIsInstance(returned_value[0], models.MxliffUnit)
+        self.assertEqual(returned_value[0], {
+            'score': 0.0,
+            'gross_score': 0.0,
+            'source': 'Hello World.',
+            'target': '',
+            'machine_trans': '',
+            'memsource_tm': '',
+        })
+
+        self.assertIsInstance(returned_value[1], models.MxliffUnit)
+        self.assertEqual(returned_value[1], {
+            'score': 1.01,
+            'gross_score': 1.01,
+            'source': 'This library wraps Memsoruce API for Python.',
+            'target': 'このライブラリはMemsourceのAPIをPython用にラップしています。',
+            'machine_trans': 'This is machine translation.',
+            'memsource_tm': 'This is memsource translation memory.',
+        })
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            'https://cloud1.memsource.com/web/api/v6/job/getBilingualFile',
+            params={
+                'token': self.job.token,
+                'jobPart': job_part_ids,
+            },
+            files={},
+            timeout=constants.Base.timeout.value * 5,
+            stream=True
+        )
+
+    @patch.object(requests, 'request')
     def test_get_segments(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
