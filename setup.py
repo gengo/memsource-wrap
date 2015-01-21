@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 import memsource
 
 
@@ -11,7 +11,6 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
-
 setup(
     name='Memsource-wrap',
     version=memsource.__version__,
@@ -21,6 +20,6 @@ setup(
     author_email='devops@gengo.com',
     url='https://github.com/gengo/memsource-wrap',
     keywords='Memsource API',
-    packages=find_packages(),
+    packages=('memsource', 'memsource.lib'),
     install_requires=parse_requirements(),
 )
