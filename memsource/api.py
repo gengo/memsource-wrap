@@ -212,15 +212,22 @@ class Project(BaseApi):
     """
     api_version = constants.ApiVersion.v3
 
-    def create(self, name, source_lang, target_lang, client, domain):
+    def create(
+            self,
+            name: {'project name': str},
+            source_lang: str,
+            target_langs: {'You can use list for multi target_lang.': (list, tuple, str)},
+            client: int=None,
+            domain: int=None
+    ) -> {'project id', int}:
         """
-        Return project id.
+        Create new project.
         """
         return self._post('project/create', {
             'token': self.token,
             'name': name,
             'sourceLang': source_lang,
-            'targetLang': target_lang,
+            'targetLang': target_langs,
             'client': client,
             'domain': domain,
         })['id']
