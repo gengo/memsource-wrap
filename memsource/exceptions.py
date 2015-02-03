@@ -1,4 +1,5 @@
 import shutil
+import uuid
 
 
 class MemsourceException(Exception):
@@ -45,7 +46,7 @@ class MemsourceUnsupportedFileException(MemsourceException):
         unsupported_file = ', '.join(unsupported_files)
 
         # Make a copy the unsupported file. It is helpful for debugging.
-        file_path = shutil.copy(original_file_path, '/var/tmp/{}'.format(unsupported_file))
+        file_path = shutil.copy(original_file_path, '/var/tmp/{}'.format(uuid.uuid1().hex))
 
         message = "{} ".format(self.message_prefix) +\
                   "error code: {} ".format('UnsupportedFile') +\
