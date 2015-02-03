@@ -127,6 +127,28 @@ class TestApiJob(api_test.ApiTestCase):
         for job_part in returned_value:
             self.assertIsInstance(job_part, models.JobPart)
 
+    @patch.object(uuid, 'uuid1')
+    @patch.object(requests, 'request')
+    def test__create(self, mock_request, mock_uuid1):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        file_name = 'filename.txt'
+        mock_uuid1().hex = self.test_file_uuid1_name
+        mock_request().json.return_value = {
+            'unsupportedFiles': [file_name],
+        }
+        text = "This is test text."
+        target_lang = 'ja'
+        files = {
+            'file': (file_name, text),
+        }
+        self.assertRaises(
+            exceptions.MemsourceUnsupportedFileException,
+            lambda: self.job._create(self.gen_random_int(), target_lang, files)
+        )
+
+        with open(self.test_file_copy_path) as f:
+            self.assertEqual(f.read(), text)
+
     @patch.object(requests, 'request')
     def test_list_by_project(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
