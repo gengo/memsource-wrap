@@ -2,6 +2,7 @@ import requests
 import uuid
 import io
 import types
+import os.path
 
 from . import constants, exceptions, models
 from .lib import mxliff
@@ -287,7 +288,7 @@ class Job(BaseApi):
     """
     api_version = constants.ApiVersion.v6
 
-    def create(self, project_id, file_path, target_langs):
+    def create(self, project_id: int, file_path: str, target_langs):
         """
         return: [JobPart]
 
@@ -295,39 +296,49 @@ class Job(BaseApi):
         this method raise MemsourceUnsupportedFileException
         """
         with open(file_path, 'r') as f:
-            result = self._post('job/create', {
-                'project': project_id,
-                'targetLang': target_langs,
-            }, {
+            return self._create(project_id, target_langs, {
                 'file': f,
             })
 
-        unsupportedFiles = result.get('unsupportedFiles', [])
-        if len(unsupportedFiles) > 0:
-            raise exceptions.MemsourceUnsupportedFileException(
-                unsupportedFiles,
-                file_path,
-                self.last_url,
-                self.last_params
-            )
-
-        return [models.JobPart(job_parts) for job_parts in result['jobParts']]
-
-    def createFromText(self, project_id, text, target_langs, file_name=None):
+    def createFromText(self, project_id: int, text: str, target_langs, file_name=None):
         """
         You can create a job without a file.
         See: Job.create
 
         Create file name by uuid1() when file_name parameter is None.
         """
-        return [
-            models.JobPart(job_parts) for job_parts in self._post('job/create', {
-                'project': project_id,
-                'targetLang': target_langs,
-            }, {
-                'file': (uuid.uuid1().hex if file_name is None else file_name, text),
-            })['jobParts']
-        ]
+        return self._create(project_id, target_langs, {
+            'file': ('{}.txt'.format(uuid.uuid1().hex) if file_name is None else file_name, text),
+        })
+
+    def _create(self, project_id: int, target_langs, files: dict):
+        result = self._post('job/create', {
+            'project': project_id,
+            'targetLang': target_langs,
+        }, files)
+
+        # unsupported file count is 0 mean success.
+        unsupported_files = result.get('unsupportedFiles', [])
+        if len(unsupported_files) == 0:
+            return [models.JobPart(job_parts) for job_parts in result['jobParts']]
+
+        _, value = files.popitem()
+        if isinstance(value, tuple):
+            # If value is tuple type, this function called from createFromText.
+            # We need to create temporary file for to raise exception.
+            file_name, text = value
+            file_path = os.path.join('/', 'tmp', file_name)
+            with open(file_path, 'w+') as f:
+                f.write(text)
+        else:
+            file_path = value.name
+
+        raise exceptions.MemsourceUnsupportedFileException(
+            unsupported_files,
+            file_path,
+            self.last_url,
+            self.last_params
+        )
 
     def listByProject(self, project_id):
         # TODO: wrap inner project
