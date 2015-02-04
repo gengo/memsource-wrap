@@ -363,6 +363,12 @@ class Job(BaseApi):
             'jobPart': job_parts,
         }).iter_content(1024)
 
+    def getBillingualFileXml(self, job_parts: {'Lsit of job_part id': (list, tuple)}) -> bytes:
+        buffer = io.BytesIO()
+        [buffer.write(chunk) for chunk in self._getBillingualStream(job_parts)]
+
+        return buffer.getvalue()
+
     def getBilingualFile(
             self,
             job_parts: {'Lsit of job_part id': (list, tuple)},
@@ -375,17 +381,12 @@ class Job(BaseApi):
             [f.write(chunk) for chunk in self._getBillingualStream(job_parts)]
 
     def getBillingualAsMxliffUnits(
-            self,
-            job_parts: {'Lsit of job_part id': (list, tuple)},
+            self, job_parts: {'Lsit of job_part id': (list, tuple)},
     ) -> models.MxliffUnit:
         """
         Get billingual file and parse it as [models.MxliffUnit]
         """
-        # Store billingual file in buffer, and parse it!
-        buffer = io.BytesIO()
-        [buffer.write(chunk) for chunk in self._getBillingualStream(job_parts)]
-
-        return mxliff.MxliffParser().parse(buffer.getvalue())
+        return mxliff.MxliffParser().parse(self.getBillingualFileXml(job_parts))
 
     def getSegments(self, task, begin_index, end_index):
         """
