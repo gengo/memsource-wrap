@@ -283,6 +283,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         self.assertIsInstance(returned_value[0], models.MxliffUnit)
         self.assertEqual(returned_value[0], {
+            'id': 'fj4ewiofj3qowjfw:0',
             'score': 0.0,
             'gross_score': 0.0,
             'source': 'Hello World.',
@@ -293,6 +294,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         self.assertIsInstance(returned_value[1], models.MxliffUnit)
         self.assertEqual(returned_value[1], {
+            'id': 'fj4ewiofj3qowjfw:1',
             'score': 1.01,
             'gross_score': 1.01,
             'source': 'This library wraps Memsoruce API for Python.',
