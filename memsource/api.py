@@ -406,6 +406,11 @@ class Job(BaseApi):
             })
         ]
 
+    def uploadBilingualFileFromXml(self, xml: str) -> None:
+        self._post('job/uploadBilingualFile', {}, {
+            'file': ('{}.mxliff'.format(uuid.uuid1().hex), xml),
+        })
+
 
 class TranslationMemory(BaseApi):
     """
