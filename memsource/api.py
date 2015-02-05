@@ -352,22 +352,22 @@ class Job(BaseApi):
         """
         self._post('job/preTranslate', {'jobPart': job_parts})
 
-    def _getBillingualStream(
+    def _getBilingualStream(
             self,
             job_parts: {'Lsit of job_part id': (list, tuple)},
     ) -> types.GeneratorType:
         """
-        Common process of billingualFile.
+        Common process of bilingualFile.
         """
         return self._get_stream('job/getBilingualFile', {
             'jobPart': job_parts,
         }).iter_content(1024)
 
-    def getBillingualFileXml(self, job_parts: {'Lsit of job_part id': (list, tuple)}) -> bytes:
+    def getBilingualFileXml(self, job_parts: {'Lsit of job_part id': (list, tuple)}) -> str:
         buffer = io.BytesIO()
-        [buffer.write(chunk) for chunk in self._getBillingualStream(job_parts)]
+        [buffer.write(chunk) for chunk in self._getBilingualStream(job_parts)]
 
-        return buffer.getvalue()
+        return buffer.getvalue().decode()
 
     def getBilingualFile(
             self,
@@ -375,18 +375,21 @@ class Job(BaseApi):
             dest_file_path: {'Save XML to this file path': str}
     ) -> None:
         """
-        Get billingual file and save it as file.
+        Get bilingual file and save it as file.
         """
         with open(dest_file_path, 'wb') as f:
-            [f.write(chunk) for chunk in self._getBillingualStream(job_parts)]
+            [f.write(chunk) for chunk in self._getBilingualStream(job_parts)]
 
-    def getBillingualAsMxliffUnits(
+    def getBilingualAsMxliffUnits(
             self, job_parts: {'Lsit of job_part id': (list, tuple)},
     ) -> models.MxliffUnit:
         """
-        Get billingual file and parse it as [models.MxliffUnit]
+        Get bilingual file and parse it as [models.MxliffUnit]
         """
-        return mxliff.MxliffParser().parse(self.getBillingualFileXml(job_parts))
+        buffer = io.BytesIO()
+        [buffer.write(chunk) for chunk in self._getBilingualStream(job_parts)]
+
+        return mxliff.MxliffParser().parse(buffer.getvalue())
 
     def getSegments(self, task, begin_index, end_index):
         """
@@ -408,7 +411,7 @@ class Job(BaseApi):
 
     def uploadBilingualFileFromXml(self, xml: str) -> None:
         self._post('job/uploadBilingualFile', {}, {
-            'file': ('{}.mxliff'.format(uuid.uuid1().hex), xml),
+            'bilingualFile': ('{}.mxliff'.format(uuid.uuid1().hex), xml),
         })
 
 

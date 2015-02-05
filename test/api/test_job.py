@@ -277,7 +277,7 @@ class TestApiJob(api_test.ApiTestCase):
         ]
         job_part_ids = [self.gen_random_int()]
 
-        returned_value = self.job.getBillingualAsMxliffUnits(job_part_ids)
+        returned_value = self.job.getBilingualAsMxliffUnits(job_part_ids)
 
         self.assertEqual(len(returned_value), 2)
 
