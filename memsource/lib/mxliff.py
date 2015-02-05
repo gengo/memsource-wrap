@@ -25,6 +25,7 @@ class MxliffParser(object):
         # Because we cannot write 'group.trans-unit'.
         trans_unit = getattr(group, 'trans-unit')
         source = {
+            'id': trans_unit.attrib['id'],
             'score': float(trans_unit.attrib[to_memsouce_key('score')]),
             'gross_score': float(trans_unit.attrib[to_memsouce_key('gross-score')]),
             'source': trans_unit.source,

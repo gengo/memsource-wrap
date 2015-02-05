@@ -265,6 +265,33 @@ class TestApiJob(api_test.ApiTestCase):
         )
 
     @patch.object(requests, 'request')
+    def test_get_bilingual_file_xml(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        mxliff_contents = ['test mxliff content', 'second']
+
+        mock_request().iter_content.return_value = [
+            bytes(content, 'utf-8') for content in mxliff_contents]
+        job_part_ids = [self.gen_random_int()]
+
+        self.assertFalse(os.path.isfile(self.test_mxllif_file_path))
+        returned_value = self.job.getBilingualFileXml(job_part_ids)
+
+        self.assertEqual(''.join(mxliff_contents), returned_value)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            'https://cloud1.memsource.com/web/api/v6/job/getBilingualFile',
+            params={
+                'token': self.job.token,
+                'jobPart': job_part_ids,
+            },
+            files={},
+            timeout=constants.Base.timeout.value * 5,
+            stream=True
+        )
+
+    @patch.object(requests, 'request')
     def test_get_bilingual_as_mxliff_units(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -277,12 +304,13 @@ class TestApiJob(api_test.ApiTestCase):
         ]
         job_part_ids = [self.gen_random_int()]
 
-        returned_value = self.job.getBillingualAsMxliffUnits(job_part_ids)
+        returned_value = self.job.getBilingualAsMxliffUnits(job_part_ids)
 
         self.assertEqual(len(returned_value), 2)
 
         self.assertIsInstance(returned_value[0], models.MxliffUnit)
         self.assertEqual(returned_value[0], {
+            'id': 'fj4ewiofj3qowjfw:0',
             'score': 0.0,
             'gross_score': 0.0,
             'source': 'Hello World.',
@@ -293,6 +321,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         self.assertIsInstance(returned_value[1], models.MxliffUnit)
         self.assertEqual(returned_value[1], {
+            'id': 'fj4ewiofj3qowjfw:1',
             'score': 1.01,
             'gross_score': 1.01,
             'source': 'This library wraps Memsoruce API for Python.',
@@ -361,3 +390,23 @@ class TestApiJob(api_test.ApiTestCase):
             self.assertIsInstance(segment, models.Segment)
 
         self.assertEqual('Hello World.', returned_value[0].source)
+
+    @patch.object(uuid, 'uuid1')
+    @patch.object(requests, 'request')
+    def test_upload_bilingual_file_from_xml(self, mock_request, mock_uuid1):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        xml = '<xml>this is test</xml>'
+        mock_uuid1().hex = self.test_file_uuid1_name
+
+        self.job.uploadBilingualFileFromXml(xml)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/v6/job/uploadBilingualFile',
+            params={
+                'token': self.job.token,
+            },
+            files={'bilingualFile': ('{}.mxliff'.format(self.test_file_uuid1_name), xml)},
+            timeout=constants.Base.timeout.value
+        )
