@@ -187,7 +187,8 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             'unsupportedFiles': []
         }
 
-        async_request, job_parts = self.asynchronous.createJobFromText(project_id, text, target_lang)
+        async_request, job_parts = self.asynchronous.createJobFromText(
+            project_id, text, target_lang)
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
