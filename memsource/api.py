@@ -549,6 +549,40 @@ class Asynchronous(BaseApi):
 
         return models.AsynchronousRequest(asyncRequest)
 
+    def createJobFromText(self, project_id: int, text: str, target_langs, file_name=None) -> (
+            models.AsynchronousResponse, list):
+        """
+        See: Job.create
+
+        Create file name by uuid1() when file_name parameter is None.
+        """
+        files = {
+            'file': ('{}.txt'.format(uuid.uuid1().hex) if file_name is None else file_name, text),
+        }
+
+        result = self._post('job/create', {
+            'project': project_id,
+            'targetLang': target_langs,
+        }, files)
+
+        # unsupported file count is 0 mean success.
+        unsupported_files = result.get('unsupportedFiles', [])
+        if len(unsupported_files) == 0:
+            return (models.AsynchronousRequest(result['asyncRequest']),
+                    [models.JobPart(job_parts) for job_parts in result['jobParts']])
+
+        _, (file_name, text) = files.popitem()
+        file_path = os.path.join('/', 'tmp', file_name)
+        with open(file_path, 'w+') as f:
+            f.write(text)
+
+        raise exceptions.MemsourceUnsupportedFileException(
+            unsupported_files,
+            file_path,
+            self.last_url,
+            self.last_params
+        )
+
 
 class Analysis(BaseApi):
     """

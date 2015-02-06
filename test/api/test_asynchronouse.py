@@ -1,12 +1,37 @@
-from unittest.mock import patch, PropertyMock
-from memsource import api, models, constants
+import uuid
+from unittest.mock import PropertyMock
+from unittest.mock import patch
+
 import requests
+
 import api as api_test
+from memsource import api
+from memsource import constants
+from memsource import models
+from memsource import exceptions
 
 
 class TestApiAsynchronous(api_test.ApiTestCase):
     def setUp(self):
         self.asynchronous = api.Asynchronous(None)
+
+        self.job_parts = [{
+            'id': 9371,
+            'task': '5023cd08e4b015e0656c4a8f',
+            'fileName': 'test_file.txt',
+            'targetLang': 'ja',
+            'wordCount': 121,
+            'beginIndex': 0,
+            'endIndex': 14
+        }, {
+            'id': 9372,
+            'task': '5087ab08eac015e0656c4a00',
+            'fileName': 'test_file.txt',
+            'targetLang': 'ja',
+            'wordCount': 121,
+            'beginIndex': 0,
+            'endIndex': 14
+        }]
 
     @patch.object(requests, 'request')
     def test_pre_translate(self, mock_request):
@@ -129,4 +154,71 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             },
             files={},
             timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(uuid, 'uuid1')
+    @patch.object(requests, 'request')
+    def test_create_job_from_text(self, mock_request, mock_uuid1):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        text = 'This is a test text.'
+        mock_uuid1().hex = 'file_name'
+        target_lang = 'ja'
+        project_id = self.gen_random_int()
+        asynchronous_request_id = self.gen_random_int()
+
+        mock_request().json.return_value = {
+            'asyncRequest': {
+                'createdBy': {
+                    'lastName': 'test',
+                    'id': 1,
+                    'firstName': 'admin',
+                    'role': 'ADMIN',
+                    'email': 'test@test.com',
+                    'userName': 'admin',
+                    'active': True
+                },
+                'action': 'PRE_TRANSLATE',
+                'id': asynchronous_request_id,
+                'dateCreated': '2014-11-03T16:03:11Z',
+                'asyncResponse': None
+            },
+            'jobParts': self.job_parts,
+            'unsupportedFiles': []
+        }
+
+        async_request, job_parts = self.asynchronous.createJobFromText(
+            project_id, text, target_lang)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/async/v2/job/create',
+            params={
+                'token': self.asynchronous.token,
+                'project': project_id,
+                'targetLang': target_lang,
+            },
+            files={'file': ('file_name.txt'.format(mock_uuid1().hex), text)},
+            timeout=constants.Base.timeout.value
+        )
+
+        self.assertEqual(async_request.id, asynchronous_request_id)
+        self.assertEqual(job_parts[0].id, 9371)
+        self.assertEqual(job_parts[1].id, 9372)
+
+    @patch.object(requests, 'request')
+    def test_create_job_from_text_failure(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        text = 'This is a test text.'
+        target_lang = 'ja'
+        project_id = self.gen_random_int()
+
+        mock_request().json.return_value = {
+            'unsupportedFiles': ['unsupported_file_name']
+        }
+
+        self.assertRaises(
+            exceptions.MemsourceUnsupportedFileException,
+            lambda: self.asynchronous.createJobFromText(project_id, text, target_lang)
         )
