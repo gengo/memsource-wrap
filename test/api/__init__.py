@@ -14,6 +14,8 @@ class ApiTestCase(unittest.TestCase):
         self._cleanUpFiles()
 
     def _cleanUpFiles(self):
+        def remove_if_exists(f):
+            os.remove(f) if os.path.isfile(f) else None
+
         if hasattr(self, 'clean_up_file_paths'):
-            remove_if_exists = lambda f: os.remove(f) if os.path.isfile(f) else None
             [remove_if_exists(f) for f in self.clean_up_file_paths]

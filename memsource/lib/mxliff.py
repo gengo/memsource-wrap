@@ -20,7 +20,8 @@ class MxliffParser(object):
             group: {objectify.ObjectifiedElement},
             memsource_namespace: {str}
     ) -> models.MxliffUnit:
-        to_memsouce_key = lambda s: '{{{}}}{}'.format(memsource_namespace, s)
+        def to_memsouce_key(s):
+            return '{{{}}}{}'.format(memsource_namespace, s)
 
         # Because we cannot write 'group.trans-unit'.
         trans_unit = getattr(group, 'trans-unit')
