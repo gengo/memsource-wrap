@@ -314,9 +314,9 @@ class TestApiJob(api_test.ApiTestCase):
             'score': 0.0,
             'gross_score': 0.0,
             'source': 'Hello World.',
-            'target': '',
-            'machine_trans': '',
-            'memsource_tm': '',
+            'target': None,
+            'machine_trans': None,
+            'memsource_tm': None,
         })
 
         self.assertIsInstance(returned_value[1], models.MxliffUnit)

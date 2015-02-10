@@ -28,12 +28,12 @@ class MxliffParser(object):
             'id': trans_unit.attrib['id'],
             'score': float(trans_unit.attrib[to_memsouce_key('score')]),
             'gross_score': float(trans_unit.attrib[to_memsouce_key('gross-score')]),
-            'source': trans_unit.source,
-            'target': trans_unit.target,
+            'source': trans_unit.source.text,
+            'target': trans_unit.target.text,
         }
 
         for alt_trans in getattr(trans_unit, 'alt-trans'):
             # machine-trans, memsource-tm -> machine_trans, memsource_tm
-            source[alt_trans.attrib['origin'].replace('-', '_')] = alt_trans.target
+            source[alt_trans.attrib['origin'].replace('-', '_')] = alt_trans.target.text
 
         return models.MxliffUnit(source)

@@ -17,14 +17,15 @@ class TestMxliffParser(unittest.TestCase):
         self.assertEqual(len(mxliff_units), 2)
 
         self.assertIsInstance(mxliff_units[0], models.MxliffUnit)
+
         self.assertEqual(mxliff_units[0], {
             'id': 'fj4ewiofj3qowjfw:0',
             'score': 0.0,
             'gross_score': 0.0,
             'source': 'Hello World.',
-            'target': '',
-            'machine_trans': '',
-            'memsource_tm': '',
+            'target': None,
+            'machine_trans': None,
+            'memsource_tm': None,
         })
 
         self.assertIsInstance(mxliff_units[1], models.MxliffUnit)
