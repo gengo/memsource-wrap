@@ -277,7 +277,7 @@ class TestApiJob(api_test.ApiTestCase):
         self.assertFalse(os.path.isfile(self.test_mxllif_file_path))
         returned_value = self.job.getBilingualFileXml(job_part_ids)
 
-        self.assertEqual(''.join(mxliff_contents), returned_value)
+        self.assertEqual(''.join(mxliff_contents).encode(), returned_value)
 
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
