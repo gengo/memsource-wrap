@@ -410,3 +410,27 @@ class TestApiJob(api_test.ApiTestCase):
             files={'bilingualFile': ('{}.mxliff'.format(self.test_file_uuid1_name), xml)},
             timeout=constants.Base.timeout.value
         )
+
+    @patch.object(requests, 'request')
+    def test_get_completed_file_text(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        mock_request().iter_content.return_value = [b'test completed content', b'second']
+        job_part_ids = [self.gen_random_int()]
+
+        self.assertFalse(os.path.isfile(self.test_mxllif_file_path))
+        returned_value = self.job.getCompletedFileText(job_part_ids)
+
+        self.assertEqual(b'test completed contentsecond', returned_value)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            'https://cloud1.memsource.com/web/api/v6/job/getCompletedFile',
+            params={
+                'token': self.job.token,
+                'jobPart': job_part_ids,
+            },
+            files={},
+            timeout=constants.Base.timeout.value * 5,
+            stream=True
+        )

@@ -380,6 +380,17 @@ class Job(BaseApi):
         with open(dest_file_path, 'wb') as f:
             [f.write(chunk) for chunk in self._getBilingualStream(job_parts)]
 
+    def getCompletedFileText(self, job_parts: list) -> bytes:
+        def getCompletedFileStream() -> types.GeneratorType:
+            return self._get_stream('job/getCompletedFile', {
+                'jobPart': job_parts,
+            }).iter_content(1024)
+
+        buffer = io.BytesIO()
+        [buffer.write(chunk) for chunk in getCompletedFileStream()]
+
+        return buffer.getvalue()
+
     def getBilingualAsMxliffUnits(
             self, job_parts: {'Lsit of job_part id': (list, tuple)},
     ) -> models.MxliffUnit:
