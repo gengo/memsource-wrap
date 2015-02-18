@@ -96,6 +96,34 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         self.assertEqual(accepted_segments_count, returned_value)
 
     @patch.object(requests, 'request')
+    def test_upload_from_text(self, mock_request):
+        accepted_segments_count = self.gen_random_int()
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = {'acceptedSegmentsCount': accepted_segments_count}
+
+        translation_memory_id = self.gen_random_int()
+        returned_value = self.translation_memory.uploadFromText(translation_memory_id, '<xml/>')
+
+        # Don't use assert_called_with because files has file object. It is difficult to test.
+        self.assertTrue(mock_request.called)
+        (called_args, called_kwargs) = mock_request.call_args
+
+        # hard to test
+        del called_kwargs['files']
+        self.assertEqual(
+            (constants.HttpMethod.post.value, '{}/import'.format(self.url_base)), called_args)
+
+        self.assertEqual({
+            'params': {
+                'token': self.translation_memory.token,
+                'transMemory': translation_memory_id,
+            },
+            'timeout': constants.Base.timeout.value,
+        }, called_kwargs)
+
+        self.assertEqual(accepted_segments_count, returned_value)
+
+    @patch.object(requests, 'request')
     def test_search_segment_by_task(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
