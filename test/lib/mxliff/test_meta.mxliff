@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:m="http://www.memsource.com/mxlf/2.0" version="1.2" m:version="2.0" m:level="1">
+  <file original="test.txt" source-language="en" target-language="ja" datatype="x-undefined" m:task-id="fj4ewiofj3qowjfw">
+    <body>
+      <group id="0">
+        <trans-unit id="fj4ewiofj3qowjfw:0" xml:space="preserve" m:score="0.0" m:gross-score="0.0" m:trans-origin="null" m:confirmed="0" m:locked="false" m:para-id="0" m:created-at="0" m:created-by="" m:modified-at="0" m:modified-by="" m:level-edited="false">
+          <source>Hello World.</source>
+          <target/>
+          <alt-trans origin="machine-trans"><target/></alt-trans>
+          <alt-trans origin="memsource-tm"><target/></alt-trans>
+          <m:tunit-metadata>
+            <m:mark id="1">
+              <m:type>term</m:type>
+              <m:content>&lt;term&gt;This is term.&lt;/term&gt;</m:content>
+            </m:mark>
+            <m:mark id="2">
+              <m:type>bracket</m:type>
+              <m:content>&lt;bracket&gt;This is bracket.&lt;/bracket&gt;</m:content>
+            </m:mark>
+          </m:tunit-metadata>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
