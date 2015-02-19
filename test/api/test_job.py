@@ -317,6 +317,7 @@ class TestApiJob(api_test.ApiTestCase):
             'target': None,
             'machine_trans': None,
             'memsource_tm': None,
+            'tunit_metadata': [],
         })
 
         self.assertIsInstance(returned_value[1], models.MxliffUnit)
@@ -328,6 +329,7 @@ class TestApiJob(api_test.ApiTestCase):
             'target': 'このライブラリはMemsourceのAPIをPython用にラップしています。',
             'machine_trans': 'This is machine translation.',
             'memsource_tm': 'This is memsource translation memory.',
+            'tunit_metadata': [],
         })
 
         mock_request.assert_called_with(
