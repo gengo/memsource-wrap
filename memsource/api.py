@@ -564,21 +564,22 @@ class Asynchronous(BaseApi):
 
         return models.AsynchronousRequest(asyncRequest)
 
-    def createJobFromText(self, project_id: int, text: str, target_langs, file_name=None) -> (
-            models.AsynchronousResponse, list):
+    def createJobFromText(self, project_id: int, text: str, target_langs, file_name=None,
+                          extension='.txt', **kwargs: dict) -> (models.AsynchronousResponse, list):
         """
         See: Job.create
 
         Create file name by uuid1() when file_name parameter is None.
         """
         files = {
-            'file': ('{}.txt'.format(uuid.uuid1().hex) if file_name is None else file_name, text),
+            'file': ('{}{}'.format(
+                uuid.uuid1().hex, extension) if file_name is None else file_name, text),
         }
 
-        result = self._post('job/create', {
+        result = self._post('job/create', dict(kwargs, **{
             'project': project_id,
             'targetLang': target_langs,
-        }, files)
+        }), files)
 
         # unsupported file count is 0 mean success.
         unsupported_files = result.get('unsupportedFiles', [])
