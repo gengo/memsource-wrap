@@ -442,21 +442,28 @@ class TranslationMemory(BaseApi):
             for translation_memory in self._post('transMemory/list', {})
         ]
 
-    def upload(self, translation_memory_id, file_path):
+    def _upload(self, translation_memory_id: int, files: dict) -> int:
+        # Casting because acceptedSegmentsCount seems always number, but it string type.
+        return int(self._post('transMemory/import', {
+            'transMemory': translation_memory_id,
+        }, files)['acceptedSegmentsCount'])
+
+    def upload(self, translation_memory_id: int, file_path: str) -> int:
         """
         This method calls import endpoint, but method name is `upload`,
         because `import` is keyword of Python. We cannot use `import` as method name.
 
         return int accepted segments count
         """
-
-        # Casting because acceptedSegmentsCount seems always number, but it string type.
         with open(file_path, 'rb') as f:
-            return int(self._post('transMemory/import', {
-                'transMemory': translation_memory_id,
-            }, {
-                'file': f
-            })['acceptedSegmentsCount'])
+            return self._upload(translation_memory_id, {
+                'file': f,
+            })
+
+    def uploadFromText(self, translation_memory_id: int, tmx: str) -> int:
+        return self._upload(translation_memory_id, {
+            'file': ('{}.tmx'.format(uuid.uuid1().hex), tmx),
+        })
 
     def searchSegmentByTask(self, task, segment_source, score_threshold=0.6):
         """
