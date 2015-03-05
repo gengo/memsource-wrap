@@ -52,6 +52,6 @@ class MxliffParser(object):
 
         return [{
             'id': mark.attrib['id'],
-            'type': getattr(mark, self.type_key),
-            'content': getattr(mark, self.content_key),
+            'type': getattr(mark, self.type_key).text,
+            'content': getattr(mark, self.content_key).text,
         } for mark in getattr(tunit_metadata, self.mark_key)]
