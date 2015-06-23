@@ -34,7 +34,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         }]
 
     @patch.object(requests, 'request')
-    def test_pre_translate(self, mock_request):
+    def test_pre_translate_no_callback(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
         asynchronous_request_id = self.gen_random_int()
@@ -69,6 +69,50 @@ class TestApiAsynchronous(api_test.ApiTestCase):
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
                 'translationMemoryThreshold': 0.7,
+                'callbackUrl': None,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests, 'request')
+    def test_pre_translate_callback(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        asynchronous_request_id = self.gen_random_int()
+        job_part_ids = [self.gen_random_int() for i in range(0, 2)]
+        callback_url = 'CALLBACK_URL'
+
+        mock_request().json.return_value = {
+            'asyncRequest': {
+                'createdBy': {
+                    'lastName': 'test',
+                    'id': 1,
+                    'firstName': 'admin',
+                    'role': 'ADMIN',
+                    'email': 'test@test.com',
+                    'userName': 'admin',
+                    'active': True
+                },
+                'action': 'PRE_TRANSLATE',
+                'id': asynchronous_request_id,
+                'dateCreated': '2014-11-03T16:03:11Z',
+                'asyncResponse': None
+            }
+        }
+
+        retuned_value = self.asynchronous.preTranslate(job_part_ids, callback_url=callback_url)
+
+        self.assertIsInstance(retuned_value, models.AsynchronousRequest)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/async/v2/job/preTranslate',
+            params={
+                'token': self.asynchronous.token,
+                'jobPart': job_part_ids,
+                'translationMemoryThreshold': 0.7,
+                'callbackUrl': callback_url,
             },
             files={},
             timeout=constants.Base.timeout.value
@@ -112,7 +156,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         )
 
     @patch.object(requests, 'request')
-    def test_create_analysis(self, mock_request):
+    def test_create_analysis_no_callback(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
         asynchronous_request_id = self.gen_random_int()
@@ -151,6 +195,58 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             params={
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
+                'callbackUrl': None
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests, 'request')
+    def test_create_analysis_callback(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        asynchronous_request_id = self.gen_random_int()
+        analysis_id = self.gen_random_int()
+        callback_url = 'CALLBACK_URL'
+
+        mock_request().json.return_value = {
+            'asyncRequest': {
+                'createdBy': {
+                    'lastName': 'test',
+                    'id': 1,
+                    'firstName': 'admin',
+                    'role': 'ADMIN',
+                    'email': 'test@test.com',
+                    'userName': 'admin',
+                    'active': True
+                },
+                'action': 'PRE_TRANSLATE',
+                'id': asynchronous_request_id,
+                'dateCreated': '2014-11-03T16:03:11Z',
+                'asyncResponse': None
+            },
+            'analyse': {
+                'id': analysis_id,
+            },
+        }
+
+        job_part_ids = [self.gen_random_int() for i in range(0, 2)]
+
+        async_request, analysis = self.asynchronous.createAnalysis(
+            job_part_ids,
+            callback_url=callback_url,
+        )
+
+        self.assertEqual(async_request.id, asynchronous_request_id)
+        self.assertEqual(analysis.id, analysis_id)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/async/v2/analyse/create',
+            params={
+                'token': self.asynchronous.token,
+                'jobPart': job_part_ids,
+                'callbackUrl': callback_url,
             },
             files={},
             timeout=constants.Base.timeout.value
@@ -158,7 +254,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
 
     @patch.object(uuid, 'uuid1')
     @patch.object(requests, 'request')
-    def test_create_job_from_text(self, mock_request, mock_uuid1):
+    def test_create_job_from_text_no_callback(self, mock_request, mock_uuid1):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
         text = 'This is a test text.'
@@ -197,6 +293,59 @@ class TestApiAsynchronous(api_test.ApiTestCase):
                 'token': self.asynchronous.token,
                 'project': project_id,
                 'targetLang': target_lang,
+                'callbackUrl': None,
+            },
+            files={'file': ('file_name.txt'.format(mock_uuid1().hex), text)},
+            timeout=constants.Base.timeout.value
+        )
+
+        self.assertEqual(async_request.id, asynchronous_request_id)
+        self.assertEqual(job_parts[0].id, 9371)
+        self.assertEqual(job_parts[1].id, 9372)
+
+    @patch.object(uuid, 'uuid1')
+    @patch.object(requests, 'request')
+    def test_create_job_from_text_callback(self, mock_request, mock_uuid1):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        text = 'This is a test text.'
+        mock_uuid1().hex = 'file_name'
+        target_lang = 'ja'
+        project_id = self.gen_random_int()
+        asynchronous_request_id = self.gen_random_int()
+        callback_url = 'CALLBACK_URL'
+
+        mock_request().json.return_value = {
+            'asyncRequest': {
+                'createdBy': {
+                    'lastName': 'test',
+                    'id': 1,
+                    'firstName': 'admin',
+                    'role': 'ADMIN',
+                    'email': 'test@test.com',
+                    'userName': 'admin',
+                    'active': True
+                },
+                'action': 'PRE_TRANSLATE',
+                'id': asynchronous_request_id,
+                'dateCreated': '2014-11-03T16:03:11Z',
+                'asyncResponse': None
+            },
+            'jobParts': self.job_parts,
+            'unsupportedFiles': []
+        }
+
+        async_request, job_parts = self.asynchronous.createJobFromText(
+            project_id, text, target_lang, callback_url=callback_url)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud1.memsource.com/web/api/async/v2/job/create',
+            params={
+                'token': self.asynchronous.token,
+                'project': project_id,
+                'targetLang': target_lang,
+                'callbackUrl': callback_url,
             },
             files={'file': ('file_name.txt'.format(mock_uuid1().hex), text)},
             timeout=constants.Base.timeout.value

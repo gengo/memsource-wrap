@@ -537,21 +537,23 @@ class Asynchronous(BaseApi):
 
         return super(Asynchronous, self)._make_url(**kwargs)
 
-    def preTranslate(self, job_parts, translation_memory_threshold=0.7):
+    def preTranslate(self, job_parts, translation_memory_threshold=0.7, callback_url=None):
         """
         return models.AsynchronousRequest
         """
         return models.AsynchronousRequest(self._post('job/preTranslate', {
             'jobPart': job_parts,
             'translationMemoryThreshold': translation_memory_threshold,
+            'callbackUrl': callback_url,
         })['asyncRequest'])
 
-    def createAnalysis(self, job_parts):
+    def createAnalysis(self, job_parts, callback_url=None):
         """
         return models.AsynchronousRequest
         """
         res = self._post('analyse/create', {
             'jobPart': job_parts,
+            'callbackUrl': callback_url,
         })
 
         return models.AsynchronousRequest(res['asyncRequest']), models.Analysis(res['analyse'])
@@ -565,7 +567,8 @@ class Asynchronous(BaseApi):
         return models.AsynchronousRequest(asyncRequest)
 
     def createJobFromText(self, project_id: int, text: str, target_langs, file_name=None,
-                          extension='.txt', **kwargs: dict) -> (models.AsynchronousResponse, list):
+                          extension='.txt', callback_url=None,
+                          **kwargs: dict) -> (models.AsynchronousResponse, list):
         """
         See: Job.create
 
@@ -579,6 +582,7 @@ class Asynchronous(BaseApi):
         result = self._post('job/create', dict(kwargs, **{
             'project': project_id,
             'targetLang': target_langs,
+            'callbackUrl': callback_url,
         }), files)
 
         # unsupported file count is 0 mean success.
