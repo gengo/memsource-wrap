@@ -580,6 +580,8 @@ class Asynchronous(BaseApi):
         file_path = os.path.join('/', 'tmp', 'memsource-wrap', uuid.uuid1().hex,
                                  file_name or '{}{}'.format(uuid.uuid1().hex, extension))
 
+        # make tmp file for upload the text. This tmp file and parent directory will delete after
+        # uploading even if uploading failed.
         file_parent = os.path.dirname(file_path)
         os.makedirs(file_parent)
         with open(file_path, 'w+') as f:
@@ -602,6 +604,8 @@ class Asynchronous(BaseApi):
         @param callback_url Memsource will hit this url when finished to create the job.
         @param kwargs See Memsource official document \
             http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
+
+        @return models.AsynchronousResponse and list of models.JobPart
         """
         with open(file_path, 'rb') as f:
             files = {
