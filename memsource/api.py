@@ -600,7 +600,8 @@ class Asynchronous(BaseApi):
         @param file_path Absolute path of translation target file.
         @param target_langs Translation target languages.
         @param callback_url Memsource will hit this url when finished to create the job.
-        @param kwargs See Memsource official document http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
+        @param kwargs See Memsource official document \
+            http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
         """
         with open(file_path, 'rb') as f:
             files = {
