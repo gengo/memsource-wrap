@@ -48,10 +48,12 @@ class MemsourceUnsupportedFileException(MemsourceException):
         # Make a copy the unsupported file. It is helpful for debugging.
         file_path = shutil.copy(original_file_path, '/var/tmp/{}'.format(uuid.uuid1().hex))
 
-        message = "{} ".format(self.message_prefix) +\
-                  "error code: {} ".format('UnsupportedFile') +\
-                  "error description: {} is unsupproted. You can see the copy at {} ".format(
-                      unsupported_file, file_path) +\
-                  "requested url: {} with {}".format(url, params)
+        message = (
+            "{} ".format(self.message_prefix),
+            "error code: {} ".format('UnsupportedFile'),
+            "error description: {} is unsupproted. You can see the copy at {} ".format(
+                unsupported_file, file_path),
+            "requested url: {} with {}".format(url, params),
+        )
 
         super(MemsourceUnsupportedFileException, self).__init__(message)

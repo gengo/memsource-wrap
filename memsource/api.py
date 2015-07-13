@@ -2,7 +2,9 @@ import requests
 import uuid
 import io
 import types
+import os
 import os.path
+import shutil
 
 from . import constants, exceptions, models
 from .lib import mxliff
@@ -567,34 +569,60 @@ class Asynchronous(BaseApi):
         return models.AsynchronousRequest(asyncRequest)
 
     def createJobFromText(self, project_id: int, text: str, target_langs, file_name=None,
-                          extension='.txt', callback_url=None,
+                          extension='.txt', *, callback_url=None,
                           **kwargs: dict) -> (models.AsynchronousResponse, list):
         """
         See: Job.create
 
         Create file name by uuid1() when file_name parameter is None.
         """
-        files = {
-            'file': ('{}{}'.format(
-                uuid.uuid1().hex, extension) if file_name is None else file_name, text),
-        }
 
-        result = self._post('job/create', dict(kwargs, **{
-            'project': project_id,
-            'targetLang': target_langs,
-            'callbackUrl': callback_url,
-        }), files)
+        file_path = os.path.join('/', 'tmp', 'memsource-wrap', uuid.uuid1().hex,
+                                 file_name or '{}{}'.format(uuid.uuid1().hex, extension))
+
+        # make tmp file for upload the text. This tmp file and parent directory will delete after
+        # uploading even if uploading failed.
+        file_parent = os.path.dirname(file_path)
+        os.makedirs(file_parent)
+        with open(file_path, 'w+') as f:
+            f.write(text)
+
+        try:
+            return self.createJob(
+                project_id, file_path, target_langs, callback_url=callback_url, **kwargs)
+        finally:
+            shutil.rmtree(file_parent)
+
+    def createJob(self, project_id: int, file_path: str, target_langs: (str, list), *,
+                  callback_url=None, **kwargs: dict) -> (models.AsynchronousResponse, list):
+        """\
+        Create new Job on Memsource asynchronously.
+
+        @param project_id Project ID of target project.
+        @param file_path Absolute path of translation target file.
+        @param target_langs Translation target languages.
+        @param callback_url Memsource will hit this url when finished to create the job.
+        @param kwargs See Memsource official document \
+            http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
+
+        @return models.AsynchronousResponse and list of models.JobPart
+        """
+        with open(file_path, 'rb') as f:
+            files = {
+                'file': (os.path.basename(file_path), f),
+            }
+
+            result = self._post('job/create', dict(kwargs, **{
+                'project': project_id,
+                'targetLang': target_langs,
+                'callbackUrl': callback_url,
+            }), files)
 
         # unsupported file count is 0 mean success.
         unsupported_files = result.get('unsupportedFiles', [])
         if len(unsupported_files) == 0:
             return (models.AsynchronousRequest(result['asyncRequest']),
                     [models.JobPart(job_parts) for job_parts in result['jobParts']])
-
-        _, (file_name, text) = files.popitem()
-        file_path = os.path.join('/', 'tmp', file_name)
-        with open(file_path, 'w+') as f:
-            f.write(text)
 
         raise exceptions.MemsourceUnsupportedFileException(
             unsupported_files,
