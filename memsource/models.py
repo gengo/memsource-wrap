@@ -31,6 +31,10 @@ class Project(BaseModel):
         return self._iso8601_to_datetime(self.dateCreated)
 
 
+class Job(BaseModel):
+    pass
+
+
 class JobPart(BaseModel):
     pass
 

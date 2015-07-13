@@ -27,7 +27,9 @@ class BaseApi(object):
     def _make_url(self, *args, **kwargs):
         return kwargs.get('format', '{base}/{api_version}/{path}').format(**kwargs)
 
-    # Should be public, it is conflict with memsource endpoint.
+    def _get(self, path: str, params: dict={}, *, timeout: int=constants.Base.timeout.value) -> str:
+        return self._request(constants.HttpMethod.get, path, None, params, timeout)
+
     def _post(
             self,
             path: {'Send request to this path': str},
@@ -423,6 +425,18 @@ class Job(BaseApi):
         self._post('job/uploadBilingualFile', {}, {
             'bilingualFile': ('{}.mxliff'.format(uuid.uuid1().hex), xml),
         })
+
+    def get(self, job_part_ids: list) -> models.Job:
+        """\
+        Get the job data.
+
+        :param job_part_ids :IDs of job_parts for the job :list
+        """
+        response = self._get('job/get', {
+            'jobPart': job_part_ids,
+        })
+
+        return models.Job(response)
 
 
 class TranslationMemory(BaseApi):

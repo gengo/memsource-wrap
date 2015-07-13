@@ -436,3 +436,28 @@ class TestApiJob(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value * 5,
             stream=True
         )
+
+    @patch.object(requests, 'request')
+    def test_get(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        mock_request().json.return_value = {
+            'status': 'NEW',
+        }
+
+        job_part_ids = [12345, 23456]
+
+        returned_value = self.job.get(job_part_ids)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            '{}/get'.format(self.url_base),
+            files=None,
+            params={
+                'token': self.job.token,
+                'jobPart': job_part_ids
+            },
+            timeout=constants.Base.timeout.value
+        )
+
+        self.assertEqual('NEW', returned_value.status)
