@@ -27,7 +27,9 @@ class BaseApi(object):
     def _make_url(self, *args, **kwargs):
         return kwargs.get('format', '{base}/{api_version}/{path}').format(**kwargs)
 
-    def _get(self, path: str, params: dict={}, *, timeout: int=constants.Base.timeout.value) -> str:
+    def _get(
+            self, path: str, params: dict={}, *, timeout: int=constants.Base.timeout.value
+    ) -> str:
         return self._request(constants.HttpMethod.get, path, None, params, timeout)
 
     def _post(
