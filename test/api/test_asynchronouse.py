@@ -258,7 +258,8 @@ class TestApiAsynchronous(api_test.ApiTestCase):
     @patch.object(io, 'open')
     @patch.object(uuid, 'uuid1')
     @patch.object(requests, 'request')
-    def test_create_job_from_text_no_callback(self, mock_request, mock_uuid1, mock_ioopen, mock_open):
+    def test_create_job_from_text_no_callback(
+            self, mock_request, mock_uuid1, mock_ioopen, mock_open):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
         text = 'This is a test text.'
