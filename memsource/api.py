@@ -600,7 +600,7 @@ class Asynchronous(BaseApi):
         # uploading even if uploading failed.
         file_parent = os.path.dirname(file_path)
         os.makedirs(file_parent)
-        with open(file_path, 'w+') as f:
+        with io.open(file_path, 'w', encoding='utf-8') as f:
             f.write(text)
 
         try:
