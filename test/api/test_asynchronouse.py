@@ -1,4 +1,5 @@
 import uuid
+import io
 import builtins
 from unittest.mock import PropertyMock
 from unittest.mock import patch
@@ -254,9 +255,11 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         )
 
     @patch.object(builtins, 'open')
+    @patch.object(io, 'open')
     @patch.object(uuid, 'uuid1')
     @patch.object(requests, 'request')
-    def test_create_job_from_text_no_callback(self, mock_request, mock_uuid1, mock_open):
+    def test_create_job_from_text_no_callback(
+            self, mock_request, mock_uuid1, mock_ioopen, mock_open):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
         text = 'This is a test text.'
@@ -302,15 +305,16 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-        mock_file.write.assert_called_with(text)
+        mock_ioopen().__enter__().write.assert_called_with(text)
         self.assertEqual(async_request.id, asynchronous_request_id)
         self.assertEqual(job_parts[0].id, 9371)
         self.assertEqual(job_parts[1].id, 9372)
 
     @patch.object(builtins, 'open')
+    @patch.object(io, 'open')
     @patch.object(uuid, 'uuid1')
     @patch.object(requests, 'request')
-    def test_create_job_from_text_callback(self, mock_request, mock_uuid1, mock_open):
+    def test_create_job_from_text_callback(self, mock_request, mock_uuid1, mock_ioopen, mock_open):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
         text = 'This is a test text.'
@@ -357,7 +361,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-        mock_file.write.assert_called_with(text)
+        mock_ioopen().__enter__().write.assert_called_with(text)
         self.assertEqual(async_request.id, asynchronous_request_id)
         self.assertEqual(job_parts[0].id, 9371)
         self.assertEqual(job_parts[1].id, 9372)
