@@ -668,7 +668,7 @@ class Analysis(BaseApi):
     api_version = constants.ApiVersion.v2
 
     def get(self, analysis_id: {'Get analysis of this id', int}) -> models.Analysis:
-        return models.Analysis(self._post('analyse/get', {
+        return models.Analysis(self._get('analyse/get', {
             'analyse': analysis_id,
         }))
 
