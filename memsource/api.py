@@ -5,6 +5,7 @@ import types
 import os
 import os.path
 import shutil
+import typing
 
 from . import constants, exceptions, models
 from .lib import mxliff
@@ -428,18 +429,29 @@ class Job(BaseApi):
             'bilingualFile': ('{}.mxliff'.format(uuid.uuid1().hex), xml),
         })
 
-    def get(self, job_part_ids: list) -> models.Job:
-        """\
-        Get the job data.
+    def get(self, job_part_id: int) -> models.Job:
+        """Get the job data.
 
-        :param job_part_ids :IDs of job_parts for the job :list
+        :param job_part_ids: ID of job_part for the job.
+        :return: The got job.
         """
         response = self._get('job/get', {
-            'jobPart': job_part_ids,
+            'jobPart': job_part_id,
         })
 
         return models.Job(response)
 
+    def list(self, job_part_ids: typing.List[int]) -> typing.List[models.Job]:
+        """Get the jobs data.
+
+        :param job_part_ids: IDs of job_part for the jobs.
+        :return: The got jobs.
+        """
+        response = self._get('job/list', {
+            'jobPart': job_part_ids,
+        })
+
+        return [models.Job(i) for i in response]
 
 class TranslationMemory(BaseApi):
     """
@@ -657,4 +669,9 @@ class Analysis(BaseApi):
     def get(self, analysis_id: {'Get analysis of this id', int}) -> models.Analysis:
         return models.Analysis(self._post('analyse/get', {
             'analyse': analysis_id,
+        }))
+
+    def create(self, job_part_ids: typing.List[int]) -> models.Analysis:
+        return models.Analysis(self._post('analyse/create', {
+            'jobPart': job_part_ids,
         }))

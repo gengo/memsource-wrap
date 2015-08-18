@@ -7,3 +7,4 @@ rednose
 flake8
 inflection
 lxml
+mypy-lang
