@@ -453,6 +453,7 @@ class Job(BaseApi):
 
         return [models.Job(i) for i in response]
 
+
 class TranslationMemory(BaseApi):
     """
     You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
