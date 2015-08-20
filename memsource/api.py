@@ -503,7 +503,7 @@ class TranslationMemory(BaseApi):
             *,
             next_segment: str=None,
             previous_segment: str=None,
-            score_threshold:float=0.6
+            score_threshold: float=0.6
     ) -> typing.List[models.SegmentSearchResult]:
         """Get translation matches.
 
