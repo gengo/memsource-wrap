@@ -127,7 +127,9 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
     def test_search_segment_by_task(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
-        segment_source = 'Hello'
+        segment = "Hello"
+        next_segment = "Next segment"
+        previous_segment = "Previous Segment"
         task = 'test task'
 
         mock_request().json.return_value = [{
@@ -146,7 +148,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
                 'domain': None,
                 'id': None,
                 'nextSegment': None,
-                'text': segment_source,
+                'text': segment,
                 'tagMetadata': [],
                 'subDomain': None,
                 'lang': 'en',
@@ -195,7 +197,9 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             }
         }]
 
-        returned_value = self.translation_memory.searchSegmentByTask(task, segment_source)
+        returned_value = self.translation_memory.searchSegmentByTask(
+            task, segment, next_segment=next_segment, previous_segment=previous_segment
+        )
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
@@ -203,7 +207,9 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             params={
                 'token': self.translation_memory.token,
                 'task': task,
-                'segment': segment_source,
+                'segment': segment,
+                'nextSegment': next_segment,
+                'previousSegment': previous_segment,
                 'scoreThreshold': 0.6,
             },
             files={},

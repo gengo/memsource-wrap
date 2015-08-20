@@ -496,23 +496,39 @@ class TranslationMemory(BaseApi):
             'file': ('{}.tmx'.format(uuid.uuid1().hex), tmx),
         })
 
-    def searchSegmentByTask(self, task, segment_source, score_threshold=0.6):
-        """
-        You can get translation memory that related with segment_source.
+    def searchSegmentByTask(
+            self,
+            task: str,
+            segment: str,
+            *,
+            next_segment: str=None,
+            previous_segment: str=None,
+            score_threshold: float=0.6
+    ) -> typing.List[models.SegmentSearchResult]:
+        """Get translation matches.
 
-        :param task :task :str
-        :param segment_source :Segment.source :str
-        :param score_threshold :optional(0.6) :return only high score than this value :double
+        :param task: task_id
+        :param segment: Search by this segment
+        :param next_segment: Effect for 101% match
+        :param previous_segment: Effect for 101% match
+        :param score_threshold: return only high score than this value
 
-        :return [models.SegmentSearchResult]
+        :return: list of models.SegmentSearchResult
         """
+        parameters = {
+            'task': task,
+            'segment': segment,
+            'scoreThreshold': score_threshold,
+        }
+        if next_segment is not None:
+            parameters['nextSegment'] = next_segment
+
+        if previous_segment is not None:
+            parameters['previousSegment'] = previous_segment
+
         return [
-            models.SegmentSearchResult(segment)
-            for segment in self._post('transMemory/searchSegmentByTask', {
-                'task': task,
-                'segment': segment_source,
-                'scoreThreshold': score_threshold,
-            })
+            models.SegmentSearchResult(item)
+            for item in self._post('transMemory/searchSegmentByTask', parameters)
         ]
 
     def insert(self, translation_memory_id, target_lang, source_segment, target_segment,
