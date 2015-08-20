@@ -515,13 +515,20 @@ class TranslationMemory(BaseApi):
 
         :return: list of models.SegmentSearchResult
         """
+        parameters = {
+            'task': task,
+            'segment': segment,
+            'scoreThreshold': score_threshold,
+        }
+        if next_segment is not None:
+            parameters['nextSegment'] = next_segment
+
+        if previous_segment is not None:
+            parameters['previousSegment'] = previous_segment
+
         return [
             models.SegmentSearchResult(item)
-            for item in self._post('transMemory/searchSegmentByTask', {
-                'task': task,
-                'segment': segment,
-                'scoreThreshold': score_threshold,
-            })
+            for item in self._post('transMemory/searchSegmentByTask', parameters)
         ]
 
     def insert(self, translation_memory_id, target_lang, source_segment, target_segment,
