@@ -382,3 +382,19 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             exceptions.MemsourceUnsupportedFileException,
             lambda: self.asynchronous.createJobFromText(project_id, text, target_lang)
         )
+
+    @patch.object(requests, 'request')
+    def test_create_job_too_many_requests(self, mock_request):
+        text = 'This is a test text.'
+        target_lang = 'ja'
+        project_id = self.gen_random_int()
+
+        response = mock_request()
+        response.status_code = 429
+        response.json.side_effect = ValueError
+        response.text = "Too many requests."
+
+        self.assertRaises(
+            exceptions.MemsourceApiException,
+            lambda: self.asynchronous.createJobFromText(project_id, text, target_lang)
+        )
