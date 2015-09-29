@@ -122,8 +122,17 @@ class BaseApi(object):
         if BaseApi.is_success(response.status_code):
             return response
 
+        # Usually Memsource returns JSON even if the response is error. But they returns
+        # "Too many requests.", It's not JSON.
+        try:
+            result_json = response.json()
+        except ValueError:
+            result_json = {
+                'errorCode': 'Non JSON response',
+                'errorDescription': 'Raw response {}'.format(response.text),
+            }
         raise exceptions.MemsourceApiException(
-            response.status_code, response.json(), self.last_url, self.last_params)
+            response.status_code, result_json, self.last_url, self.last_params)
 
     def _request(
             self,
