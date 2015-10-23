@@ -603,14 +603,16 @@ class Asynchronous(BaseApi):
             'callbackUrl': callback_url,
         })['asyncRequest'])
 
-    def createAnalysis(self, job_parts, callback_url=None):
+    def createAnalysis(
+            self, job_parts: int, callback_url: str=None, **kwargs) -> models.AsynchronousRequest:
+        """Create analysis asynchronously.
+
+        :param job_parts: Make analysis for these job_part ids.
+        :param callback_url: Memsource will send a callback when they finish analyzing.
+        :param kwags: Another non required parameters, you can pass.
         """
-        return models.AsynchronousRequest
-        """
-        res = self._post('analyse/create', {
-            'jobPart': job_parts,
-            'callbackUrl': callback_url,
-        })
+        res = self._post(
+            'analyse/create', dict(kwargs, jobPart=job_parts, callbackUrl=callback_url))
 
         return models.AsynchronousRequest(res['asyncRequest']), models.Analysis(res['analyse'])
 
