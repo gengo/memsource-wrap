@@ -1,14 +1,15 @@
-import requests
-import uuid
 import io
-import types
 import os
 import os.path
 import shutil
+import types
 import typing
+import uuid
 
-from . import constants, exceptions, models
-from .lib import mxliff
+import requests
+
+from memsource import constants, exceptions, models
+from memsource.lib import mxliff
 
 
 __all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
