@@ -10,7 +10,7 @@ class TestApiDomain(api_test.ApiTestCase):
         self.url_base = 'https://cloud1.memsource.com/web/api/v3/project'
         self.project = api.Project(None)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         returning_id = self.gen_random_int()
@@ -44,7 +44,7 @@ class TestApiDomain(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_list(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -85,7 +85,7 @@ class TestApiDomain(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get_trans_memories(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         project_id = self.gen_random_int()
@@ -122,7 +122,7 @@ class TestApiDomain(api_test.ApiTestCase):
         for translation_memory in returned_values:
             self.assertIsInstance(translation_memory, models.TranslationMemory)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_set_trans_memories(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 

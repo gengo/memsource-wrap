@@ -35,7 +35,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             'endIndex': 14
         }]
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_pre_translate_no_callback(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -77,7 +77,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_pre_translate_callback(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -120,7 +120,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get_async_request(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -157,7 +157,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_analysis_no_callback(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -203,7 +203,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_analysis_callback(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -257,7 +257,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
     @patch.object(builtins, 'open')
     @patch.object(io, 'open')
     @patch.object(uuid, 'uuid1')
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_job_from_text_no_callback(
             self, mock_request, mock_uuid1, mock_ioopen, mock_open):
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -313,7 +313,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
     @patch.object(builtins, 'open')
     @patch.object(io, 'open')
     @patch.object(uuid, 'uuid1')
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_job_from_text_callback(self, mock_request, mock_uuid1, mock_ioopen, mock_open):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -366,7 +366,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         self.assertEqual(job_parts[0].id, 9371)
         self.assertEqual(job_parts[1].id, 9372)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_job_from_text_failure(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -383,7 +383,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             lambda: self.asynchronous.createJobFromText(project_id, text, target_lang)
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_job_too_many_requests(self, mock_request):
         text = 'This is a test text.'
         target_lang = 'ja'
