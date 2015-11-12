@@ -9,7 +9,7 @@ class TestApiDomain(unittest.TestCase):
         self.url_base = 'https://cloud1.memsource.com/web/api/v2/domain'
         self.domain = api.Domain(None)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):
         def test():
             mock_request.assert_called_with(
@@ -35,7 +35,7 @@ class TestApiDomain(unittest.TestCase):
         self.domain.create(domain)
         test()
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get(self, mock_request):
         def test():
             mock_request.assert_called_with(
@@ -61,7 +61,7 @@ class TestApiDomain(unittest.TestCase):
         self.domain.get(domain)
         test()
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_list(self, mock_request):
         def test():
             mock_request.assert_called_with(

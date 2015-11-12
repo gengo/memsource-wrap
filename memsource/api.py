@@ -1,14 +1,15 @@
-import requests
-import uuid
 import io
-import types
 import os
 import os.path
 import shutil
+import types
 import typing
+import uuid
 
-from . import constants, exceptions, models
-from .lib import mxliff
+import requests
+
+from memsource import constants, exceptions, models
+from memsource.lib import mxliff
 
 
 __all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
@@ -16,6 +17,8 @@ __all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'A
 
 
 class BaseApi(object):
+    _session = requests.Session()
+
     """Inheriting classes must have the api_version attribute"""
     def __init__(self, token: {'Authentication token for using APIs': str}):
         if not hasattr(self, 'api_version'):
@@ -24,6 +27,18 @@ class BaseApi(object):
                 'api_version is not set in {}'.format(self.__class__.__name__))
 
         self.token = token
+
+    @classmethod
+    def use_session(cls, session: requests.Session):
+        """
+        Configures the session object which is used for API invocation.
+
+        This method is not thread-safe. It is recommended to configure only once.
+
+        Arguments:
+        session -- The session object to be used by BaseApi
+        """
+        cls._session = session
 
     def _make_url(self, *args, **kwargs):
         return kwargs.get('format', '{base}/{api_version}/{path}').format(**kwargs)
@@ -106,7 +121,7 @@ class BaseApi(object):
             **kwargs
     ) -> requests.models.Response:
         try:
-            response = requests.request(http_method.value, url, **kwargs)
+            response = self._session.request(http_method.value, url, **kwargs)
         except requests.exceptions.Timeout:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',

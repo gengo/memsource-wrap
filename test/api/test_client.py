@@ -9,7 +9,7 @@ class TestApiClient(unittest.TestCase):
         self.url_base = 'https://cloud1.memsource.com/web/api/v2/client'
         self.client = api.Client(None)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):
         def test():
             mock_request.assert_called_with(
@@ -35,7 +35,7 @@ class TestApiClient(unittest.TestCase):
         self.client.create(client)
         test()
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get(self, mock_request):
         def test_called():
             mock_request.assert_called_with(
@@ -75,7 +75,7 @@ class TestApiClient(unittest.TestCase):
         self.assertEqual(r.id, client_id)
         self.assertEqual(r.name, client_name)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_list(self, mock_request):
         def test():
             mock_request.assert_called_with(
@@ -99,7 +99,7 @@ class TestApiClient(unittest.TestCase):
         self.client.list()
         test()
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_error_response(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=400)
 

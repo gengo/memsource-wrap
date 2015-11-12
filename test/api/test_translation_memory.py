@@ -15,7 +15,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         with open(self.test_tmx_file_path, 'w+') as f:
             f.write('This is test tmx file.')
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         returning_id = self.gen_random_int()
@@ -41,7 +41,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_list(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = [{
@@ -66,7 +66,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_upload(self, mock_request):
         accepted_segments_count = self.gen_random_int()
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -95,7 +95,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
 
         self.assertEqual(accepted_segments_count, returned_value)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_upload_from_text(self, mock_request):
         accepted_segments_count = self.gen_random_int()
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -123,7 +123,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
 
         self.assertEqual(accepted_segments_count, returned_value)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_search_segment_by_task(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -219,7 +219,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         for segment_search_result in returned_value:
             self.assertIsInstance(segment_search_result, models.SegmentSearchResult)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_insert(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 

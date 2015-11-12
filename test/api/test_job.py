@@ -45,7 +45,7 @@ class TestApiJob(api_test.ApiTestCase):
             }]
         }
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = self.create_return_value
@@ -78,7 +78,7 @@ class TestApiJob(api_test.ApiTestCase):
             self.assertIsInstance(job_part, models.JobPart)
 
     @patch.object(uuid, 'uuid1')
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_with_unsupported_file(self, mock_request, mock_uuid1):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = {
@@ -95,7 +95,7 @@ class TestApiJob(api_test.ApiTestCase):
         self.assertTrue(os.path.isfile(self.test_file_copy_path))
 
     @patch.object(uuid, 'uuid1')
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create_from_text(self, mock_request, mock_uuid1):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = self.create_return_value
@@ -128,7 +128,7 @@ class TestApiJob(api_test.ApiTestCase):
             self.assertIsInstance(job_part, models.JobPart)
 
     @patch.object(uuid, 'uuid1')
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test__create(self, mock_request, mock_uuid1):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         file_name = 'filename.txt'
@@ -149,7 +149,7 @@ class TestApiJob(api_test.ApiTestCase):
         with open(self.test_file_copy_path) as f:
             self.assertEqual(f.read(), text)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_list_by_project(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -212,7 +212,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         self.assertEqual(len(returned_value), len(mock_request().json()))
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_pre_translate(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = {}
@@ -233,7 +233,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         self.assertIsNone(returned_value)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get_bilingual_file(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -264,7 +264,7 @@ class TestApiJob(api_test.ApiTestCase):
             stream=True
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get_bilingual_file_xml(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -291,7 +291,7 @@ class TestApiJob(api_test.ApiTestCase):
             stream=True
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get_bilingual_as_mxliff_units(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -344,7 +344,7 @@ class TestApiJob(api_test.ApiTestCase):
             stream=True
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get_segments(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -394,7 +394,7 @@ class TestApiJob(api_test.ApiTestCase):
         self.assertEqual('Hello World.', returned_value[0].source)
 
     @patch.object(uuid, 'uuid1')
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_upload_bilingual_file_from_xml(self, mock_request, mock_uuid1):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -413,7 +413,7 @@ class TestApiJob(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get_completed_file_text(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -437,7 +437,7 @@ class TestApiJob(api_test.ApiTestCase):
             stream=True
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -462,7 +462,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         self.assertEqual('NEW', returned_value.status)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_list(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
