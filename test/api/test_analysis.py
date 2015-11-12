@@ -9,7 +9,7 @@ class TestApiAnalysis(api_test.ApiTestCase):
         self.url_base = 'https://cloud1.memsource.com/web/api/v2/analyse'
         self.analysis = api.Analysis('token')
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_get(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -31,7 +31,7 @@ class TestApiAnalysis(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 

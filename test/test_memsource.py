@@ -13,7 +13,7 @@ class TestMemsource(unittest.TestCase):
         for api in ('client', 'domain', 'project', 'job', ):
             self.assertEqual(getattr(m, api).token, token)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_init_with_user_name_and_password(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
@@ -39,7 +39,7 @@ class TestMemsource(unittest.TestCase):
             timeout=constants.Base.timeout.value
         )
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_init_with_token(self, mock_request):
         token = 'test_token'
         self.check_token(Memsource(token=token), token)
@@ -47,7 +47,7 @@ class TestMemsource(unittest.TestCase):
         # When token is given as parameter, never send http request.
         self.assertFalse(mock_request.called)
 
-    @patch.object(requests, 'request')
+    @patch.object(requests.Session, 'request')
     def test_init_with_user_name_and_password_and_token(self, mock_request):
         token = 'test_token'
         m = Memsource(user_name='test user name', password='test password', token=token)
