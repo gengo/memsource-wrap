@@ -7,7 +7,7 @@ import api as api_test
 
 class TestApiDomain(api_test.ApiTestCase):
     def setUp(self):
-        self.url_base = 'https://cloud1.memsource.com/web/api/v3/project'
+        self.url_base = 'https://cloud.memsource.com/web/api/v3/project'
         self.project = api.Project(None)
 
     @patch.object(requests.Session, 'request')

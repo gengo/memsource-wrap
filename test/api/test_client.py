@@ -6,7 +6,7 @@ import requests
 
 class TestApiClient(unittest.TestCase):
     def setUp(self):
-        self.url_base = 'https://cloud1.memsource.com/web/api/v2/client'
+        self.url_base = 'https://cloud.memsource.com/web/api/v2/client'
         self.client = api.Client(None)
 
     @patch.object(requests.Session, 'request')

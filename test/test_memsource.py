@@ -7,7 +7,7 @@ from unittest.mock import patch, PropertyMock
 
 class TestMemsource(unittest.TestCase):
     def setUp(self):
-        self.url_base = 'https://cloud1.memsource.com/web/api/v3/auth/login'
+        self.url_base = 'https://cloud.memsource.com/web/api/v3/auth/login'
 
     def check_token(self, m, token):
         for api in ('client', 'domain', 'project', 'job', ):

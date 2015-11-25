@@ -6,7 +6,7 @@ import api as api_test
 
 class TestApiAnalysis(api_test.ApiTestCase):
     def setUp(self):
-        self.url_base = 'https://cloud1.memsource.com/web/api/v2/analyse'
+        self.url_base = 'https://cloud.memsource.com/web/api/v2/analyse'
         self.analysis = api.Analysis('token')
 
     @patch.object(requests.Session, 'request')

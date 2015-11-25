@@ -597,11 +597,11 @@ class Asynchronous(BaseApi):
         """
         Because only this endpoint has different format with other endpoints.
         like these:
-        * https://cloud1.memsource.com/web/api/async/v2/job/preTranslate
-        * https://cloud1.memsource.com/web/api/v2/async/getAsyncRequest
+        * https://cloud.memsource.com/web/api/async/v2/job/preTranslate
+        * https://cloud.memsource.com/web/api/v2/async/getAsyncRequest
 
         This is example of other endpoints
-        * https://cloud1.memsource.com/web/api/v3/project/create
+        * https://cloud.memsource.com/web/api/v3/project/create
         """
         if kwargs['path'] != 'async/getAsyncRequest':
             kwargs['format'] = '{base}/async/{api_version}/{path}'
