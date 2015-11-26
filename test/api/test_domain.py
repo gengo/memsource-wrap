@@ -6,7 +6,7 @@ import requests
 
 class TestApiDomain(unittest.TestCase):
     def setUp(self):
-        self.url_base = 'https://cloud1.memsource.com/web/api/v2/domain'
+        self.url_base = 'https://cloud.memsource.com/web/api/v2/domain'
         self.domain = api.Domain(None)
 
     @patch.object(requests.Session, 'request')

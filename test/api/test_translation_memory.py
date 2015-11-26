@@ -6,7 +6,7 @@ import api as api_test
 
 class TestApiTranslationMemory(api_test.ApiTestCase):
     def setUp(self):
-        self.url_base = 'https://cloud1.memsource.com/web/api/v4/transMemory'
+        self.url_base = 'https://cloud.memsource.com/web/api/v4/transMemory'
         self.translation_memory = api.TranslationMemory(None)
         self.test_tmx_file_path = '/tmp/test.tmx'
 
@@ -203,7 +203,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
-            'https://cloud1.memsource.com/web/api/v4/transMemory/searchSegmentByTask',
+            'https://cloud.memsource.com/web/api/v4/transMemory/searchSegmentByTask',
             params={
                 'token': self.translation_memory.token,
                 'task': task,
@@ -241,7 +241,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
-            'https://cloud1.memsource.com/web/api/v4/transMemory/insert',
+            'https://cloud.memsource.com/web/api/v4/transMemory/insert',
             params={
                 'token': self.translation_memory.token,
                 'transMemory': translation_memory_id,
