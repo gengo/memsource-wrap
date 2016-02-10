@@ -63,15 +63,6 @@ class BaseApi(object):
         """
         return self._request(constants.HttpMethod.post, path, files, params, timeout)
 
-    def _delete(
-           self,
-           path: str,
-           params: dict={},
-           *,
-           timeout: int=constants.Base.timeout.value
-    ) -> None:
-        self._request(constants.HttpMethod.delete, path, None, params, timeout)
-
     def _get_stream(
             self,
             path: {'Send request to this path': str},
@@ -487,7 +478,7 @@ class Job(BaseApi):
         return [models.Job(i) for i in response]
 
     def delete(self, job_part_id: int, purge: bool=False) -> None:
-        self._delete('job/delete', {
+        self._post('job/delete', {
             'jobPart': job_part_id,
             'purge': purge
         })
@@ -734,12 +725,8 @@ class Analysis(BaseApi):
             'jobPart': job_part_ids,
         }))
 
-    def delete(
-            self,
-            analysis_id: {'Get analysis of this id', int},
-            purge: bool=False
-    ) -> models.Analysis:
-        return models.Analysis(self._delete('analyse/delete', {
+    def delete(self,analysis_id: int, purge: bool=False) -> None:
+        self._post('analyse/delete', {
             'analyse': analysis_id,
             'purge': purge,
-        }))
+        })
