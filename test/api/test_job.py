@@ -486,3 +486,24 @@ class TestApiJob(api_test.ApiTestCase):
         )
 
         self.assertEqual('NEW', returned_value[0].status)
+
+    @patch.object(requests.Session, 'request')
+    def test_delete(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = None
+
+        job_part_id = self.gen_random_int()
+
+        self.assertIsNone(self.job.delete(job_part_id))
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/delete'.format(self.url_base),
+            params={
+                'token': self.job.token,
+                'jobPart': job_part_id,
+                'purge': False,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )

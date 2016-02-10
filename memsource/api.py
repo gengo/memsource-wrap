@@ -477,6 +477,12 @@ class Job(BaseApi):
 
         return [models.Job(i) for i in response]
 
+    def delete(self, job_part_id: int, purge: bool=False) -> None:
+        self._post('job/delete', {
+            'jobPart': job_part_id,
+            'purge': purge
+        })
+
 
 class TranslationMemory(BaseApi):
     """
@@ -718,3 +724,9 @@ class Analysis(BaseApi):
         return models.Analysis(self._post('analyse/create', {
             'jobPart': job_part_ids,
         }))
+
+    def delete(self, analysis_id: int, purge: bool=False) -> None:
+        self._post('analyse/delete', {
+            'analyse': analysis_id,
+            'purge': purge,
+        })

@@ -52,3 +52,24 @@ class TestApiAnalysis(api_test.ApiTestCase):
             files={},
             timeout=constants.Base.timeout.value
         )
+
+    @patch.object(requests.Session, 'request')
+    def test_delete(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = None
+
+        analysis_id = self.gen_random_int()
+
+        self.assertIsNone(self.analysis.delete(analysis_id))
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/delete'.format(self.url_base),
+            params={
+                'token': self.analysis.token,
+                'analyse': analysis_id,
+                'purge': False,
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
