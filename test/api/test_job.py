@@ -502,7 +502,8 @@ class TestApiJob(api_test.ApiTestCase):
             params={
                 'token': self.job.token,
                 'jobPart': job_part_id,
+                'purge': False,
             },
-            files=None,
+            files={},
             timeout=constants.Base.timeout.value
         )

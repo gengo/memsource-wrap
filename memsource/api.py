@@ -725,7 +725,7 @@ class Analysis(BaseApi):
             'jobPart': job_part_ids,
         }))
 
-    def delete(self,analysis_id: int, purge: bool=False) -> None:
+    def delete(self, analysis_id: int, purge: bool=False) -> None:
         self._post('analyse/delete', {
             'analyse': analysis_id,
             'purge': purge,

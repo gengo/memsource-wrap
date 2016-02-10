@@ -68,7 +68,8 @@ class TestApiAnalysis(api_test.ApiTestCase):
             params={
                 'token': self.analysis.token,
                 'analyse': analysis_id,
+                'purge': False,
             },
-            files=None,
+            files={},
             timeout=constants.Base.timeout.value
         )
