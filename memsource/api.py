@@ -533,7 +533,8 @@ class TranslationMemory(BaseApi):
             *,
             next_segment: str=None,
             previous_segment: str=None,
-            score_threshold: float=0.6
+            score_threshold: float=0.6,
+            **kwargs
     ) -> typing.List[models.SegmentSearchResult]:
         """Get translation matches.
 
@@ -542,14 +543,16 @@ class TranslationMemory(BaseApi):
         :param next_segment: Effect for 101% match
         :param previous_segment: Effect for 101% match
         :param score_threshold: return only high score than this value
+        :param kwargs: See the Memsource official document
+        http://wiki.memsource.com/wiki/Translation_Memory_API_v4#Search_Segment_By_Task
 
         :return: list of models.SegmentSearchResult
         """
-        parameters = {
+        parameters = dict(kwargs, **{
             'task': task,
             'segment': segment,
             'scoreThreshold': score_threshold,
-        }
+        })
         if next_segment is not None:
             parameters['nextSegment'] = next_segment
 
