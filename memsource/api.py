@@ -548,11 +548,7 @@ class TranslationMemory(BaseApi):
 
         :return: list of models.SegmentSearchResult
         """
-        parameters = dict(kwargs, **{
-            'task': task,
-            'segment': segment,
-            'scoreThreshold': score_threshold,
-        })
+        parameters = dict(kwargs, task=task, segment=segment, scoreThreshold=score_threshold)
         if next_segment is not None:
             parameters['nextSegment'] = next_segment
 
