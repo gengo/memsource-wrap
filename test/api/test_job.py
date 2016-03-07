@@ -9,7 +9,7 @@ import api as api_test
 
 class TestApiJob(api_test.ApiTestCase):
     def setUp(self):
-        self.url_base = 'https://cloud.memsource.com/web/api/v6/job'
+        self.url_base = 'https://cloud.memsource.com/web/api/v7/job'
         self.job = api.Job(None)
         self.test_file_path = '/tmp/test_file.txt'
         self.test_file_uuid1_name = 'test-file-uuid1'
@@ -254,7 +254,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
-            'https://cloud.memsource.com/web/api/v6/job/getBilingualFile',
+            'https://cloud.memsource.com/web/api/v7/job/getBilingualFile',
             params={
                 'token': self.job.token,
                 'jobPart': job_part_ids,
@@ -281,7 +281,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
-            'https://cloud.memsource.com/web/api/v6/job/getBilingualFile',
+            'https://cloud.memsource.com/web/api/v7/job/getBilingualFile',
             params={
                 'token': self.job.token,
                 'jobPart': job_part_ids,
@@ -334,7 +334,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
-            'https://cloud.memsource.com/web/api/v6/job/getBilingualFile',
+            'https://cloud.memsource.com/web/api/v7/job/getBilingualFile',
             params={
                 'token': self.job.token,
                 'jobPart': job_part_ids,
@@ -377,7 +377,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
-            'https://cloud.memsource.com/web/api/v6/job/getSegments',
+            'https://cloud.memsource.com/web/api/v7/job/getSegments',
             params={
                 'token': self.job.token,
                 'task': task,
@@ -405,7 +405,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
-            'https://cloud.memsource.com/web/api/v6/job/uploadBilingualFile',
+            'https://cloud.memsource.com/web/api/v7/job/uploadBilingualFile',
             params={
                 'token': self.job.token,
             },
@@ -427,7 +427,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
-            'https://cloud.memsource.com/web/api/v6/job/getCompletedFile',
+            'https://cloud.memsource.com/web/api/v7/job/getCompletedFile',
             params={
                 'token': self.job.token,
                 'jobPart': job_part_ids,

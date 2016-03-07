@@ -10,7 +10,7 @@ class ApiVersion(enum.Enum):
     v2 = 'v2'
     v3 = 'v3'
     v4 = 'v4'
-    v6 = 'v6'
+    v7 = 'v7'
 
 
 class HttpMethod(enum.Enum):
