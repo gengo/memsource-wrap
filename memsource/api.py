@@ -315,9 +315,9 @@ class Project(BaseApi):
 
 class Job(BaseApi):
     """
-    You can see the document http://wiki.memsource.com/wiki/Job_API_v6
+    You can see the document http://wiki.memsource.com/wiki/Job_API_v7
     """
-    api_version = constants.ApiVersion.v6
+    api_version = constants.ApiVersion.v7
 
     def create(self, project_id: int, file_path: str, target_langs):
         """
