@@ -26,9 +26,9 @@ Examples
 
 ::
 
-    import memsource
+    import memsource.memsource
 
-    m = memsource.Memsource(user_name='your user name', password='your password')
+    m = memsource.memsource.Memsource(user_name='your user name', password='your password')
     print(m.client.create('test client'))
     # will return id of the client
 
@@ -36,8 +36,8 @@ If you already have token, you can omit user_name and password. In this case, th
 
 ::
 
-    import memsource
+    import memsource.memsource
 
-    m = memsource.Memsource(token='your token')
+    m = memsource.memsource.Memsource(token='your token')
     print(m.client.create('test client'))
     # will return id of the client
