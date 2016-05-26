@@ -567,7 +567,8 @@ class TranslationMemory(BaseApi):
             translation_memory_id: {'translation memory id for target of exporitng data': int},
             file_format: {'Export data file format': str},
             target_langs: {'You can use list for multi target_lang.': (list, tuple, str)},
-            file_path: {'Save exported data to this file path': str}
+            file_path: {'Save exported data to this file path': str},
+            chunk_size: {'byte size of chunk for response data': int}=1024,
     ) -> None:
         """
         Get translation memory exported data
@@ -579,7 +580,7 @@ class TranslationMemory(BaseApi):
         }
         with open(file_path, 'wb') as f:
             [f.write(chunk) for chunk in
-                self._get_stream('transMemory/export', params).iter_content(1024)]
+                self._get_stream('transMemory/export', params).iter_content(chunk_size)]
 
     def insert(self, translation_memory_id, target_lang, source_segment, target_segment,
                previous_source_segment=None, next_source_segment=None):
