@@ -264,7 +264,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
     def test_export(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
-        translation_memory_id = self.gen_random_int()
+        translation_memory_id = 2
         target_langs = ['ja']
         file_format = 'tmx'
 
