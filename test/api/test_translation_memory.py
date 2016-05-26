@@ -271,7 +271,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         target_langs = ANY_LCS
         file_format = 'tmx'
 
-        tmx_contents = ['test tmx content', 'second']
+        tmx_contents = ['test first chunk', 'second chunk']
         mock_request().iter_content.return_value = [
             bytes(content, 'utf-8') for content in tmx_contents]
 
