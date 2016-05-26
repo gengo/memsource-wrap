@@ -269,7 +269,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
 
         translation_memory_id = ANY_ID
         target_langs = ANY_LCS
-        file_format = 'tmx'
+        file_format = 'TMX'
 
         tmx_contents = ['test first chunk', 'second chunk']
         mock_request().iter_content.return_value = [

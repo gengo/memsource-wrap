@@ -565,9 +565,9 @@ class TranslationMemory(BaseApi):
     def export(
             self,
             translation_memory_id: {'translation memory id for target of exporitng data': int},
-            file_format: {'Export data file format': str},
             target_langs: {'You can use list for multi target_lang.': (list, tuple, str)},
             file_path: {'Save exported data to this file path': str},
+            file_format: {'Export data file format': str}='TMX',
             chunk_size: {'byte size of chunk for response data': int}=1024,
     ) -> None:
         """
