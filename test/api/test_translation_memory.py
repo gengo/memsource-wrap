@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch, PropertyMock
 from memsource import api, constants, models
 import requests
