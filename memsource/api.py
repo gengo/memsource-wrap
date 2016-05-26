@@ -6,6 +6,8 @@ import types
 import typing
 import uuid
 
+from typing import List
+
 import requests
 
 from memsource import constants, exceptions, models
@@ -606,6 +608,21 @@ class TranslationMemory(BaseApi):
             params['nextSourceSegment'] = next_source_segment
 
         self._post('transMemory/insert', params)
+
+    def deleteSourceAndTranslations(
+            self, translation_memory_id: int, segment_ids: List[str]) -> None:
+        """Delete segments from a translation memory.
+
+        :param translation_memory_id: Delete the segments from this translation
+        memory.
+        :param segment_ids: Delete these segments from the translation memory.
+        You cannot pass more than 1000 ids one time.
+        """
+        assert 1000 > len(segment_ids), "You cannot pass more than 1000 ids one time."
+        self._post('transMemory/deleteSourceAndTranslations', {
+            'transMemory': translation_memory_id,
+            'segmentId': segment_ids
+        })
 
 
 class Asynchronous(BaseApi):

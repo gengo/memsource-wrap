@@ -1,8 +1,11 @@
 import os
 from unittest.mock import patch, PropertyMock
-from memsource import api, constants, models
+import urllib.request
+
 import requests
+
 import api as api_test
+from memsource import api, constants, models
 
 
 class TestApiTranslationMemory(api_test.ApiTestCase):
@@ -296,4 +299,24 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             files={},
             timeout=constants.Base.timeout.value * 5,
             stream=True
+        )
+
+    @patch.object(requests.Session, 'request')
+    def test_delete_source_and_translations(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        translation_memory_id = 1
+        segment_ids = ['2', '3']
+
+        self.translation_memory.deleteSourceAndTranslations(translation_memory_id, segment_ids)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            urllib.request.urljoin(self.url_base, "transMemory/deleteSourceAndTranslations"),
+            params={
+                'token': self.translation_memory.token,
+                'transMemory': translation_memory_id,
+                'segmentId': segment_ids
+            },
+            files={},
+            timeout=constants.Base.timeout.value
         )
