@@ -10,6 +10,7 @@ from memsource import api, constants, models
 ANY_ID = 1
 ANY_LCS = ['en', 'ja']
 
+
 class TestApiTranslationMemory(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v4/transMemory'

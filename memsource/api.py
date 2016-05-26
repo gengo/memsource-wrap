@@ -10,7 +10,6 @@ from typing import List
 
 import requests
 
-
 from memsource import constants, exceptions, models
 from memsource.lib import mxliff
 
