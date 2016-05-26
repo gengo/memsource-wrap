@@ -7,6 +7,8 @@ import requests
 import api as api_test
 from memsource import api, constants, models
 
+ANY_ID = 1
+ANY_LCS = ['en', 'ja']
 
 class TestApiTranslationMemory(api_test.ApiTestCase):
     def setUp(self):
@@ -264,8 +266,8 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
     def test_export(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 
-        translation_memory_id = 2
-        target_langs = ['ja']
+        translation_memory_id = ANY_ID
+        target_langs = ANY_LCS
         file_format = 'tmx'
 
         tmx_contents = ['test tmx content', 'second']
