@@ -562,18 +562,18 @@ class TranslationMemory(BaseApi):
 
     def export(
             self,
-            trans_memory: {'': dict},
+            translation_memory_id: {'translation memory id for target of exporitng data': int},
             file_format: {'Export data file format': str},
-            target_lang: {'Translation target languages': (list, tuple, str)},
+            target_langs: {'You can use list for multi target_lang.': (list, tuple, str)},
             file_path: {'Save exported data to this file path': str}
     ) -> None:
         """
         Get translation memory exported data
         """
         params = {
-            'transMemory': trans_memory,
+            'transMemory': translation_memory_id,
             'format': file_format,
-            'targetLang': target_lang,
+            'targetLang': target_langs,
         }
         with open(file_path, 'wb') as f:
             [f.write(chunk) for chunk in

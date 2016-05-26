@@ -254,3 +254,44 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             files={},
             timeout=constants.Base.timeout.value
         )
+
+    @patch.object(requests.Session, 'request')
+    def test_export(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        translation_memory_id = self.gen_random_int()
+        target_langs = ['ja']
+        file_format = 'tmx'
+
+        tmx_contents = ['test tmx content', 'second']
+        mock_request().iter_content.return_value = [
+            bytes(content, 'utf-8') for content in tmx_contents]
+
+        self.assertFalse(os.path.isfile(self.test_tmx_file_path))
+
+        returned_value = self.translation_memory.export(
+            token=self.translation_memory.token,
+            trans_memory=translation_memory_id,
+            file_format=file_format,
+            target_langs=target_langs,
+            file_path=self.test_tmx_file_path
+        )
+        self.assertTrue(os.path.isfile(self.test_tmx_file_path))
+
+        self.assertIsNone(returned_value)
+
+        with open(self.test_tmx_file_path) as f:
+            self.assertEqual(''.join(tmx_contents), f.read())
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            "{}/insert".format(self.url_base),
+            params={
+                'token': self.translation_memory.token,
+                'transMemory': translation_memory_id,
+                'targetLang': target_langs,
+            },
+            files={},
+            timeout=constants.Base.timeout.value * 5,
+            stream=True
+        )
