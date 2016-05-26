@@ -560,6 +560,25 @@ class TranslationMemory(BaseApi):
             for item in self._post('transMemory/searchSegmentByTask', parameters)
         ]
 
+    def export(
+            self,
+            trans_memory: {'': dict},
+            file_format: {'Export data file format': str},
+            target_lang: {'Translation target languages': (list, tuple, str)},
+            file_path: {'Save exported data to this file path': str}
+    ) -> None:
+        """
+        Get translation memory exported data
+        """
+        params = {
+            'transMemory': trans_memory,
+            'format': file_format,
+            'targetLang': target_lang,
+        }
+        with open(file_path, 'wb') as f:
+            [f.write(chunk) for chunk in
+                self._get_stream('transMemory/export', params).iter_content(1024)]
+
     def insert(self, translation_memory_id, target_lang, source_segment, target_segment,
                previous_source_segment=None, next_source_segment=None):
         """
