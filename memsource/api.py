@@ -499,10 +499,10 @@ class TranslationMemory(BaseApi):
             'targetLang': target_langs,
         })['id']
 
-    def list(self, page_id=0):
+    def list(self, page=0):
         return [
             models.TranslationMemory(translation_memory)
-            for translation_memory in self._post('transMemory/list', {'page': page_id})
+            for translation_memory in self._post('transMemory/list', {'page': page})
         ]
 
     def _upload(self, translation_memory_id: int, files: dict) -> int:
