@@ -69,10 +69,58 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             '{}/list'.format(self.url_base),
             params={
                 'token': self.translation_memory.token,
+                'page': 0
             },
             files={},
             timeout=constants.Base.timeout.value
         )
+
+
+    @patch.object(requests.Session, 'request')
+    def test_list_with_page_id(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = [{
+            'id': 1,
+            'targetLangs': [
+                'ja'
+            ],
+            'sourceLang': 'en',
+            'name': 'transMem'
+        }]
+        EXISTING_PAGE_ID = 1
+        for translation_memory in self.translation_memory.list(EXISTING_PAGE_ID):
+            self.assertIsInstance(translation_memory, models.TranslationMemory)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/list'.format(self.url_base),
+            params={
+                'token': self.translation_memory.token,
+                'page': EXISTING_PAGE_ID
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests.Session, 'request')
+    def test_list_with_EMPTY_PAGE_ID(self, mock_request):
+
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = []
+        EMPTY_PAGE_ID = 1
+        self.assertEqual(0, len(self.translation_memory(EMPTY_PAGE_ID)))
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/list'.format(self.url_base),
+            params={
+                'token': self.translation_memory.token,
+                'page': EMPTY_PAGE_ID
+            },
+            files={},
+            timeout=constants.Base.timeout.value
+        )
+
 
     @patch.object(requests.Session, 'request')
     def test_upload(self, mock_request):
