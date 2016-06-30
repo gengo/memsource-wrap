@@ -75,7 +75,6 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value
         )
 
-
     @patch.object(requests.Session, 'request')
     def test_list_with_page_id(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
@@ -120,7 +119,6 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             files={},
             timeout=constants.Base.timeout.value
         )
-
 
     @patch.object(requests.Session, 'request')
     def test_upload(self, mock_request):
