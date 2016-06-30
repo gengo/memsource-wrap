@@ -108,7 +108,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = []
         EMPTY_PAGE_ID = 1
-        self.assertEqual(0, len(self.translation_memory(EMPTY_PAGE_ID)))
+        self.assertEqual(0, len(self.translation_memory.list(EMPTY_PAGE_ID)))
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
