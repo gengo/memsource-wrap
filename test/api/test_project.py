@@ -5,7 +5,7 @@ import datetime
 import api as api_test
 
 
-class TestApiDomain(api_test.ApiTestCase):
+class TestApiProject(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v3/project'
         self.project = api.Project(None)
@@ -32,7 +32,7 @@ class TestApiDomain(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/create'.format(self.url_base),
-            params={
+            data={
                 'token': self.project.token,
                 'name': name,
                 'sourceLang': source_lang,
@@ -40,7 +40,6 @@ class TestApiDomain(api_test.ApiTestCase):
                 'client': client,
                 'domain': domain,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -78,10 +77,9 @@ class TestApiDomain(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
-            params={
+            data={
                 'token': self.project.token,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -109,11 +107,10 @@ class TestApiDomain(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/getTransMemories'.format(self.url_base),
-            params={
+            data={
                 'token': self.project.token,
                 'project': project_id
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -133,11 +130,10 @@ class TestApiDomain(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/setTransMemories'.format(self.url_base),
-            params={
+            data={
                 'token': self.project.token,
                 'project': project_id
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -154,7 +150,7 @@ class TestApiDomain(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/setTransMemories'.format(self.url_base),
-            params={
+            data={
                 'token': self.project.token,
                 'project': project_id,
                 'readTransMemory': read_trans_memory_ids,
@@ -162,6 +158,5 @@ class TestApiDomain(api_test.ApiTestCase):
                 'penalty': penalties,
                 'targetLang': target_lang,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )

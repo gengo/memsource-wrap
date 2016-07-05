@@ -66,7 +66,7 @@ class TestApiJob(api_test.ApiTestCase):
             (constants.HttpMethod.post.value, '{}/create'.format(self.url_base)), called_args)
 
         self.assertEqual({
-            'params': {
+            'data': {
                 'token': self.job.token,
                 'project': project_id,
                 'targetLang': target_lang,
@@ -116,7 +116,7 @@ class TestApiJob(api_test.ApiTestCase):
             (constants.HttpMethod.post.value, '{}/create'.format(self.url_base)), called_args)
 
         self.assertEqual({
-            'params': {
+            'data': {
                 'token': self.job.token,
                 'project': project_id,
                 'targetLang': target_lang,
@@ -203,11 +203,10 @@ class TestApiJob(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/listByProject'.format(self.url_base),
-            params={
+            data={
                 'token': self.job.token,
                 'project': project_id
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -224,11 +223,10 @@ class TestApiJob(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/preTranslate'.format(self.url_base),
-            params={
+            data={
                 'token': self.job.token,
                 'jobPart': job_part_ids
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -260,7 +258,6 @@ class TestApiJob(api_test.ApiTestCase):
                 'token': self.job.token,
                 'jobPart': job_part_ids,
             },
-            files={},
             timeout=constants.Base.timeout.value * 5,
             stream=True
         )
@@ -287,7 +284,6 @@ class TestApiJob(api_test.ApiTestCase):
                 'token': self.job.token,
                 'jobPart': job_part_ids,
             },
-            files={},
             timeout=constants.Base.timeout.value * 5,
             stream=True
         )
@@ -340,7 +336,6 @@ class TestApiJob(api_test.ApiTestCase):
                 'token': self.job.token,
                 'jobPart': job_part_ids,
             },
-            files={},
             timeout=constants.Base.timeout.value * 5,
             stream=True
         )
@@ -379,13 +374,12 @@ class TestApiJob(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "{}/getSegments".format(self.url_base),
-            params={
+            data={
                 'token': self.job.token,
                 'task': task,
                 'beginIndex': begin_index,
                 'endIndex': end_index,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -407,7 +401,7 @@ class TestApiJob(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "{}/uploadBilingualFile".format(self.url_base),
-            params={
+            data={
                 'token': self.job.token,
             },
             files={'bilingualFile': ('{}.mxliff'.format(self.test_file_uuid1_name), xml)},
@@ -433,7 +427,6 @@ class TestApiJob(api_test.ApiTestCase):
                 'token': self.job.token,
                 'jobPart': job_part_ids,
             },
-            files={},
             timeout=constants.Base.timeout.value * 5,
             stream=True
         )
@@ -453,7 +446,6 @@ class TestApiJob(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             '{}/get'.format(self.url_base),
-            files=None,
             params={
                 'token': self.job.token,
                 'jobPart': job_part_id
@@ -478,7 +470,6 @@ class TestApiJob(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             '{}/list'.format(self.url_base),
-            files=None,
             params={
                 'token': self.job.token,
                 'jobPart': job_part_ids
@@ -500,11 +491,10 @@ class TestApiJob(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/delete'.format(self.url_base),
-            params={
+            data={
                 'token': self.job.token,
                 'jobPart': job_part_id,
                 'purge': False,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )

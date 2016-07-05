@@ -15,11 +15,10 @@ class TestApiClient(unittest.TestCase):
             mock_request.assert_called_with(
                 constants.HttpMethod.post.value,
                 '{}/create'.format(self.url_base),
-                params={
+                data={
                     'token': self.client.token,
                     'name': client
                 },
-                files={},
                 timeout=constants.Base.timeout.value
             )
 
@@ -41,11 +40,10 @@ class TestApiClient(unittest.TestCase):
             mock_request.assert_called_with(
                 constants.HttpMethod.post.value,
                 '{}/get'.format(self.url_base),
-                params={
+                data={
                     'token': self.client.token,
                     'client': client
                 },
-                files={},
                 timeout=constants.Base.timeout.value
             )
 
@@ -81,11 +79,10 @@ class TestApiClient(unittest.TestCase):
             mock_request.assert_called_with(
                 constants.HttpMethod.post.value,
                 '{}/list'.format(self.url_base),
-                params={
+                data={
                     'token': self.client.token,
                     'page': 0
                 },
-                files={},
                 timeout=constants.Base.timeout.value
             )
 

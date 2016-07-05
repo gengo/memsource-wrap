@@ -67,13 +67,12 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/async/v2/job/preTranslate',
-            params={
+            data={
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
                 'translationMemoryThreshold': 0.7,
                 'callbackUrl': None,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -110,13 +109,12 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/async/v2/job/preTranslate',
-            params={
+            data={
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
                 'translationMemoryThreshold': 0.7,
                 'callbackUrl': callback_url,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -149,11 +147,10 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/v2/async/getAsyncRequest',
-            params={
+            data={
                 'token': self.asynchronous.token,
                 'asyncRequest': asynchronous_request_id,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -194,12 +191,11 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/async/v2/analyse/create',
-            params={
+            data={
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
                 'callbackUrl': None
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -245,12 +241,11 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/async/v2/analyse/create',
-            params={
+            data={
                 'token': self.asynchronous.token,
                 'jobPart': job_part_ids,
                 'callbackUrl': callback_url,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -295,7 +290,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/async/v2/job/create',
-            params={
+            data={
                 'token': self.asynchronous.token,
                 'project': project_id,
                 'targetLang': target_lang,
@@ -351,7 +346,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/async/v2/job/create',
-            params={
+            data={
                 'token': self.asynchronous.token,
                 'project': project_id,
                 'targetLang': target_lang,

@@ -39,13 +39,12 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/create'.format(self.url_base),
-            params={
+            data={
                 'token': self.translation_memory.token,
                 'name': name,
                 'sourceLang': source_lang,
                 'targetLang': target_langs,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -67,11 +66,10 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
-            params={
+            data={
                 'token': self.translation_memory.token,
                 'page': 0
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -93,11 +91,10 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
-            params={
+            data={
                 'token': self.translation_memory.token,
                 'page': EXISTING_PAGE_ID
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -112,11 +109,10 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
-            params={
+            data={
                 'token': self.translation_memory.token,
                 'page': EMPTY_PAGE_ID
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -140,7 +136,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             (constants.HttpMethod.post.value, '{}/import'.format(self.url_base)), called_args)
 
         self.assertEqual({
-            'params': {
+            'data': {
                 'token': self.translation_memory.token,
                 'transMemory': translation_memory_id,
             },
@@ -168,7 +164,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             (constants.HttpMethod.post.value, '{}/import'.format(self.url_base)), called_args)
 
         self.assertEqual({
-            'params': {
+            'data': {
                 'token': self.translation_memory.token,
                 'transMemory': translation_memory_id,
             },
@@ -258,7 +254,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/v4/transMemory/searchSegmentByTask',
-            params={
+            data={
                 'token': self.translation_memory.token,
                 'task': task,
                 'segment': segment,
@@ -266,7 +262,6 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
                 'previousSegment': previous_segment,
                 'scoreThreshold': 0.6,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -296,7 +291,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             'https://cloud.memsource.com/web/api/v4/transMemory/insert',
-            params={
+            data={
                 'token': self.translation_memory.token,
                 'transMemory': translation_memory_id,
                 'targetLang': target_lang,
@@ -305,7 +300,6 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
                 'previousSourceSegment': previous_source_segment,
                 'nextSourceSegment': next_source_segment
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -345,7 +339,6 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
                 'format': file_format,
                 'targetLang': target_langs,
             },
-            files={},
             timeout=constants.Base.timeout.value * 5,
             stream=True
         )
@@ -361,11 +354,10 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             urllib.request.urljoin(self.url_base, "transMemory/deleteSourceAndTranslations"),
-            params={
+            data={
                 'token': self.translation_memory.token,
                 'transMemory': translation_memory_id,
                 'segmentId': segment_ids
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
