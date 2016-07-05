@@ -27,7 +27,6 @@ class TestApiAnalysis(api_test.ApiTestCase):
                 'token': self.analysis.token,
                 'analyse': analysis_id,
             },
-            files=None,
             timeout=constants.Base.timeout.value
         )
 
@@ -45,11 +44,10 @@ class TestApiAnalysis(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/create'.format(self.url_base),
-            params={
+            data={
                 'token': self.analysis.token,
                 'jobPart': job_part_ids,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 
@@ -65,11 +63,10 @@ class TestApiAnalysis(api_test.ApiTestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             '{}/delete'.format(self.url_base),
-            params={
+            data={
                 'token': self.analysis.token,
                 'analyse': analysis_id,
                 'purge': False,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )

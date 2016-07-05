@@ -30,12 +30,11 @@ class TestMemsource(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             self.url_base,
-            params={
+            data={
                 'userName': username,
                 'password': password,
                 'token': None,
             },
-            files={},
             timeout=constants.Base.timeout.value
         )
 

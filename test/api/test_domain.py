@@ -15,11 +15,10 @@ class TestApiDomain(unittest.TestCase):
             mock_request.assert_called_with(
                 constants.HttpMethod.post.value,
                 '{}/create'.format(self.url_base),
-                params={
+                data={
                     'token': self.domain.token,
                     'name': domain
                 },
-                files={},
                 timeout=constants.Base.timeout.value
             )
 
@@ -41,11 +40,10 @@ class TestApiDomain(unittest.TestCase):
             mock_request.assert_called_with(
                 constants.HttpMethod.post.value,
                 '{}/get'.format(self.url_base),
-                params={
+                data={
                     'token': self.domain.token,
                     'domain': domain
                 },
-                files={},
                 timeout=constants.Base.timeout.value
             )
 
@@ -67,11 +65,10 @@ class TestApiDomain(unittest.TestCase):
             mock_request.assert_called_with(
                 constants.HttpMethod.post.value,
                 '{}/list'.format(self.url_base),
-                params={
+                data={
                     'token': self.domain.token,
                     'page': 0
                 },
-                files={},
                 timeout=constants.Base.timeout.value
             )
 

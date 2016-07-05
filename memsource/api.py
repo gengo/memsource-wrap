@@ -48,13 +48,14 @@ class BaseApi(object):
     def _get(
             self, path: str, params: dict={}, *, timeout: int=constants.Base.timeout.value
     ) -> str:
-        return self._request(constants.HttpMethod.get, path, None, params, timeout)
+        return self._request(constants.HttpMethod.get, path,
+                             files=None, params=params, data=None, timeout=timeout)
 
     def _post(
             self,
             path: {'Send request to this path': str},
-            params: {'Send request with this parameters': dict},
-            files: {'Upload this files. Key is filename, value is file object': dict}={},
+            data: {'Send request with this parameters': dict}=None,
+            files: {'Upload this files. Key is filename, value is file object': dict}=None,
             timeout: {
                 'When takes over this time in one request, raise timeout': (int, float)
             }=constants.Base.timeout.value
@@ -63,13 +64,14 @@ class BaseApi(object):
         If you want to raw response, you can use _get_stream method.
         TODO: implements _post_stream.
         """
-        return self._request(constants.HttpMethod.post, path, files, params, timeout)
+        return self._request(constants.HttpMethod.post, path,
+                             files=files, params=None, data=data, timeout=timeout)
 
     def _get_stream(
             self,
             path: {'Send request to this path': str},
             params: {'Send request with this parameters': dict},
-            files: {'Upload this files. Key is filename, value is file object': dict}={},
+            files: {'Upload this files. Key is filename, value is file object': dict}=None,
             timeout: {
                 'When takes over this time in one request, raise timeout': (int, float)
             }=constants.Base.timeout.value * 5
@@ -81,7 +83,7 @@ class BaseApi(object):
         We can switch response by value of stream, but it is not good, I think,
         because type of returning value is only one is easy to use, easy to understand.
         """
-        return self._request_stream(constants.HttpMethod.get, path, files, params, timeout)
+        return self._request_stream(constants.HttpMethod.get, path, files, params, None, timeout)
 
     def _pre_request(
             self,
@@ -109,12 +111,22 @@ class BaseApi(object):
             path: {'Send request with this parameters': dict},
             files: {'Upload this files. Key is filename, value is file object': dict},
             params: {'Send request with this parameters': dict},
+            data: {'Send request with this data': dict},
             timeout: {'When takes over this time in one request, raise timeout': (int, float)}
     ) -> requests.models.Response:
-        (url, params_with_token) = self._pre_request(path, params)
+        if params:
+            (url, params) = self._pre_request(path, params)
+        else:
+            (url, data) = self._pre_request(path, data)
+
+        arguments = {
+            key: value for key, value in [
+                ('files', files), ('params', params), ('data', data)
+            ] if value is not None
+        }
 
         return self._get_response(
-            http_method, url, params=params_with_token, files=files, timeout=timeout, stream=True)
+            http_method, url, timeout=timeout, stream=True, **arguments)
 
     def _get_response(
             self,
@@ -157,13 +169,22 @@ class BaseApi(object):
             path: {'Send request with this parameters': dict},
             files: {'Upload this files. Key is filename, value is file object': dict},
             params: {'Send request with this parameters': dict},
+            data: {'Send request with this data': dict},
             timeout: {'When takes over this time in one request, raise timeout': (int, float)}
     ) -> {'Parsed esponse body as JSON': dict}:
-        (url, params_with_token) = self._pre_request(path, params)
+        if params:
+            (url, params) = self._pre_request(path, params)
+        else:
+            (url, data) = self._pre_request(path, data)
+
+        arguments = {
+            key: value for key, value in [
+                ('files', files), ('params', params), ('data', data)
+            ] if value is not None
+        }
 
         # If it is successful, returns response json
-        return self._get_response(
-            http_method, url, params=params_with_token, files=files, timeout=timeout).json()
+        return self._get_response(http_method, url, timeout=timeout, **arguments).json()
 
     @staticmethod
     def is_success(status_code: {int}):
@@ -619,7 +640,7 @@ class TranslationMemory(BaseApi):
         :param segment_ids: Delete these segments from the translation memory.
         You cannot pass more than 1000 ids one time.
         """
-        assert 1000 > len(segment_ids), "You cannot pass more than 1000 ids one time."
+        assert 1000 >= len(segment_ids), "You cannot pass more than 1000 ids one time."
         self._post('transMemory/deleteSourceAndTranslations', {
             'transMemory': translation_memory_id,
             'segmentId': segment_ids
