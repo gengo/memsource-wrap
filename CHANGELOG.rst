@@ -3,6 +3,14 @@ Change Log
 ==========
 All notable changes to this project will be documented in this file. Dates are in UTC.
 
+Unreleased
+==========
+
+Fixed
+=====
+
+- Cancel fixed external libraries version.
+
 [0.3.0] - 2016-07-05
 ====================
 
