@@ -10,6 +10,7 @@ Fixed
 =====
 
 - Cancel fixed external libraries version.
+- Standardize method comment style.
 
 [0.3.0] - 2016-07-05
 ====================
