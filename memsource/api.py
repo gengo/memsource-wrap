@@ -3,10 +3,14 @@ import os
 import os.path
 import shutil
 import types
-import typing
 import uuid
 
-from typing import List
+from typing import (
+    Iterator,
+    List,
+    Tuple,
+    Union,
+)
 
 import requests
 
@@ -14,15 +18,18 @@ from memsource import constants, exceptions, models
 from memsource.lib import mxliff
 
 
-__all__ = ('Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
-           'Analysis')
+__all__ = ['Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
+           'Analysis']
 
 
-class BaseApi(object):
+class BaseApi:
     _session = requests.Session()
 
-    """Inheriting classes must have the api_version attribute"""
-    def __init__(self, token: {'Authentication token for using APIs': str}):
+    def __init__(self, token: str) -> None:
+        """Inheriting classes must have the api_version attribute
+
+        :param token: Authentication token for using APIs
+        """
         if not hasattr(self, 'api_version'):
             # This exception is for development this library.
             raise NotImplementedError(
@@ -31,7 +38,7 @@ class BaseApi(object):
         self.token = token
 
     @classmethod
-    def use_session(cls, session: requests.Session):
+    def use_session(cls, session: requests.Session) -> None:
         """
         Configures the session object which is used for API invocation.
 
@@ -51,47 +58,47 @@ class BaseApi(object):
         return self._request(constants.HttpMethod.get, path,
                              files=None, params=params, data=None, timeout=timeout)
 
-    def _post(
-            self,
-            path: {'Send request to this path': str},
-            data: {'Send request with this parameters': dict}=None,
-            files: {'Upload this files. Key is filename, value is file object': dict}=None,
-            timeout: {
-                'When takes over this time in one request, raise timeout': (int, float)
-            }=constants.Base.timeout.value
-    ) -> {'Reponse body': dict}:
-        """
+    def _post(self, path: str, data: dict=None, files: dict=None,
+              timeout: Union[int, float]=constants.Base.timeout.value) -> dict:
+        """Send a post request.
+
         If you want to raw response, you can use _get_stream method.
-        TODO: implements _post_stream.
+
+        :param path: Send request to this path
+        :param data: Send request with this parameters
+        :param files: Upload this files. Key is filename, value is file object
+        :param timeout: When takes over this time in one request, raise timeout
+        :return: parsed response body as JSON
         """
         return self._request(constants.HttpMethod.post, path,
                              files=files, params=None, data=data, timeout=timeout)
 
     def _get_stream(
-            self,
-            path: {'Send request to this path': str},
-            params: {'Send request with this parameters': dict},
-            files: {'Upload this files. Key is filename, value is file object': dict}=None,
-            timeout: {
-                'When takes over this time in one request, raise timeout': (int, float)
-            }=constants.Base.timeout.value * 5
-    ) -> 'Response object of Requests library':
+            self, path: str, params: dict, files: dict=None,
+            timeout: Union[int, float]=constants.Base.timeout.value * 5
+    ) -> requests.models.Response:
         """
         This method returns response object of requests library,
         because XML parse or save to file or etc are different will call different method.
 
         We can switch response by value of stream, but it is not good, I think,
         because type of returning value is only one is easy to use, easy to understand.
+
+        :param path: Send request to this path
+        :param params: Send request with this parameters
+        :param files: Upload this files. Key is filename, value is file object
+        :param timeout: When takes over this time in one request, raise timeout
+        :return: Response object of Requests library
         """
         return self._request_stream(constants.HttpMethod.get, path, files, params, None, timeout)
 
-    def _pre_request(
-            self,
-            path: {'{api_name}/{method}': str},
-            params: {'Insert token in this dict.': dict}
-    ) -> (str, dict):
-        """
-        Create request url and extend param with token for authentication.
+    def _pre_request(self, path: str, params: dict) -> Tuple[str, dict]:
+        """Create request url and extend param with token for authentication.
+
+        :param path: API path with this format ({api_name}/{method})
+        :param params: Insert token in this dict
+
+        :return: Tuple of URL and params with token.
         """
         url = self._make_url(
             base=constants.Base.url.value,
@@ -106,14 +113,19 @@ class BaseApi(object):
         return (url, params, )
 
     def _request_stream(
-            self,
-            http_method: {constants.HttpMethod, 'Use this http method'},
-            path: {'Send request with this parameters': dict},
-            files: {'Upload this files. Key is filename, value is file object': dict},
-            params: {'Send request with this parameters': dict},
-            data: {'Send request with this data': dict},
-            timeout: {'When takes over this time in one request, raise timeout': (int, float)}
+            self, http_method: constants.HttpMethod, path: dict, files: dict,
+            params: dict, data: dict, timeout: Tuple[int, float]
     ) -> requests.models.Response:
+        """Send a stream request.
+
+        :param http_method: Use this http method
+        :param path: Send request with this parameters
+        :param files: Upload this files. Key is filename, value is file object
+        :param params: Send request with this parameters
+        :param data: Send request with this data
+        :param timeout: When takes over this time in one request, raise timeout
+        :return: response of request module
+        """
         if params:
             (url, params) = self._pre_request(path, params)
         else:
@@ -125,15 +137,18 @@ class BaseApi(object):
             ] if value is not None
         }
 
-        return self._get_response(
-            http_method, url, timeout=timeout, stream=True, **arguments)
+        return self._get_response(http_method, url, timeout=timeout, stream=True, **arguments)
 
     def _get_response(
-            self,
-            http_method: {'Use this http method': constants.HttpMethod},
-            url: {'access to this url': str},
-            **kwargs
+            self, http_method: constants.HttpMethod, url: str, **kwargs
     ) -> requests.models.Response:
+        """Request with error handling.
+
+        :param http_method: Use this http method
+        :param url: access to this url
+        :param kwargs: optional parameters
+        :return: response of request module
+        """
         try:
             response = self._session.request(http_method.value, url, **kwargs)
         except requests.exceptions.Timeout:
@@ -163,15 +178,17 @@ class BaseApi(object):
         raise exceptions.MemsourceApiException(
             response.status_code, result_json, self.last_url, self.last_params)
 
-    def _request(
-            self,
-            http_method: {constants.HttpMethod, 'Use this http method'},
-            path: {'Send request with this parameters': dict},
-            files: {'Upload this files. Key is filename, value is file object': dict},
-            params: {'Send request with this parameters': dict},
-            data: {'Send request with this data': dict},
-            timeout: {'When takes over this time in one request, raise timeout': (int, float)}
-    ) -> {'Parsed esponse body as JSON': dict}:
+    def _request(self, http_method: constants.HttpMethod, path: str, files: dict, params: dict,
+                 data: dict, timeout: Tuple[int, float]) -> dict:
+        """Send a http request.
+
+        :param http_method: Use this http method
+        :param path: Send request to this path
+        :param data: Send request with this parameters
+        :param files: Upload this files. Key is filename, value is file object
+        :param timeout: When takes over this time in one request, raise timeout
+        :return: parsed response body as JSON
+        """
         if params:
             (url, params) = self._pre_request(path, params)
         else:
@@ -194,9 +211,9 @@ class BaseApi(object):
 
 
 class Auth(BaseApi):
+    """You can see the document http://wiki.memsource.com/wiki/Authentication_API_v3
     """
-    You can see the document http://wiki.memsource.com/wiki/Authentication_API_v3
-    """
+
     api_version = constants.ApiVersion.v3
 
     def __init__(self, token=None):
@@ -214,9 +231,9 @@ class Auth(BaseApi):
 
 
 class Client(BaseApi):
+    """You can see the document http://wiki.memsource.com/wiki/Client_API_v2
     """
-    You can see the document http://wiki.memsource.com/wiki/Client_API_v2
-    """
+
     api_version = constants.ApiVersion.v2
 
     def create(self, name):
@@ -238,9 +255,9 @@ class Client(BaseApi):
 
 
 class Domain(BaseApi):
+    """You can see the document http://wiki.memsource.com/wiki/Domain_API_v2
     """
-    You can see the document http://wiki.memsource.com/wiki/Domain_API_v2
-    """
+
     api_version = constants.ApiVersion.v2
 
     def create(self, name):
@@ -262,21 +279,20 @@ class Domain(BaseApi):
 
 
 class Project(BaseApi):
-    """
-    You can see the document http://wiki.memsource.com/wiki/Project_API_v3
+    """You can see the document http://wiki.memsource.com/wiki/Project_API_v3
     """
     api_version = constants.ApiVersion.v3
 
-    def create(
-            self,
-            name: {'project name': str},
-            source_lang: str,
-            target_langs: {'You can use list for multi target_lang.': (list, tuple, str)},
-            client: int=None,
-            domain: int=None
-    ) -> {'project id', int}:
-        """
-        Create new project.
+    def create(self, name: str, source_lang: str, target_langs: Union[List[str], Tuple[str], str],
+               client: int=None, domain: int=None) -> int:
+        """Create new project.
+
+        :param name: project name
+        :param source_lang:
+        :param target_langs: You can use list for multi target_lang.
+        :param client:
+        :param domain:
+        :return: created project id
         """
         return self._post('project/create', {
             'token': self.token,
@@ -298,20 +314,17 @@ class Project(BaseApi):
             })
         ]
 
-    def setTransMemories(self, project_id, read_trans_memory_ids=[], write_trans_memory_id=None,
-                         penalties=[], target_lang=None):
-        """
-        You can set translation memory to a project.
+    def setTransMemories(self, project_id, read_trans_memory_ids: List[int]=[],
+                         write_trans_memory_id: int=None, penalties: List[float]=[],
+                         target_lang: str=None) -> None:
+        """You can set translation memory to a project.
 
-        :param project_id :set translation memory to this id of project :int
-        :param read_trans_memory_ids :Read these translation memories :[int]
-        :param write_trans_memory_id :Write to this translation memory.
-        write translation memory must be included in the read translation memories, too :int
-        :param penalties :a list of penalties for each read translation memory :[double]
-        :param target_lang :set translation memories only for the specific project target language
-        :str
-
-        :return :None
+        :param project_id: set translation memory to this id of project
+        :param read_trans_memory_ids: Read these translation memories
+        :param write_trans_memory_id: Write to this translation memory.
+        write translation memory must be included in the read translation memories, too
+        :param penalties: a list of penalties for each read translation memory
+        :param target_lang: set translation memories only for the specific project target language
         """
         params = {
             'project': project_id,
@@ -333,39 +346,62 @@ class Project(BaseApi):
         # This end-point return nothing.
         self._post('project/setTransMemories', params)
 
-        return None
-
 
 class Job(BaseApi):
+    """You can see the document http://wiki.memsource.com/wiki/Job_API_v7
     """
-    You can see the document http://wiki.memsource.com/wiki/Job_API_v7
-    """
+
     api_version = constants.ApiVersion.v7
 
-    def create(self, project_id: int, file_path: str, target_langs):
-        """
-        return: [JobPart]
+    def create(
+            self, project_id: int, file_path: str, target_langs: List[str]
+    ) -> List[models.JobPart]:
+        """Create a job.
 
         If returning JSON has `unsupportedFiles`,
         this method raise MemsourceUnsupportedFileException
+
+        :param project_id: New job will be in this project.
+        :param file_path: Source file of job.
+        :param target_langs: List of translation target languages.
+        :return: List of models.JobPart
         """
         with open(file_path, 'r') as f:
             return self._create(project_id, target_langs, {
                 'file': f,
             })
 
-    def createFromText(self, project_id: int, text: str, target_langs, file_name=None):
-        """
-        You can create a job without a file.
-        See: Job.create
+    def createFromText(
+            self, project_id: int, text: str, target_langs: List[str], file_name: str=None
+    ) -> List[models.JobPart]:
+        """You can create a job without a file.
 
-        Create file name by uuid1() when file_name parameter is None.
+        See: Job.create
+        If returning JSON has `unsupportedFiles`,
+        this method raise MemsourceUnsupportedFileException
+
+        :param project_id: New job will be in this project.
+        :param text: Source text of job.
+        :param target_langs: List of translation target languages.
+        :param file_name: Create file name by uuid1() when file_name parameter is None.
+        :return: List of models.JobPart
         """
         return self._create(project_id, target_langs, {
             'file': ('{}.txt'.format(uuid.uuid1().hex) if file_name is None else file_name, text),
         })
 
-    def _create(self, project_id: int, target_langs, files: dict):
+    def _create(
+            self, project_id: int, target_langs: List[str], files: dict) -> List[models.JobPart]:
+        """Common process of creating job.
+
+        If returning JSON has `unsupportedFiles`,
+        this method raise MemsourceUnsupportedFileException
+
+        :param project_id: New job will be in this project.
+        :param file_path: Source file of job.
+        :param target_langs: List of translation target languages.
+        :return: List of models.JobPart
+        """
         result = self._post('job/create', {
             'project': project_id,
             'targetLang': target_langs,
@@ -394,47 +430,57 @@ class Job(BaseApi):
             self.last_params
         )
 
-    def listByProject(self, project_id):
-        # TODO: wrap inner project
+    def listByProject(self, project_id: int) -> List[models.JobPart]:
         return [models.JobPart(job_part) for job_part in self._post('job/listByProject', {
             'project': project_id
         })]
 
-    def preTranslate(self, job_parts):
-        """
-        This API takes long time. you might timed out. You can use Asynchronous.preTranslate
+    def preTranslate(self, job_parts: List[int]) -> None:
+        """Request pre translate.
+
+        This API takes long time. you might timed out. You can use Asynchronous.preTranslate.
+
+        :param job_parts: List of job_part id.
         """
         self._post('job/preTranslate', {'jobPart': job_parts})
 
-    def _getBilingualStream(
-            self,
-            job_parts: {'Lsit of job_part id': (list, tuple)},
-    ) -> types.GeneratorType:
-        """
-        Common process of bilingualFile.
+    def _getBilingualStream(self, job_parts: List[int]) -> Iterator[bytes]:
+        """Common process of bilingualFile.
+
+        :param job_parts: List of job_part id.
+        :return: Downloaded bilingual file with iterator.
         """
         return self._get_stream('job/getBilingualFile', {
             'jobPart': job_parts,
         }).iter_content(1024)
 
-    def getBilingualFileXml(self, job_parts: {'Lsit of job_part id': (list, tuple)}) -> bytes:
+    def getBilingualFileXml(self, job_parts: List[int]) -> bytes:
+        """Download bilingual file and return it as bytes.
+
+        This method might use huge memory.
+
+        :param job_parts: List of job_part id.
+        :return: Downloaded bilingual file.
+        """
         buffer = io.BytesIO()
         [buffer.write(chunk) for chunk in self._getBilingualStream(job_parts)]
 
         return buffer.getvalue()
 
-    def getBilingualFile(
-            self,
-            job_parts: {'Lsit of job_part id': (list, tuple)},
-            dest_file_path: {'Save XML to this file path': str}
-    ) -> None:
-        """
-        Get bilingual file and save it as file.
+    def getBilingualFile(self, job_parts: List[int], dest_file_path: str) -> None:
+        """Download bilingual file and save it as a file.
+
+        :param job_parts: List of job_part id.
+        :param dest_file_path: Save bilingual file to there.
         """
         with open(dest_file_path, 'wb') as f:
             [f.write(chunk) for chunk in self._getBilingualStream(job_parts)]
 
-    def getCompletedFileText(self, job_parts: list) -> bytes:
+    def getCompletedFileText(self, job_parts: List[int]) -> bytes:
+        """Download completed file and return it.
+
+        :param job_parts: List of job_part id.
+        """
         def getCompletedFileStream() -> types.GeneratorType:
             return self._get_stream('job/getCompletedFile', {
                 'jobPart': job_parts,
@@ -445,23 +491,24 @@ class Job(BaseApi):
 
         return buffer.getvalue()
 
-    def getBilingualAsMxliffUnits(
-            self, job_parts: {'Lsit of job_part id': (list, tuple)},
-    ) -> models.MxliffUnit:
-        """
-        Get bilingual file and parse it as [models.MxliffUnit]
+    def getBilingualAsMxliffUnits(self, job_parts: List[str]) -> models.MxliffUnit:
+        """Download bilingual file and parse it as [models.MxliffUnit]
+
+        :param job_parts: List of job_part id.
+        :returns: MxliffUnit
         """
         return mxliff.MxliffParser().parse(self.getBilingualFileXml(job_parts))
 
-    def getSegments(self, task, begin_index, end_index):
-        """
-        TODO: If first argument is JobPart type,
-        get task, begin_index and end_index from first argument.
+    def getSegments(self, task: str, begin_index: int, end_index: int) -> List[models.Segment]:
+        """Call get segments API.
 
         NOTE: I don't know why this endpoint returns list of list.
         It seems always one item in outer list.
 
-        return [models.Segment]
+        :param task:
+        :param begin_index:
+        :param end_index:
+        :return: List of models.Segment
         """
         return [
             models.Segment(segment[0]) for segment in self._post('job/getSegments', {
@@ -472,6 +519,10 @@ class Job(BaseApi):
         ]
 
     def uploadBilingualFileFromXml(self, xml: str) -> None:
+        """Call uploadBilingualFile API.
+
+        :param xml: Upload this text.
+        """
         self._post('job/uploadBilingualFile', {}, {
             'bilingualFile': ('{}.mxliff'.format(uuid.uuid1().hex), xml),
         })
@@ -488,7 +539,7 @@ class Job(BaseApi):
 
         return models.Job(response)
 
-    def list(self, job_part_ids: typing.List[int]) -> typing.List[models.Job]:
+    def list(self, job_part_ids: List[int]) -> List[models.Job]:
         """Get the jobs data.
 
         :param job_part_ids: IDs of job_part for the jobs.
@@ -501,6 +552,11 @@ class Job(BaseApi):
         return [models.Job(i) for i in response]
 
     def delete(self, job_part_id: int, purge: bool=False) -> None:
+        """Delete a job
+
+        :param job_part_id: id of job you want to delete.
+        :param purge:
+        """
         self._post('job/delete', {
             'jobPart': job_part_id,
             'purge': purge
@@ -508,19 +564,30 @@ class Job(BaseApi):
 
 
 class TranslationMemory(BaseApi):
-    """
-    You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
+    """You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
     """
     api_version = constants.ApiVersion.v4
 
-    def create(self, name, source_lang, target_langs):
+    def create(self, name: str, source_lang: str, target_langs: Union[List[str], str]) -> int:
+        """Create a translation memory.
+
+        :param name: Name of new translation memory.
+        :param source_lang: Soruce language of new translation memory.
+        :param target_langs: Target languages of new translation memory.
+        :return: ID of created translation memory.
+        """
         return self._post('transMemory/create', {
             'name': name,
             'sourceLang': source_lang,
             'targetLang': target_langs,
         })['id']
 
-    def list(self, page=0):
+    def list(self, page: int=0) -> List[models.TranslationMemory]:
+        """List translation memories.
+
+        :page: index of pager.
+        :return: List of translation memory.
+        """
         return [
             models.TranslationMemory(translation_memory)
             for translation_memory in self._post('transMemory/list', {'page': page})
@@ -533,11 +600,14 @@ class TranslationMemory(BaseApi):
         }, files)['acceptedSegmentsCount'])
 
     def upload(self, translation_memory_id: int, file_path: str) -> int:
-        """
+        """Call **import** API.
+
         This method calls import endpoint, but method name is `upload`,
         because `import` is keyword of Python. We cannot use `import` as method name.
 
-        return int accepted segments count
+        :param translation_memory_id: Uploaded translation units are into here.
+        :param file_path: Import this file into the translation memory.
+        :return: accepted segments count.
         """
         with open(file_path, 'rb') as f:
             return self._upload(translation_memory_id, {
@@ -545,20 +615,20 @@ class TranslationMemory(BaseApi):
             })
 
     def uploadFromText(self, translation_memory_id: int, tmx: str) -> int:
+        """Import tmx text into a translation memory.
+
+        :param translation_memory_id: Uploaded translation units are into here.
+        :param tmx: Import this tmx text into the translation memory.
+        :return: accepted segments count.
+        """
         return self._upload(translation_memory_id, {
             'file': ('{}.tmx'.format(uuid.uuid1().hex), tmx),
         })
 
     def searchSegmentByTask(
-            self,
-            task: str,
-            segment: str,
-            *,
-            next_segment: str=None,
-            previous_segment: str=None,
-            score_threshold: float=0.6,
-            **kwargs
-    ) -> typing.List[models.SegmentSearchResult]:
+            self, task: str, segment: str, *, next_segment: str=None,
+            previous_segment: str=None, score_threshold: float=0.6, **kwargs
+    ) -> List[models.SegmentSearchResult]:
         """Get translation matches.
 
         :param task: task_id
@@ -583,16 +653,15 @@ class TranslationMemory(BaseApi):
             for item in self._post('transMemory/searchSegmentByTask', parameters)
         ]
 
-    def export(
-            self,
-            translation_memory_id: {'translation memory id for target of exporitng data': int},
-            target_langs: {'You can use list for multi target_lang.': (list, tuple, str)},
-            file_path: {'Save exported data to this file path': str},
-            file_format: {'Export data file format': str}='TMX',
-            chunk_size: {'byte size of chunk for response data': int}=1024,
-    ) -> None:
-        """
-        Get translation memory exported data
+    def export(self, translation_memory_id: int, target_langs: Union[List[str], str],
+               file_path: str, file_format: str='TMX', chunk_size: int=1024) -> None:
+        """Get translation memory exported data
+
+        :param translation_memory_id: translation memory id for target of exporitng data.
+        :param target_langs: Export target languages.
+        :param file_path: Save exported data to this file path.
+        :param file_format: Export data file format. Default is TMX.
+        :param chunk_size: byte size of chunk for response data.
         """
         params = {
             'transMemory': translation_memory_id,
@@ -604,7 +673,7 @@ class TranslationMemory(BaseApi):
                 self._get_stream('transMemory/export', params).iter_content(chunk_size)]
 
     def insert(self, translation_memory_id, target_lang, source_segment, target_segment,
-               previous_source_segment=None, next_source_segment=None):
+               previous_source_segment=None, next_source_segment=None) -> None:
         """
         :param translation_memory_id :Insert new translation to this translation memory :int
         :param target_lang :target_segment is this language :str
@@ -612,8 +681,6 @@ class TranslationMemory(BaseApi):
         :param target_segment :translated text :str
         :previous_source_segment :optional This is for 101% match :str
         :next_source_segment :optional This is for 101% match :str
-
-        :return :None
         """
         params = {
             'transMemory': translation_memory_id,
@@ -648,8 +715,7 @@ class TranslationMemory(BaseApi):
 
 
 class Asynchronous(BaseApi):
-    """
-    You can see the documents:
+    """You can see the documents:
     * http://wiki.memsource.com/wiki/Asynchronous_API_v2
     * http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
     * http://wiki.memsource.com/wiki/Analysis_Asynchronous_API_v2
@@ -671,9 +737,13 @@ class Asynchronous(BaseApi):
 
         return super(Asynchronous, self)._make_url(**kwargs)
 
-    def preTranslate(self, job_parts, translation_memory_threshold=0.7, callback_url=None):
-        """
-        return models.AsynchronousRequest
+    def preTranslate(self, job_parts: List[int], translation_memory_threshold: float=0.7,
+                     callback_url: str=None) -> models.AsynchronousRequest:
+        """Call async pre translate API.
+
+        :param job_parts: List of job_part id.
+        :param translation_memory_threshold: If matching score is higher than this, it filled.
+        :return: models.AsynchronousRequest
         """
         return models.AsynchronousRequest(self._post('job/preTranslate', {
             'jobPart': job_parts,
@@ -688,13 +758,14 @@ class Asynchronous(BaseApi):
         :param job_parts: Make analysis for these job_part ids.
         :param callback_url: Memsource will send a callback when they finish analyzing.
         :param kwags: Another non required parameters, you can pass.
+        :return: models.AsynchronousRequest
         """
         res = self._post(
             'analyse/create', dict(kwargs, jobPart=job_parts, callbackUrl=callback_url))
 
         return models.AsynchronousRequest(res['asyncRequest']), models.Analysis(res['analyse'])
 
-    def getAsyncRequest(self, asynchronous_request_id):
+    def getAsyncRequest(self, asynchronous_request_id: int) -> models.AsynchronousRequest:
         asyncRequest = self._post('async/getAsyncRequest', {
             'asyncRequest': asynchronous_request_id,
         })
@@ -705,10 +776,9 @@ class Asynchronous(BaseApi):
     def createJobFromText(self, project_id: int, text: str, target_langs, file_name=None,
                           extension='.txt', *, callback_url=None,
                           **kwargs: dict) -> (models.AsynchronousResponse, list):
-        """
-        See: Job.create
+        """Call async job create API.
 
-        Create file name by uuid1() when file_name parameter is None.
+        See: Job.create
         """
 
         file_path = os.path.join('/', 'tmp', 'memsource-wrap', uuid.uuid1().hex,
@@ -727,19 +797,20 @@ class Asynchronous(BaseApi):
         finally:
             shutil.rmtree(file_parent)
 
-    def createJob(self, project_id: int, file_path: str, target_langs: (str, list), *,
-                  callback_url=None, **kwargs: dict) -> (models.AsynchronousResponse, list):
-        """\
-        Create new Job on Memsource asynchronously.
+    def createJob(
+            self, project_id: int, file_path: str, target_langs: (str, list), *, callback_url=None,
+            **kwargs: dict
+    ) -> Tuple[models.AsynchronousResponse, List[models.JobPart]]:
+        """Create new Job on Memsource asynchronously.
 
-        @param project_id Project ID of target project.
-        @param file_path Absolute path of translation target file.
-        @param target_langs Translation target languages.
-        @param callback_url Memsource will hit this url when finished to create the job.
-        @param kwargs See Memsource official document \
-            http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
+        :param project_id: Project ID of target project.
+        :param file_path: Absolute path of translation target file.
+        :param target_langs: Translation target languages.
+        :param callback_url: Memsource will hit this url when finished to create the job.
+        :param kwargs: See Memsource official document
+        http://wiki.memsource.com/wiki/Job_Asynchronous_API_v2
 
-        @return models.AsynchronousResponse and list of models.JobPart
+        :return: models.AsynchronousResponse and list of models.JobPart
         """
         with open(file_path, 'rb') as f:
             files = {
@@ -767,22 +838,36 @@ class Asynchronous(BaseApi):
 
 
 class Analysis(BaseApi):
-    """
-    You can see the document http://wiki.memsource.com/wiki/Analysis_API_v2
+    """You can see the document http://wiki.memsource.com/wiki/Analysis_API_v2
     """
     api_version = constants.ApiVersion.v2
 
-    def get(self, analysis_id: {'Get analysis of this id', int}) -> models.Analysis:
+    def get(self, analysis_id: int) -> models.Analysis:
+        """Call get API.
+
+        :param analysis_id: Get analysis of this id.
+        :return: Result of analysis.
+        """
         return models.Analysis(self._get('analyse/get', {
             'analyse': analysis_id,
         }))
 
-    def create(self, job_part_ids: typing.List[int]) -> models.Analysis:
+    def create(self, job_part_ids: List[int]) -> models.Analysis:
+        """Create new analysis.
+
+        :param job_part_ids: Target of analysis.
+        :return: Result of analysis.
+        """
         return models.Analysis(self._post('analyse/create', {
             'jobPart': job_part_ids,
         }))
 
     def delete(self, analysis_id: int, purge: bool=False) -> None:
+        """Delete an analysis.
+
+        :param analysis_id: Analysis ID you want to delete.
+        :param purge:
+        """
         self._post('analyse/delete', {
             'analyse': analysis_id,
             'purge': purge,
