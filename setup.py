@@ -11,6 +11,7 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
+
 setup(
     name='Memsource-wrap',
     version=memsource.__version__,
