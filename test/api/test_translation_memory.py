@@ -180,7 +180,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         translation_memory_id = 1234
         query = "Hello"
         source_lang = "en"
-        target_langs = ["ja", 'en-gb']
+        target_langs = ["ja", 'en_gb']
         next_segment = "Next segment"
         previous_segment = "Previous Segment"
 
@@ -254,6 +254,8 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             target_langs=target_langs, next_segment=next_segment,
             previous_segment=previous_segment
         )
+
+        self.assertEqual(len(returned_value), 1)
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
