@@ -174,6 +174,108 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
         self.assertEqual(accepted_segments_count, returned_value)
 
     @patch.object(requests.Session, 'request')
+    def test_search(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        translation_memory_id = 1234
+        query = "Hello"
+        source_lang = "en"
+        target_langs = ["ja", 'en_gb']
+        next_segment = "Next segment"
+        previous_segment = "Previous Segment"
+
+        mock_request().json.return_value = [{
+            'score': 1.01,
+            'grossScore': 1.01,
+            'segmentId': '5023cd08e4b015e0656c4a8f',
+            'source': {
+                'fileName': None,
+                'modifiedAt': 1418972812301,
+                'project': None,
+                'rtl': False,
+                'previousSegment': None,
+                'createdAt': 1418972812301,
+                'createdBy': None,
+                'modifiedBy': None,
+                'domain': None,
+                'id': None,
+                'nextSegment': None,
+                'text': query,
+                'tagMetadata': [],
+                'subDomain': None,
+                'lang': 'en',
+                'client': None
+            },
+            'subSegment': False,
+            'translations': [{
+                'fileName': None,
+                'modifiedAt': 1340641766000,
+                'project': None,
+                'rtl': False,
+                'previousSegment': None,
+                'createdAt': 1336380000000,
+                'createdBy': {
+                    'role': None,
+                    'email': None,
+                    # Because I got null as string.
+                    'userName': 'null',
+                    'lastName': None,
+                    'active': False,
+                    'firstName': None,
+                    'id': 0
+                },
+                'modifiedBy': {
+                    'role': None,
+                    'email': None,
+                    'userName': 'null',
+                    'lastName': None,
+                    'active': False,
+                    'firstName': None,
+                    'id': 0
+                },
+                'domain': None,
+                'id': None,
+                'nextSegment': None,
+                'text': 'こんにちは',
+                'tagMetadata': [],
+                'subDomain': None,
+                'lang': 'ja',
+                'client': None
+            }],
+            'transMemory': {
+                'name': 'Test translation memory',
+                'id': '5023cb2ee4b015e0656c4a8e',
+                'reverse': False
+            }
+        }]
+
+        returned_value = self.translation_memory.search(
+            translation_memory_id, query, source_lang,
+            target_langs=target_langs, next_segment=next_segment,
+            previous_segment=previous_segment
+        )
+
+        self.assertEqual(len(returned_value), 1)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            'https://cloud.memsource.com/web/api/v4/transMemory/search',
+            data={
+                'token': self.translation_memory.token,
+                'transMemory': translation_memory_id,
+                'query': query,
+                'sourceLang': source_lang,
+                'targetLang': target_langs,
+                'nextSegment': next_segment,
+                'previousSegment': previous_segment
+            },
+            timeout=constants.Base.timeout.value
+        )
+
+        for segment_search_result in returned_value:
+            self.assertIsInstance(segment_search_result, models.SegmentSearchResult)
+
+    @patch.object(requests.Session, 'request')
     def test_search_segment_by_task(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
 

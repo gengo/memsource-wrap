@@ -653,6 +653,42 @@ class TranslationMemory(BaseApi):
             for item in self._post('transMemory/searchSegmentByTask', parameters)
         ]
 
+    def search(
+            self, translation_memory_id: int, query: str,
+            source_lang: str, target_langs: Union[List[str], str],
+            next_segment: str=None, previous_segment: str=None, **kwargs
+    ) -> List[models.SegmentSearchResult]:
+        """Get translation matches.
+
+        :param translation_memory_id: Search translation units are into here.
+        :param query: Search query
+        :param source_lang: Soruce language of translation memory.
+        :param target_langs: Target languages of translation memory.
+        :param next_segment: Effect for 101% match
+        :param previous_segment: Effect for 101% match
+        :param kwargs: See the Memsource official document
+        https://wiki.memsource.com/wiki/Translation_Memory_API_v4#Search
+
+        :return: list of models.SegmentSearchResult
+        """
+        parameters = dict(
+            kwargs, transMemory=translation_memory_id,
+            query=query, sourceLang=source_lang)
+
+        if target_langs is not None:
+            parameters['targetLang'] = target_langs
+
+        if next_segment is not None:
+            parameters['nextSegment'] = next_segment
+
+        if previous_segment is not None:
+            parameters['previousSegment'] = previous_segment
+
+        return [
+            models.SegmentSearchResult(item)
+            for item in self._post('transMemory/search', parameters)
+        ]
+
     def export(self, translation_memory_id: int, target_langs: Union[List[str], str],
                file_path: str, file_format: str='TMX', chunk_size: int=1024) -> None:
         """Get translation memory exported data

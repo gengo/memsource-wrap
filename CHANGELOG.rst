@@ -9,18 +9,10 @@ Unreleased
 Fixed
 =====
 
-- Cancel fixed external libraries version.
-- Standardize method comment style.
-
-[0.3.0] - 2016-07-05
+[0.4.0] - 2017-06-13
 ====================
 
 Added
 -----
 
-- Support page argument for list of translation memory api.
-
-Fixed
------
-
-- Use request body instead of url parameter in POST request.
+- Support search endpoint of translation memory api.
