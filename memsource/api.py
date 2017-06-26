@@ -19,7 +19,7 @@ from memsource.lib import mxliff
 
 
 __all__ = ['Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
-           'Analysis']
+           'Language', 'Analysis']
 
 
 class BaseApi:
@@ -275,6 +275,19 @@ class Domain(BaseApi):
             models.Domain(domain) for domain in self._post('domain/list', {
                 'page': page,
             })
+        ]
+
+
+class Language(BaseApi):
+    """You can see the document https://wiki.memsource.com/wiki/Language_API_v2
+    """
+
+    api_version = constants.ApiVersion.v2
+
+    def listSupportedLangs(self):
+        return [
+            models.Language(language)
+            for language in self._post('language/listSupportedLangs', {})
         ]
 
 

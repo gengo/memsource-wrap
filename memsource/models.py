@@ -25,6 +25,10 @@ class Domain(BaseModel):
     pass
 
 
+class Language(BaseModel):
+    pass
+
+
 class Project(BaseModel):
     @property
     def date_created(self):
