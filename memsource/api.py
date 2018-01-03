@@ -686,7 +686,7 @@ class TranslationMemory(BaseApi):
         """
         parameters = dict(
             kwargs, transMemory=translation_memory_id,
-            query=query, sourceLang=source_lang)
+            query='"{}"'.format(query), sourceLang=source_lang)
 
         if target_langs is not None:
             parameters['targetLang'] = target_langs

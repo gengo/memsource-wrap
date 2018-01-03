@@ -263,7 +263,7 @@ class TestApiTranslationMemory(api_test.ApiTestCase):
             data={
                 'token': self.translation_memory.token,
                 'transMemory': translation_memory_id,
-                'query': query,
+                'query': '"{}"'.format(query),
                 'sourceLang': source_lang,
                 'targetLang': target_langs,
                 'nextSegment': next_segment,
