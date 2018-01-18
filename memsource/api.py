@@ -316,8 +316,8 @@ class Project(BaseApi):
             'domain': domain,
         })['id']
 
-    def list(self, params: dict={}):
-        return [models.Project(project) for project in self._post('project/list', params)]
+    def list(self, **query):
+        return [models.Project(project) for project in self._post('project/list', query)]
 
     def getTransMemories(self, project_id):
         return [

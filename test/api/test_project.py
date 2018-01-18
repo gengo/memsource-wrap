@@ -70,7 +70,7 @@ class TestApiProject(api_test.ApiTestCase):
             }
         ]
 
-        for project in self.project.list(params={'name': 'foo project'}):
+        for project in self.project.list(name='foo project'):
             self.assertIsInstance(project, models.Project)
             self.assertIsInstance(project.date_created, datetime.datetime)
 
