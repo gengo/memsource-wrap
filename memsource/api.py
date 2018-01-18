@@ -74,7 +74,7 @@ class BaseApi:
                              files=files, params=None, data=data, timeout=timeout)
 
     def _get_stream(
-            self, path: str, params: dict, files: dict=None,
+            self, path: str, params: dict={}, files: dict=None,
             timeout: Union[int, float]=constants.Base.timeout.value * 5
     ) -> requests.models.Response:
         """
@@ -126,7 +126,7 @@ class BaseApi:
         :param timeout: When takes over this time in one request, raise timeout
         :return: response of request module
         """
-        if params:
+        if http_method == constants.HttpMethod.get:
             (url, params) = self._pre_request(path, params)
         else:
             (url, data) = self._pre_request(path, data)
@@ -189,7 +189,7 @@ class BaseApi:
         :param timeout: When takes over this time in one request, raise timeout
         :return: parsed response body as JSON
         """
-        if params:
+        if http_method == constants.HttpMethod.get:
             (url, params) = self._pre_request(path, params)
         else:
             (url, data) = self._pre_request(path, data)
@@ -316,8 +316,8 @@ class Project(BaseApi):
             'domain': domain,
         })['id']
 
-    def list(self):
-        return [models.Project(project) for project in self._post('project/list', {})]
+    def list(self, params: dict={}):
+        return [models.Project(project) for project in self._post('project/list', params)]
 
     def getTransMemories(self, project_id):
         return [
