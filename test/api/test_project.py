@@ -70,7 +70,7 @@ class TestApiProject(api_test.ApiTestCase):
             }
         ]
 
-        for project in self.project.list():
+        for project in self.project.list(name='foo project'):
             self.assertIsInstance(project, models.Project)
             self.assertIsInstance(project.date_created, datetime.datetime)
 
@@ -78,6 +78,7 @@ class TestApiProject(api_test.ApiTestCase):
             constants.HttpMethod.post.value,
             '{}/list'.format(self.url_base),
             data={
+                'name': 'foo project',
                 'token': self.project.token,
             },
             timeout=constants.Base.timeout.value
