@@ -893,7 +893,7 @@ class Asynchronous(BaseApi):
         :param tm_id: ID of the translation memory.
         :param query: Text/pattern you are searching for. See Memsource documentation.
         :param target_langs: The target languages you would like exported.
-        :param format: file format - TMX or XLSX. Memsource currently defaults to TMX.
+        :param file_format: TMX or XLSX. Memsource currently defaults to TMX.
         :param callback_url: Memsource will hit this url when finished to create the job.
         :param kwargs: See Memsource documentation
         https://wiki.memsource.com/wiki/Translation_Memory_Asynchronous_API_v2
