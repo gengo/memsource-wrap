@@ -393,3 +393,56 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             exceptions.MemsourceApiException,
             lambda: self.asynchronous.createJobFromText(project_id, text, target_lang)
         )
+
+    @patch.object(requests.Session, 'request')
+    def test_export_by_query(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        asynchronous_request_id = self.gen_random_int()
+        tm_id = self.gen_random_int()
+        langs = 'en'
+        query = '*'
+        format = 'TMX'
+        callback_url = 'CALLBACK_URL'
+
+        mock_request().json.return_value = {
+            'asyncRequest': {
+                'createdBy': {
+                    'lastName': 'test',
+                    'id': 1,
+                    'firstName': 'admin',
+                    'role': 'ADMIN',
+                    'email': 'test@test.com',
+                    'userName': 'admin',
+                    'active': True
+                },
+                'action': 'EXPORT_TMX_BY_QUERY',
+                'id': asynchronous_request_id,
+                'dateCreated': '2014-11-03T16:03:11Z',
+                'asyncResponse': None
+            }
+        }
+
+        returned_value = self.asynchronous.exportByQuery(
+            tm_id=tm_id,
+            query=query,
+            target_langs=langs,
+            format=format,
+            callback_url=callback_url
+        )
+
+        self.assertIsInstance(returned_value, models.AsynchronousRequest)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            'https://cloud.memsource.com/web/api/async/v2/transMemory/exportByQuery',
+            params={
+                'token': self.asynchronous.token,
+                'transMemory': tm_id,
+                'exportTargetLang': langs,
+                'query': query,
+                'queryLang': langs,
+                'format': format,
+                'callbackUrl': callback_url,
+            },
+            timeout=constants.Base.timeout.value)
