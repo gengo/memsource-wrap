@@ -402,7 +402,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         tm_id = self.gen_random_int()
         langs = 'en'
         query = '*'
-        format = 'TMX'
+        file_format = 'TMX'
         callback_url = 'CALLBACK_URL'
 
         mock_request().json.return_value = {
@@ -427,7 +427,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             tm_id=tm_id,
             query=query,
             target_langs=langs,
-            format=format,
+            file_format=file_format,
             callback_url=callback_url
         )
 
@@ -442,7 +442,7 @@ class TestApiAsynchronous(api_test.ApiTestCase):
                 'exportTargetLang': langs,
                 'query': query,
                 'queryLang': langs,
-                'format': format,
+                'format': file_format,
                 'callbackUrl': callback_url,
             },
             timeout=constants.Base.timeout.value)
