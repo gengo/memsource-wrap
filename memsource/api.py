@@ -886,14 +886,14 @@ class Asynchronous(BaseApi):
         )
 
     def exportByQuery(
-            self, tm_id: int, query: str, target_langs: Union[str, List[str]], *, format=None,
+            self, tm_id: int, query: str, target_langs: Union[str, List[str]], *, file_format=None,
             callback_url=None, **kwargs: dict) -> models.AsynchronousResponse:
         """Create a translation memory data export asynchronously.
 
         :param tm_id: ID of the translation memory.
         :param query: Text/pattern you are searching for. See Memsource documentation.
         :param target_langs: The target languages you would like exported.
-        :param format: file format - TMX or XLSX
+        :param format: file format - TMX or XLSX. Memsource currently defaults to TMX.
         :param callback_url: Memsource will hit this url when finished to create the job.
         :param kwargs: See Memsource documentation
         https://wiki.memsource.com/wiki/Translation_Memory_Asynchronous_API_v2
@@ -905,7 +905,7 @@ class Asynchronous(BaseApi):
                 'exportTargetLang': target_langs,
                 'query': query,
                 'queryLang': target_langs,
-                'format': format,
+                'format': file_format,
                 'callbackUrl': callback_url,
             }))['asyncRequest'])
 
