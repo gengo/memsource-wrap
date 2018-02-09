@@ -462,8 +462,8 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             ),
             (
                 {
-                    'async_request_id': fake_async_request_id,
                     'file_format': file_format,
+                    'async_request_id': fake_async_request_id,
                 },
                 'token={}&asyncRequest={}&format={}'.format(
                     self.asynchronous.token,
