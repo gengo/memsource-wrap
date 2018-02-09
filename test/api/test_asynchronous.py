@@ -402,7 +402,6 @@ class TestApiAsynchronous(api_test.ApiTestCase):
         tm_id = self.gen_random_int()
         langs = 'en'
         query = '*'
-        file_format = 'TMX'
         callback_url = 'CALLBACK_URL'
 
         mock_request().json.return_value = {
@@ -427,7 +426,6 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             tm_id=tm_id,
             query=query,
             target_langs=langs,
-            file_format=file_format,
             callback_url=callback_url
         )
 
@@ -442,7 +440,45 @@ class TestApiAsynchronous(api_test.ApiTestCase):
                 'exportTargetLang': langs,
                 'query': query,
                 'queryLang': langs,
-                'format': file_format,
                 'callbackUrl': callback_url,
             },
             timeout=constants.Base.timeout.value)
+
+    def test_make_download_url(self):
+        fake_async_request_id = 5
+        file_format = 'XLSX'
+
+        base_dl_url = '{}/async/v2/transMemory/downloadExport'.format(constants.Base.url.value)
+
+        tests = [
+            (
+                {
+                    'async_request_id': fake_async_request_id
+                },
+                'token={}&asyncRequest={}'.format(
+                    self.asynchronous.token,
+                    fake_async_request_id,
+                )
+            ),
+            (
+                {
+                    'async_request_id': fake_async_request_id,
+                    'file_format': file_format,
+                },
+                'token={}&asyncRequest={}&format={}'.format(
+                    self.asynchronous.token,
+                    fake_async_request_id,
+                    file_format,
+                )
+            ),
+        ]
+
+        for method_kwargs, expected_params in tests:
+            download_url = self.asynchronous.make_download_url(**method_kwargs)
+            self.assertEqual(
+                download_url,
+                '{}?{}'.format(
+                    base_dl_url,
+                    expected_params,
+                )
+            )
