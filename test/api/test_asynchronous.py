@@ -1,6 +1,7 @@
 import uuid
 import io
 import builtins
+import urllib.parse
 from unittest.mock import PropertyMock
 from unittest.mock import patch
 
@@ -445,40 +446,48 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value)
 
     def test_make_download_url(self):
-        fake_async_request_id = 5
+        fake_async_request_id = '5'
         file_format = 'XLSX'
 
-        base_dl_url = '{}/async/v2/transMemory/downloadExport'.format(constants.Base.url.value)
+        base_dl_url = '{}/async/{}/transMemory/downloadExport'.format(
+            constants.Base.url.value,
+            self.asynchronous.api_version.value
+        )
 
         tests = [
             (
                 {
                     'async_request_id': fake_async_request_id
                 },
-                'token={}&asyncRequest={}'.format(
-                    self.asynchronous.token,
-                    fake_async_request_id,
-                )
+                {
+                    'token': [str(self.asynchronous.token)],
+                    'asyncRequest': [fake_async_request_id],
+                }
             ),
             (
                 {
-                    'file_format': file_format,
                     'async_request_id': fake_async_request_id,
+                    'file_format': file_format,
                 },
-                'token={}&asyncRequest={}&format={}'.format(
-                    self.asynchronous.token,
-                    fake_async_request_id,
-                    file_format,
-                )
+                {
+                    'token': [str(self.asynchronous.token)],
+                    'asyncRequest': [fake_async_request_id],
+                    'format': [file_format],
+                }
             ),
         ]
 
         for method_kwargs, expected_params in tests:
             download_url = self.asynchronous.make_download_url(**method_kwargs)
+            parsed_url = urllib.parse.urlparse(download_url)
+
             self.assertEqual(
-                download_url,
-                '{}?{}'.format(
-                    base_dl_url,
-                    expected_params,
-                )
+                '{}://{}{}'.format(
+                    parsed_url.scheme,
+                    parsed_url.netloc,
+                    parsed_url.path,
+                ),
+                base_dl_url
             )
+            self.assertEqual(
+                urllib.parse.parse_qs(parsed_url.query), expected_params)

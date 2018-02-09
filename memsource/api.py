@@ -3,6 +3,7 @@ import os
 import os.path
 import shutil
 import types
+import urllib.parse
 import uuid
 
 from typing import (
@@ -928,7 +929,7 @@ class Asynchronous(BaseApi):
         if file_format:
             params['format'] = file_format
 
-        params_string = '&'.join(['{}={}'.format(key, value) for key, value in params.items()])
+        params_string = urllib.parse.urlencode(params)
 
         return '{url}?{params}'.format(url=url, params=params_string)
 
