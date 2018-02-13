@@ -3,6 +3,7 @@ import os
 import os.path
 import shutil
 import types
+import urllib.parse
 import uuid
 
 from typing import (
@@ -886,28 +887,51 @@ class Asynchronous(BaseApi):
         )
 
     def exportByQuery(
-            self, tm_id: int, query: str, target_langs: Union[str, List[str]], *, file_format=None,
-            callback_url=None, **kwargs: dict) -> models.AsynchronousResponse:
+            self, tm_id: int, query: str, target_langs: Union[str, List[str]], *,
+            callback_url=None, **kwargs: dict) -> models.AsynchronousRequest:
         """Create a translation memory data export asynchronously.
 
         :param tm_id: ID of the translation memory.
         :param query: Text/pattern you are searching for. See Memsource documentation.
         :param target_langs: The target languages you would like exported.
-        :param file_format: TMX or XLSX. Memsource currently defaults to TMX.
         :param callback_url: Memsource will hit this url when finished to create the job.
         :param kwargs: See Memsource documentation
         https://wiki.memsource.com/wiki/Translation_Memory_Asynchronous_API_v2
 
-        :return: models.AsynchronousResponse
+        :return: models.AsynchronousRequest
         """
         return models.AsynchronousRequest(self._get('transMemory/exportByQuery', dict(kwargs, **{
                 'transMemory': tm_id,
                 'exportTargetLang': target_langs,
                 'query': query,
                 'queryLang': target_langs,
-                'format': file_format,
                 'callbackUrl': callback_url,
             }))['asyncRequest'])
+
+    def make_download_url(self, async_request_id: int, *, file_format: str=None) -> str:
+        """Returns the download link of a previously-requested TM export.
+
+        :param async_request_id: ID of the Memsource asynchronous request.
+        :param file_format: TMX or XLSX. Default to TMX if unspecified.
+
+        :return: URL string
+        """
+        url = self._make_url(
+            base=constants.Base.url.value,
+            api_version=self.api_version.value,
+            path='transMemory/downloadExport',
+        )
+
+        params = {
+            'token': self.token,
+            'asyncRequest': async_request_id,
+        }
+        if file_format:
+            params['format'] = file_format
+
+        params_string = urllib.parse.urlencode(params)
+
+        return '{url}?{params}'.format(url=url, params=params_string)
 
 
 class Analysis(BaseApi):
