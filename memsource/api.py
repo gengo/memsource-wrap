@@ -365,6 +365,7 @@ class Job(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Job_API_v7
     """
 
+    status_delivered = "Delivered"
     api_version = constants.ApiVersion.v7
 
     def create(
@@ -574,6 +575,20 @@ class Job(BaseApi):
         self._post('job/delete', {
             'jobPart': job_part_id,
             'purge': purge
+        })
+
+    def setStatus(self, job_part_id, status) -> None:
+        """Update job status
+
+        JobStatus: New, Emailed, Assigned, Declined_By_Linguist,
+                   Completed_By_Linguist, Completed, Cancelled, Delivered
+
+        :param job_part_id: id of job you want to update.
+        :param status: status of job to update
+        """
+        self._post('job/setStatus', {
+            'jobPart': job_part_id,
+            'status': status
         })
 
 

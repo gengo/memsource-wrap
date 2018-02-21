@@ -498,3 +498,23 @@ class TestApiJob(api_test.ApiTestCase):
             },
             timeout=constants.Base.timeout.value
         )
+
+    @patch.object(requests.Session, 'request')
+    def test_setStatus(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = None
+
+        job_part_id = self.gen_random_int()
+
+        self.assertIsNone(self.job.setStatus(job_part_id, api.Job.status_delivered))
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/setStatus'.format(self.url_base),
+            data={
+                'token': self.job.token,
+                'jobPart': job_part_id,
+                'status': api.Job.status_delivered,
+            },
+            timeout=constants.Base.timeout.value
+        )
