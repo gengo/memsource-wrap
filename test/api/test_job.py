@@ -506,7 +506,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         job_part_id = self.gen_random_int()
 
-        self.assertIsNone(self.job.setStatus(job_part_id, api.Job.status_delivered))
+        self.assertIsNone(self.job.setStatus(job_part_id, api.Job.status_completed))
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
@@ -514,7 +514,7 @@ class TestApiJob(api_test.ApiTestCase):
             data={
                 'token': self.job.token,
                 'jobPart': job_part_id,
-                'status': api.Job.status_delivered,
+                'status': api.Job.status_completed,
             },
             timeout=constants.Base.timeout.value
         )

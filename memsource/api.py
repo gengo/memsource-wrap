@@ -581,7 +581,7 @@ class Job(BaseApi):
         """Update job status
 
         JobStatus: New, Emailed, Assigned, Declined_By_Linguist,
-                   Completed_By_Linguist, Completed, Cancelled, Delivered
+                   Completed_By_Linguist, Completed, Cancelled
 
         :param job_part_id: id of job you want to update.
         :param status: status of job to update
