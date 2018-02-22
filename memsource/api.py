@@ -576,6 +576,20 @@ class Job(BaseApi):
             'purge': purge
         })
 
+    def setStatus(self, job_part_id: int, status: str) -> None:
+        """Update job status
+
+        JobStatus: New, Emailed, Assigned, Declined_By_Linguist,
+                   Completed_By_Linguist, Completed, Cancelled
+
+        :param job_part_id: id of job you want to update.
+        :param status: status of job to update. Acceptable type is JobStatus constant.
+        """
+        self._post('job/setStatus', {
+            'jobPart': job_part_id,
+            'status': status
+        })
+
 
 class TranslationMemory(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
