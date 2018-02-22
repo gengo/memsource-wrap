@@ -365,7 +365,6 @@ class Job(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Job_API_v7
     """
 
-    status_completed = "Completed"
     api_version = constants.ApiVersion.v7
 
     def create(
