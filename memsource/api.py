@@ -922,6 +922,24 @@ class Asynchronous(BaseApi):
                 'callbackUrl': callback_url,
             }))['asyncRequest'])
 
+    def downloadExport(self, async_request_id: int, file_path: str, *, file_format: str='TMX',
+                       chunk_size: int=1024) -> None:
+        """Download the completed export of a translation memory.
+
+        :param async_request_id: ID of the export request - e.g. requested via exportByQuery()
+        :param file_format: TMX or XLSX. Defaults to TMX.
+        :param file_path: Save exported data to this file path.
+        :param chunk_size: byte size of chunk for response data.
+        """
+        params = {
+            'asyncRequest': async_request_id,
+            'format': file_format,
+        }
+
+        with open(file_path, 'wb') as f:
+            [f.write(chunk) for chunk in
+                self._get_stream('transMemory/downloadExport', params).iter_content(chunk_size)]
+
     def make_download_url(self, async_request_id: int, *, file_format: str=None) -> str:
         """Returns the download link of a previously-requested TM export.
 

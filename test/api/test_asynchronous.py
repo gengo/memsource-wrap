@@ -1,7 +1,8 @@
-import uuid
-import io
 import builtins
+import io
+import os
 import urllib.parse
+import uuid
 from unittest.mock import PropertyMock
 from unittest.mock import patch
 
@@ -35,6 +36,11 @@ class TestApiAsynchronous(api_test.ApiTestCase):
             'beginIndex': 0,
             'endIndex': 14
         }]
+
+        self.test_mxliff_file_path = '/tmp/test.mxliff'
+        self.setCleanUpFiles(
+            self.test_mxliff_file_path
+        )
 
     @patch.object(requests.Session, 'request')
     def test_pre_translate_no_callback(self, mock_request):
@@ -444,6 +450,26 @@ class TestApiAsynchronous(api_test.ApiTestCase):
                 'callbackUrl': callback_url,
             },
             timeout=constants.Base.timeout.value)
+
+    @patch.object(requests.Session, 'request')
+    def test_download_export(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        mxliff_contents = ['test mxliff content', 'second']
+
+        mock_request().iter_content.return_value = [
+            bytes(content, 'utf-8') for content in mxliff_contents]
+
+        self.assertFalse(os.path.isfile(self.test_mxliff_file_path))
+        returned_value = self.asynchronous.downloadExport(
+            async_request_id=1,
+            file_path=self.test_mxliff_file_path
+        )
+        self.assertTrue(os.path.isfile(self.test_mxliff_file_path))
+        self.assertIsNone(returned_value)
+
+        with open(self.test_mxliff_file_path) as f:
+            self.assertEqual(''.join(mxliff_contents), f.read())
 
     def test_make_download_url(self):
         fake_async_request_id = '5'
