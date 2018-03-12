@@ -506,7 +506,7 @@ class TestApiJob(api_test.ApiTestCase):
 
         job_part_id = self.gen_random_int()
 
-        self.assertIsNone(self.job.setStatus(job_part_id, constants.JobStatus.COMPLETED.value))
+        self.assertIsNone(self.job.setStatus(job_part_id, constants.JobStatus.COMPLETED))
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,

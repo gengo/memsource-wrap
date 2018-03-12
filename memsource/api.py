@@ -360,6 +360,20 @@ class Project(BaseApi):
         # This end-point return nothing.
         self._post('project/setTransMemories', params)
 
+    def setStatus(self, project_id: int, status: constants.ProjectStatus) -> None:
+        """Update project status
+
+        ProjectStatus: New, Emailed, Assigned, Declined_By_Linguist,
+                       Completed_By_Linguist, Completed, Cancelled
+
+        :param project_id: id of project you want to update.
+        :param status: status of project to update. Acceptable type is ProjectStatus constant.
+        """
+        self._post('project/setStatus', {
+            'project': project_id,
+            'status': status.value
+        })
+
 
 class Job(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Job_API_v7
@@ -576,7 +590,7 @@ class Job(BaseApi):
             'purge': purge
         })
 
-    def setStatus(self, job_part_id: int, status: str) -> None:
+    def setStatus(self, job_part_id: int, status: constants.JobStatus) -> None:
         """Update job status
 
         JobStatus: New, Emailed, Assigned, Declined_By_Linguist,
@@ -587,7 +601,7 @@ class Job(BaseApi):
         """
         self._post('job/setStatus', {
             'jobPart': job_part_id,
-            'status': status
+            'status': status.value
         })
 
 
