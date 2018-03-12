@@ -161,3 +161,23 @@ class TestApiProject(api_test.ApiTestCase):
             },
             timeout=constants.Base.timeout.value
         )
+
+    @patch.object(requests.Session, 'request')
+    def test_setStatus(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = None
+
+        project_id = self.gen_random_int()
+
+        self.assertIsNone(self.project.setStatus(project_id, constants.ProjectStatus.CANCELLED))
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/setStatus'.format(self.url_base),
+            data={
+                'token': self.project.token,
+                'project': project_id,
+                'status': constants.ProjectStatus.CANCELLED.value,
+            },
+            timeout=constants.Base.timeout.value
+        )

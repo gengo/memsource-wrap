@@ -16,6 +16,16 @@ class JobStatus(enum.Enum):
     CANCELLED = "Cancelled"
 
 
+class ProjectStatus(enum.Enum):
+    NEW = "New"
+    ASSIGNED = "Assigned"
+    COMPLETED = "Completed"
+    CANCELLED = "Cancelled"
+    ACCEPTED_BY_VENDOR = "Accepted_By_Vendor"
+    DECLINED_BY_VENDOR = "Declined_By_Vendor"
+    COMPLETED_BY_VENDOR = "Completed_By_Vendor"
+
+
 class ApiVersion(enum.Enum):
     v2 = 'v2'
     v3 = 'v3'
