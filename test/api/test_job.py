@@ -514,7 +514,7 @@ class TestApiJob(api_test.ApiTestCase):
             data={
                 'token': self.job.token,
                 'jobPart': job_part_id,
-                'status': "Completed",
+                'status': constants.JobStatus.COMPLETED.value,
             },
             timeout=constants.Base.timeout.value
         )

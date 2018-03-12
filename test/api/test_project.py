@@ -177,7 +177,7 @@ class TestApiProject(api_test.ApiTestCase):
             data={
                 'token': self.project.token,
                 'project': project_id,
-                'status': "Cancelled",
+                'status': constants.ProjectStatus.CANCELLED.value,
             },
             timeout=constants.Base.timeout.value
         )
