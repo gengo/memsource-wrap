@@ -12,9 +12,7 @@ class TestApiAnalysis(api_test.ApiTestCase):
     @patch.object(requests.Session, 'request')
     def test_get(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
-
-        mock_request().json.return_value = {
-        }
+        mock_request().json.return_value = {}
 
         analysis_id = self.gen_random_int()
 
@@ -33,9 +31,7 @@ class TestApiAnalysis(api_test.ApiTestCase):
     @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):
         type(mock_request()).status_code = PropertyMock(return_value=200)
-
-        mock_request().json.return_value = {
-        }
+        mock_request().json.return_value = {}
 
         job_part_ids = [self.gen_random_int()]
 
@@ -67,6 +63,29 @@ class TestApiAnalysis(api_test.ApiTestCase):
                 'token': self.analysis.token,
                 'analyse': analysis_id,
                 'purge': False,
+            },
+            timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests.Session, 'request')
+    def test_get_by_project(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+        mock_request().json.return_value = [{id: 1}, {id: 2}]
+
+        project_id = self.gen_random_int()
+
+        analyses = self.analysis.get_by_project(project_id)
+
+        self.assertIsInstance(analyses, list)
+        for analysis in analyses:
+            self.assertIsInstance(analysis, models.Analysis)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            '{}/listByProject'.format(self.url_base),
+            params={
+                'token': self.analysis.token,
+                'project': project_id,
             },
             timeout=constants.Base.timeout.value
         )
