@@ -26,6 +26,12 @@ class ProjectStatus(enum.Enum):
     COMPLETED_BY_VENDOR = "Completed_By_Vendor"
 
 
+class AnalysisFormat(enum.Enum):
+    CSV = "CSV"
+    LOG = "LOG"
+    CSV_EXTENDED = "CSV_EXTENDED"
+
+
 class ApiVersion(enum.Enum):
     v2 = 'v2'
     v3 = 'v3'

@@ -1016,9 +1016,23 @@ class Analysis(BaseApi):
             'purge': purge,
         })
 
-    def get_by_project(self, project_id: int) -> List[models.Analysis]:
+    def get_by_project(self, project_id: str) -> List[models.Analysis]:
+        """List Analyses By Project.
+
+        :param project_id: Project ID you want to get analyses.
+        """
         return [
             models.Analysis(client) for client in self._get('analyse/listByProject', {
                 'project': project_id
             })
         ]
+
+    def download(self, analysis_id: int,
+                 format: constants.AnalysisFormat=constants.AnalysisFormat.CSV.value):
+        """Download analysis into specified format.
+
+        :param project_id: Project ID you want to get analyses.
+        """
+        return models.Analysis(self._post('analyse/download', {
+            'analyse': analysis_id
+        }))
