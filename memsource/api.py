@@ -1034,5 +1034,6 @@ class Analysis(BaseApi):
         :param project_id: Project ID you want to get analyses.
         """
         return models.Analysis(self._post('analyse/download', {
-            'analyse': analysis_id
+            'analyse': analysis_id,
+            'format': format.value,
         }))
