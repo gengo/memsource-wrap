@@ -1015,3 +1015,10 @@ class Analysis(BaseApi):
             'analyse': analysis_id,
             'purge': purge,
         })
+
+    def get_by_project(self, project_id: int) -> List[models.Analysis]:
+        return [
+            models.Analysis(client) for client in self._get('analyse/listByProject', {
+                'project_id': project_id
+            })
+        ]
