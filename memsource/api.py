@@ -1028,7 +1028,7 @@ class Analysis(BaseApi):
         ]
 
     def download(self, analysis_id: int,
-                 format: constants.AnalysisFormat=constants.AnalysisFormat.CSV.value):
+                 format: constants.AnalysisFormat=constants.AnalysisFormat.CSV):
         """Download analysis into specified format.
 
         :param project_id: Project ID you want to get analyses.
