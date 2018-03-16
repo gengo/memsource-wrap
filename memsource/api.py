@@ -1019,7 +1019,8 @@ class Analysis(BaseApi):
     def get_by_project(self, project_id: str) -> List[models.Analysis]:
         """List Analyses By Project.
 
-        :param project_id: Project ID you want to get analyses.
+        :param project_id: Project ID for which you want to get the analyses.
+        :return: List of Analyses.
         """
         return [
             models.Analysis(client) for client in self._get('analyse/listByProject', {
@@ -1028,22 +1029,26 @@ class Analysis(BaseApi):
         ]
 
     def download(self, analysis_id: int, dest_file_path: str,
-                 format: constants.AnalysisFormat=constants.AnalysisFormat.CSV) -> None:
-        """Download analysis into specified format.
+                 file_format: constants.AnalysisFormat=constants.AnalysisFormat.CSV) -> None:
+        """Download analysis into specified file format.
 
-        :param project_id: Project ID you want to get analyses.
+        :param analysis_id: Anaylsis ID for which you download.
+        :param dest_file_path: Destination path where you want to download the file.
+        :param file_format: File format of file.
+        :return: Downloaded file with content of the analysis
         """
         with open(dest_file_path, 'wb') as f:
-            [f.write(chunk) for chunk in self._getAnalysisStream(analysis_id, format)]
+            [f.write(chunk) for chunk in self._getAnalysisStream(analysis_id, file_format)]
 
     def _getAnalysisStream(self, analysis_id: int,
-                           format: constants.AnalysisFormat) -> Iterator[bytes]:
-        """Common process of bilingualFile.
+                           file_format: constants.AnalysisFormat) -> Iterator[bytes]:
+        """Process bytes return by API
 
-        :param job_parts: List of job_part id.
-        :return: Downloaded bilingual file with iterator.
+        :param analysis_id: Anaylsis ID for which you download.
+        :param file_format: File format of file.
+        :return: Downloaded analysis file with iterator.
         """
         return self._get_stream('analyse/download', {
             'analyse': analysis_id,
-            'format': format.value,
+            'format': file_format.value,
         }).iter_content(1024)
