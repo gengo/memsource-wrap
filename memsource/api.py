@@ -1027,13 +1027,23 @@ class Analysis(BaseApi):
             })
         ]
 
-    def download(self, analysis_id: int,
-                 format: constants.AnalysisFormat=constants.AnalysisFormat.CSV):
+    def download(self, analysis_id: int, dest_file_path: str,
+                 format: constants.AnalysisFormat=constants.AnalysisFormat.CSV) -> None:
         """Download analysis into specified format.
 
         :param project_id: Project ID you want to get analyses.
         """
-        return models.Analysis(self._post('analyse/download', {
+        with open(dest_file_path, 'wb') as f:
+            [f.write(chunk) for chunk in self._getAnalysisStream(analysis_id, format)]
+
+    def _getAnalysisStream(self, analysis_id: int,
+                           format: constants.AnalysisFormat) -> Iterator[bytes]:
+        """Common process of bilingualFile.
+
+        :param job_parts: List of job_part id.
+        :return: Downloaded bilingual file with iterator.
+        """
+        return self._get_stream('analyse/download', {
             'analyse': analysis_id,
             'format': format.value,
-        }))
+        }).iter_content(1024)
