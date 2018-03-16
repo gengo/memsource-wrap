@@ -1,6 +1,9 @@
+import os
 from unittest.mock import patch, PropertyMock
-from memsource import api, constants, models
+
 import requests
+
+from memsource import api, constants, models
 import api as api_test
 
 
@@ -8,6 +11,9 @@ class TestApiAnalysis(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v2/analyse'
         self.analysis = api.Analysis('token')
+        self.test_analysis_file_path = '/tmp/analysis.csv'
+
+        self.setCleanUpFiles([self.test_analysis_file_path])
 
     @patch.object(requests.Session, 'request')
     def test_get(self, mock_request):
@@ -88,4 +94,35 @@ class TestApiAnalysis(api_test.ApiTestCase):
                 'project': project_id,
             },
             timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests.Session, 'request')
+    def test_download(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        analysis = 'this is analysis'
+
+        mock_request().iter_content.return_value = [
+            bytes(content, 'utf-8') for content in analysis]
+        analysis_id = self.gen_random_int()
+
+        self.assertFalse(os.path.isfile(self.test_analysis_file_path))
+        returned_value = self.analysis.download(analysis_id, self.test_analysis_file_path)
+        self.assertTrue(os.path.isfile(self.test_analysis_file_path))
+
+        self.assertIsNone(returned_value)
+
+        with open(self.test_analysis_file_path) as f:
+            self.assertEqual(''.join(analysis), f.read())
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            "{}/download".format(self.url_base),
+            params={
+                'token': self.analysis.token,
+                'analyse': analysis_id,
+                'format': constants.AnalysisFormat.CSV.value
+            },
+            timeout=constants.Base.timeout.value * 5,
+            stream=True
         )
