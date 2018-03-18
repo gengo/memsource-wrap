@@ -1015,3 +1015,40 @@ class Analysis(BaseApi):
             'analyse': analysis_id,
             'purge': purge,
         })
+
+    def get_by_project(self, project_id: str) -> List[models.Analysis]:
+        """List Analyses By Project.
+
+        :param project_id: Project ID for which you want to get the analyses.
+        :return: List of Analyses.
+        """
+        return [
+            models.Analysis(client) for client in self._get('analyse/listByProject', {
+                'project': project_id
+            })
+        ]
+
+    def download(self, analysis_id: int, dest_file_path: str,
+                 file_format: constants.AnalysisFormat=constants.AnalysisFormat.CSV) -> None:
+        """Download analysis into specified file format.
+
+        :param analysis_id: Anaylsis ID for which you download.
+        :param dest_file_path: Destination path where you want to download the file.
+        :param file_format: File format of file.
+        :return: Downloaded file with content of the analysis
+        """
+        with open(dest_file_path, 'wb') as f:
+            [f.write(chunk) for chunk in self._getAnalysisStream(analysis_id, file_format)]
+
+    def _getAnalysisStream(self, analysis_id: int,
+                           file_format: constants.AnalysisFormat) -> Iterator[bytes]:
+        """Process bytes return by API
+
+        :param analysis_id: Anaylsis ID for which you download.
+        :param file_format: File format of file.
+        :return: Downloaded analysis file with iterator.
+        """
+        return self._get_stream('analyse/download', {
+            'analyse': analysis_id,
+            'format': file_format.value,
+        }).iter_content(1024)
