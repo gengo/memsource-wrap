@@ -382,7 +382,7 @@ class Job(BaseApi):
     api_version = constants.ApiVersion.v7
 
     def create(
-            self, project_id: int, file_path: str, target_langs: List[str]
+            self, project_id: int, file_path: str, target_langs: List[str], zip_file: bool = False
     ) -> List[models.JobPart]:
         """Create a job.
 
@@ -394,7 +394,8 @@ class Job(BaseApi):
         :param target_langs: List of translation target languages.
         :return: List of models.JobPart
         """
-        with open(file_path, 'r') as f:
+        mode = 'r+b' if zip_file else 'r'
+        with open(file_path, mode=mode) as f:
             return self._create(project_id, target_langs, {
                 'file': f,
             })
@@ -995,14 +996,16 @@ class Analysis(BaseApi):
             'analyse': analysis_id,
         }))
 
-    def create(self, job_part_ids: List[int]) -> models.Analysis:
+    def create(self, job_part_ids: List[int], **kwargs) -> models.Analysis:
         """Create new analysis.
 
         :param job_part_ids: Target of analysis.
+        :param kwargs: Can be defined as key-value arguments from here https://wiki.memsource.com/wiki/Analysis_API_v2#Create_New_Analysis
         :return: Result of analysis.
         """
         return models.Analysis(self._post('analyse/create', {
             'jobPart': job_part_ids,
+            **kwargs
         }))
 
     def delete(self, analysis_id: int, purge: bool=False) -> None:
