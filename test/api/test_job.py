@@ -518,3 +518,21 @@ class TestApiJob(api_test.ApiTestCase):
             },
             timeout=constants.Base.timeout.value
         )
+
+    @patch.object(requests.Session, 'request')
+    def test_deleteAllTranslations(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        job_part_ids = [self.gen_random_int()]
+
+        self.assertIsNone(self.job.deleteAllTranslations(job_part_ids))
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            '{}/deleteAllTranslations'.format(self.url_base),
+            data={
+                'token': self.job.token,
+                'jobPart': job_part_ids,
+            },
+            timeout=constants.Base.timeout.value
+        )

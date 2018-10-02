@@ -604,6 +604,16 @@ class Job(BaseApi):
             'status': status.value
         })
 
+    def deleteAllTranslations(self, job_part_ids: List[int]) -> None:
+        """Delete all translations from a job
+
+        :param job_part_ids: IDs of job_part for the jobs.
+        """
+        self._post('job/deleteAllTranslations', {
+            'jobPart': job_part_ids,
+        })
+
+
 
 class TranslationMemory(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
