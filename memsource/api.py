@@ -614,7 +614,6 @@ class Job(BaseApi):
         })
 
 
-
 class TranslationMemory(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Translation_Memory_API_v4
     """
