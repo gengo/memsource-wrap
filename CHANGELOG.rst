@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file. Dates are i
 
 Unreleased
 ==========
+[0.4.3] - 2018-10-02
+====================
+
+Added
+-----
+- Support delete all job translations.
 
 [0.4.2] - 2018-03-16
 ====================
