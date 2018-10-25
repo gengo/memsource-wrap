@@ -22,7 +22,7 @@ from memsource.lib import mxliff
 
 
 __all__ = ['Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
-           'Language', 'Analysis']
+           'Language', 'Analysis', 'TermBase']
 
 
 class BaseApi:
@@ -1071,3 +1071,33 @@ class Analysis(BaseApi):
             'analyse': analysis_id,
             'format': file_format.value,
         }).iter_content(1024)
+
+
+class TermBase(BaseApi):
+    """Documentation - https://wiki.memsource.com/wiki/Term_Base_API_v2
+    """
+    api_version = constants.ApiVersion.v2
+
+    def download(
+        self,
+        termbase_id: int,
+        filepath: str,
+        *,
+        file_format: str='XLSX',
+        chunk_size: int=1024,
+    ) -> None:
+        """Download a term base.
+
+        :param termbase_id: ID of the term base to be downloaded.
+        :param filepath: Save exported data to this file path.
+        :param file_format: TBX or XLSX. Defaults to XLSX.
+        :param chunk_size: byte size of chunk for response data.
+        """
+        params = {
+            'termBase': termbase_id,
+            'format': file_format,
+        }
+
+        with open(filepath, 'wb') as f:
+            [f.write(chunk) for chunk in
+                self._get_stream('termBase/export', params).iter_content(chunk_size)]

@@ -84,3 +84,7 @@ class Analysis(BaseModel):
 
 class MxliffUnit(BaseModel):
     pass
+
+
+class TermBase(BaseModel):
+    pass
