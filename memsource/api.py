@@ -7,6 +7,8 @@ import urllib.parse
 import uuid
 
 from typing import (
+    Any,
+    Dict,
     Iterator,
     List,
     Tuple,
@@ -373,6 +375,14 @@ class Project(BaseApi):
             'project': project_id,
             'status': status.value
         })
+
+    def getTermBases(self, project_id: int) -> List[Dict[str, Any]]:
+        """Returns the list of term bases belonging to a project.
+        Documentation - https://wiki.memsource.com/wiki/Project_API_v3#Get_Term_Bases
+
+        :param project_id: ID of the project containing the term bases
+        """
+        return self._get('project/getTermBases', {'project': project_id})
 
 
 class Job(BaseApi):
