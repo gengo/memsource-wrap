@@ -11,7 +11,7 @@ class TestApiTermBase(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v2/termBase'
         self.termbase = api.TermBase(None)
-        self.test_termbase_filepath = '/tmp/test.xlsx'
+        self.test_termbase_filepath = '/tmp/test_termbase.xlsx'
 
         self.setCleanUpFiles((self.test_termbase_filepath,))
 
@@ -42,7 +42,7 @@ class TestApiTermBase(api_test.ApiTestCase):
             params={
                 'token': self.termbase.token,
                 'termBase': 123,
-                'format': 'XLSX',
+                'format': constants.TermBaseFormat.XLSX,
             },
             timeout=constants.Base.timeout.value * 5,
             stream=True,

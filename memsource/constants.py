@@ -32,6 +32,11 @@ class AnalysisFormat(enum.Enum):
     CSV_EXTENDED = "CSV_EXTENDED"
 
 
+class TermBaseFormat(enum.Enum):
+    XLSX = "XLSX"
+    TBX = "TBX"
+
+
 class ApiVersion(enum.Enum):
     v2 = 'v2'
     v3 = 'v3'

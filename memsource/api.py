@@ -1079,7 +1079,8 @@ class TermBase(BaseApi):
     api_version = constants.ApiVersion.v2
 
     def download(self, termbase_id: int, filepath: str, *,
-                 file_format: str='XLSX', chunk_size: int=1024) -> None:
+                 file_format: str=constants.TermBaseFormat.XLSX,
+                 chunk_size: int=1024) -> None:
         """Download a term base.
 
         :param termbase_id: ID of the term base to be downloaded.
