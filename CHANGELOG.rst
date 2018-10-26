@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file. Dates are i
 
 Unreleased
 ==========
+
+[0.4.4] - 2018-10-25
+====================
+
+Added
+-----
+- Support get term base list of a project.
+- Support download term base.
+
 [0.4.3] - 2018-10-02
 ====================
 

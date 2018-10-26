@@ -1,8 +1,10 @@
-from unittest.mock import patch, PropertyMock
-from memsource import api, models, constants
-import requests
 import datetime
+from unittest.mock import patch, PropertyMock
+
+import requests
+
 import api as api_test
+from memsource import api, models, constants
 
 
 class TestApiProject(api_test.ApiTestCase):
@@ -180,4 +182,26 @@ class TestApiProject(api_test.ApiTestCase):
                 'status': constants.ProjectStatus.CANCELLED.value,
             },
             timeout=constants.Base.timeout.value
+        )
+
+    @patch.object(requests.Session, 'request')
+    def test_get_termbases(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        termbase_response = [
+            {'termBase': {'id': self.gen_random_int()}},
+        ]
+        mock_request().json.return_value = termbase_response
+
+        returned_id = self.project.getTermBases(123)
+        self.assertEqual(termbase_response, returned_id)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            '{}/getTermBases'.format(self.url_base),
+            params={
+                'token': self.project.token,
+                'project': 123,
+            },
+            timeout=constants.Base.timeout.value,
         )
