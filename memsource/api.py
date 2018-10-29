@@ -207,7 +207,7 @@ class BaseApi:
         return self._get_response(http_method, url, timeout=timeout, **arguments).json()
 
     @staticmethod
-    def is_success(status_code: {int}):
+    def is_success(status_code: int):
         # if status_code is float type, we will get unexpected result.
         # but I think it is not big deal.
         return 200 <= status_code < 300
@@ -1079,7 +1079,7 @@ class TermBase(BaseApi):
     api_version = constants.ApiVersion.v2
 
     def download(self, termbase_id: int, filepath: str, *,
-                 file_format: str=constants.TermBaseFormat.XLSX,
+                 file_format: constants.TermBaseFormat=constants.TermBaseFormat.XLSX,
                  chunk_size: int=1024) -> None:
         """Download a term base.
 
@@ -1090,7 +1090,7 @@ class TermBase(BaseApi):
         """
         params = {
             'termBase': termbase_id,
-            'format': file_format,
+            'format': file_format.value,
         }
 
         with open(filepath, 'wb') as f:

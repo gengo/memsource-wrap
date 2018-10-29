@@ -42,7 +42,7 @@ class TestApiTermBase(api_test.ApiTestCase):
             params={
                 'token': self.termbase.token,
                 'termBase': 123,
-                'format': constants.TermBaseFormat.XLSX,
+                'format': 'XLSX',
             },
             timeout=constants.Base.timeout.value * 5,
             stream=True,
