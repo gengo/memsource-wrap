@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.4.5] - 2018-10-29
+====================
+
+Fix
+-----
+- Fix file format parameter constant in term base download method.
+
 [0.4.4] - 2018-10-25
 ====================
 
