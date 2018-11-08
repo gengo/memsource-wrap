@@ -47,3 +47,38 @@ class TestApiTermBase(api_test.ApiTestCase):
             timeout=constants.Base.timeout.value * 5,
             stream=True,
         )
+
+    @patch.object(requests.Session, 'request')
+    def test_get_term_bases_with_project_id(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        termbase_contents = ['test termbase content', 'second']
+
+        mock_request().iter_content.return_value = [
+            bytes(content, 'utf-8') for content in termbase_contents]
+
+        self.assertFalse(os.path.isfile(self.test_termbase_filepath))
+        returned_value = self.termbase.download(
+            termbase_id=123,
+            filepath=self.test_termbase_filepath,
+            project_id=456,
+        )
+        self.assertTrue(os.path.isfile(self.test_termbase_filepath))
+
+        self.assertIsNone(returned_value)
+
+        with open(self.test_termbase_filepath) as f:
+            self.assertEqual(''.join(termbase_contents), f.read())
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.get.value,
+            "{}/export".format(self.url_base),
+            params={
+                'token': self.termbase.token,
+                'termBase': 123,
+                'format': 'XLSX',
+                'project': 456,
+            },
+            timeout=constants.Base.timeout.value * 5,
+            stream=True,
+        )
