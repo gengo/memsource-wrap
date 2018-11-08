@@ -11,6 +11,7 @@ from typing import (
     Dict,
     Iterator,
     List,
+    Optional,
     Tuple,
     Union,
 )
@@ -1078,20 +1079,28 @@ class TermBase(BaseApi):
     """
     api_version = constants.ApiVersion.v2
 
-    def download(self, termbase_id: int, filepath: str, *,
-                 file_format: constants.TermBaseFormat=constants.TermBaseFormat.XLSX,
-                 chunk_size: int=1024) -> None:
+    def download(
+            self,
+            termbase_id: int,
+            filepath: str,
+            *,
+            file_format: constants.TermBaseFormat=constants.TermBaseFormat.XLSX,
+            chunk_size: int=1024,
+            project_id: Optional[int]= None) -> None:
         """Download a term base.
 
         :param termbase_id: ID of the term base to be downloaded.
         :param filepath: Save exported data to this file path.
         :param file_format: TBX or XLSX. Defaults to XLSX.
         :param chunk_size: byte size of chunk for response data.
+        :param project_id: optional project ID to check term base access permissions.
         """
         params = {
             'termBase': termbase_id,
             'format': file_format.value,
         }
+        if project_id:
+            params['project'] = project_id
 
         with open(filepath, 'wb') as f:
             [f.write(chunk) for chunk in

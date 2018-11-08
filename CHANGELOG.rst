@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.4.6] - 2018-11-08
+====================
+
+Added
+-----
+- Extra project_id parameter to term base download method.
+
 [0.4.5] - 2018-10-29
 ====================
 
