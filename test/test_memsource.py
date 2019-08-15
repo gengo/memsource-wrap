@@ -54,3 +54,26 @@ class TestMemsource(unittest.TestCase):
 
         # When token is given as parameter, never send http request.
         self.assertFalse(mock_request.called)
+
+    @patch.object(requests.Session, 'request')
+    def test_header_memsource_parameter(self, mock_request):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        token = 'test_token'
+        mock_request().json.return_value = {
+            'token': token,
+            'user': {},
+        }
+        headers = {
+            'Authorization': 'Bearer test_token'
+        }
+
+        self.check_token(Memsource(headers=headers), token)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.post.value,
+            self.url_base,
+            data={'password': None, 'userName': None, 'token': None},
+            timeout=constants.Base.timeout.value,
+            headers={'Authorization': 'Bearer test_token'}
+        )
