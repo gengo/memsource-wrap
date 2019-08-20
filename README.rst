@@ -5,7 +5,7 @@ memsource-wrap
 ##############
 Memsource API Wrap Library for Python
 
-This library require Python 3.4. If Python 3.4 is not installed on your system, I recommened to use `Pythonz <https://github.com/saghul/pythonz>`_
+This library require Python 3.5. If Python 3.5 is not installed on your system, I recommened to use `Pythonz <https://github.com/saghul/pythonz>`_
 
 Install
 =======

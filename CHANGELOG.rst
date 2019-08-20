@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.4.7] - 2019-08-19
+====================
+
+Upgraded
+-----
+- Upgraded python version from python3.4 to python3.5.
+
 [0.4.6] - 2018-11-08
 ====================
 
