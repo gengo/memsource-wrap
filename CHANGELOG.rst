@@ -11,7 +11,7 @@ Unreleased
 
 Added
 -----
-- Added  headers parameters on initiating memsource, headers will be used for authentication.
+- Added `headers` parameter on initiating the Memsource class. This will be used for authentication.
 
 [0.4.7] - 2019-08-19
 ====================
