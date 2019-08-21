@@ -11,7 +11,7 @@ class TestApiJob(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = "https://cloud.memsource.com/web/api/{}/job".format(
             api.Job.api_version.value)
-        self.job = api.Job(None)
+        self.job = api.Job()
         self.test_file_path = '/tmp/test_file.txt'
         self.test_file_uuid1_name = 'test-file-uuid1'
         self.test_file_copy_path = '/var/tmp/{}'.format(self.test_file_uuid1_name)

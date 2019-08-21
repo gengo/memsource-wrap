@@ -17,7 +17,7 @@ from memsource import exceptions
 
 class TestApiAsynchronous(api_test.ApiTestCase):
     def setUp(self):
-        self.asynchronous = api.Asynchronous(None)
+        self.asynchronous = api.Asynchronous()
 
         self.job_parts = [{
             'id': 9371,

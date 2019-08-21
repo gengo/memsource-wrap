@@ -7,7 +7,7 @@ import requests
 class TestApiDomain(unittest.TestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v2/domain'
-        self.domain = api.Domain(None)
+        self.domain = api.Domain()
 
     @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):

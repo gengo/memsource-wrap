@@ -10,7 +10,7 @@ from memsource import api, models, constants
 class TestApiProject(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v3/project'
-        self.project = api.Project(None)
+        self.project = api.Project()
 
     @patch.object(requests.Session, 'request')
     def test_create(self, mock_request):

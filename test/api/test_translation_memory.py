@@ -14,7 +14,7 @@ ANY_LCS = ['en', 'ja']
 class TestApiTranslationMemory(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v4/transMemory'
-        self.translation_memory = api.TranslationMemory(None)
+        self.translation_memory = api.TranslationMemory()
         self.test_tmx_file_path = '/tmp/test.tmx'
         self.test_export_file_path = '/tmp/export.tmx'
 
