@@ -57,8 +57,7 @@ class TestMemsource(unittest.TestCase):
 
     @patch.object(requests.Session, 'request')
     def test_header_memsource_parameter(self, mock_request):
-        type(mock_request()).status_code = PropertyMock(return_value=200)
-
+        mock_request.return_value.status_code = 200
         token = 'test_token'
         mock_request().json.return_value = {
             'token': token,
