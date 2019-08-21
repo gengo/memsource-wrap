@@ -40,6 +40,7 @@ class BaseApi:
                 'api_version is not set in {}'.format(self.__class__.__name__))
 
         self.token = token
+        self.headers = None
 
     @classmethod
     def use_session(cls, session: requests.Session) -> None:
@@ -137,7 +138,7 @@ class BaseApi:
 
         arguments = {
             key: value for key, value in [
-                ('files', files), ('params', params), ('data', data)
+                ('files', files), ('params', params), ('data', data), ('headers', self.headers)
             ] if value is not None
         }
 
@@ -197,10 +198,9 @@ class BaseApi:
             (url, params) = self._pre_request(path, params)
         else:
             (url, data) = self._pre_request(path, data)
-
         arguments = {
             key: value for key, value in [
-                ('files', files), ('params', params), ('data', data)
+                ('files', files), ('params', params), ('data', data), ('headers', self.headers)
             ] if value is not None
         }
 
@@ -213,6 +213,9 @@ class BaseApi:
         # but I think it is not big deal.
         return 200 <= status_code < 300
 
+    def _set_headers(self, headers):
+        self.headers = headers
+
 
 class Auth(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Authentication_API_v3
@@ -223,12 +226,14 @@ class Auth(BaseApi):
     def __init__(self, token=None):
         super(Auth, self).__init__(token)
 
+    def set_headers(self, headers):
+        self._set_headers(headers)
+
     def login(self, user_name, password):
         r = self._post('auth/login', {
             'userName': user_name,
             'password': password,
         })
-
         r['user'] = models.User(r.pop('user'))
 
         return models.Authentication(r)

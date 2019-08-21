@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.4.8] - 2019-08-21
+====================
+
+Added
+-----
+- Added `headers` parameter on initiating the Memsource class. This will be used for authentication.
+
 [0.4.7] - 2019-08-19
 ====================
 

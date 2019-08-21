@@ -3,12 +3,13 @@ import inflection
 
 
 class Memsource(object):
-    def __init__(self, user_name=None, password=None, token=None):
+    def __init__(self, user_name=None, password=None, token=None, headers=None):
         """
         If token is given, use the token.
         Otherwise authenticate with user_name and password, and get token.
         """
         self.auth = api.Auth()
+        self.auth.set_headers(headers)
 
         # make api class instances
         (lambda token: [
