@@ -1,5 +1,4 @@
 from . import api
-import inflection
 
 
 class Memsource(object):
@@ -8,10 +7,17 @@ class Memsource(object):
         If token is given, use the token.
         Otherwise authenticate with user_name and password, and get token.
         """
-        self.auth = api.Auth()
-        self.auth.set_headers(headers)
+        self.auth = api.Auth(token, headers)
+        if user_name and password and not token and not headers:
+            token = self.auth.login(user_name, password).token
 
         # make api class instances
-        (lambda token: [
-            setattr(self, inflection.underscore(c), getattr(api, c)(token)) for c in api.__all__
-        ])(self.auth.login(user_name, password).token if token is None else token)
+        self.client = api.Client(token, headers)
+        self.domain = api.Domain(token, headers)
+        self.project = api.Project(token, headers)
+        self.job = api.Job(token, headers)
+        self.translation_memory = api.TranslationMemory(token, headers)
+        self.asynchronous = api.Asynchronous(token, headers)
+        self.language = api.Language(token, headers)
+        self.analysis = api.Analysis(token, headers)
+        self.term_base = api.TermBase(token, headers)

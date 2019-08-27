@@ -21,7 +21,7 @@ class TestBaseApi(unittest.TestCase):
         """
         Raise MemsourceApiException when timed out
         """
-        api_implements = ApiImplements(None)
+        api_implements = ApiImplements()
         self.assertRaises(
             exceptions.MemsourceApiException,
             lambda: api_implements._post('path', {})
@@ -32,7 +32,7 @@ class TestBaseApi(unittest.TestCase):
         """
         Raise MemsourceApiException when connection failed.
         """
-        api_implements = ApiImplements(None)
+        api_implements = ApiImplements()
         self.assertRaises(
             exceptions.MemsourceApiException,
             lambda: api_implements._post('path', {})

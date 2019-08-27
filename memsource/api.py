@@ -22,14 +22,14 @@ from memsource import constants, exceptions, models
 from memsource.lib import mxliff
 
 
-__all__ = ['Auth', 'Client', 'Domain', 'Project', 'Job', 'TranslationMemory', 'Asynchronous',
-           'Language', 'Analysis', 'TermBase']
-
-
 class BaseApi:
     _session = requests.Session()
 
-    def __init__(self, token: str) -> None:
+    def __init__(
+        self,
+        token: Optional[str] = None,
+        headers: Optional[Dict[str, Any]] = None
+    ) -> None:
         """Inheriting classes must have the api_version attribute
 
         :param token: Authentication token for using APIs
@@ -40,7 +40,7 @@ class BaseApi:
                 'api_version is not set in {}'.format(self.__class__.__name__))
 
         self.token = token
-        self.headers = None
+        self.headers = headers
 
     @classmethod
     def use_session(cls, session: requests.Session) -> None:
@@ -213,21 +213,12 @@ class BaseApi:
         # but I think it is not big deal.
         return 200 <= status_code < 300
 
-    def _set_headers(self, headers):
-        self.headers = headers
-
 
 class Auth(BaseApi):
     """You can see the document http://wiki.memsource.com/wiki/Authentication_API_v3
     """
 
     api_version = constants.ApiVersion.v3
-
-    def __init__(self, token=None):
-        super(Auth, self).__init__(token)
-
-    def set_headers(self, headers):
-        self._set_headers(headers)
 
     def login(self, user_name, password):
         r = self._post('auth/login', {

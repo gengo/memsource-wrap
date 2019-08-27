@@ -10,7 +10,7 @@ from memsource import api, constants
 class TestApiTermBase(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v2/termBase'
-        self.termbase = api.TermBase(None)
+        self.termbase = api.TermBase()
         self.test_termbase_filepath = '/tmp/test_termbase.xlsx'
 
         self.setCleanUpFiles((self.test_termbase_filepath,))

@@ -9,7 +9,7 @@ from memsource import api, constants, models
 class TestApiLanguage(api_test.ApiTestCase):
     def setUp(self):
         self.url_base = 'https://cloud.memsource.com/web/api/v2/language'
-        self.language = api.Language(None)
+        self.language = api.Language()
 
     @patch.object(requests.Session, 'request')
     def test_list(self, mock_request):
