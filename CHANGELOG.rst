@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.5.0] - 2019-11-28
+====================
+
+Fix bug
+-----
+- Fix bug in getting token in Memsource Auth class.
+
 [0.4.9] - 2019-08-23
 ====================
 
