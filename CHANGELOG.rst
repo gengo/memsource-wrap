@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
-[0.5.0] - 2019-11-28
+[0.4.10] - 2019-11-28
 ====================
 
 Fix bug
