@@ -8,7 +8,7 @@ class Memsource(object):
         Otherwise authenticate with user_name and password, and get token.
         """
         if user_name and password and not token and not headers:
-            token = api.Auth(token, headers).login(user_name, password).token
+            token = api.Auth().login(user_name, password).token
 
         # make api class instances
         self.auth = api.Auth(token, headers)
