@@ -465,10 +465,12 @@ class Job(BaseApi):
             self.last_params
         )
 
-    def listByProject(self, project_id: int) -> List[models.JobPart]:
-        return [models.JobPart(job_part) for job_part in self._post('job/listByProject', {
-            'project': project_id
-        })]
+    def listByProject(self, project_id: int, page: int = 0) -> List[models.JobPart]:
+        jobs = self._post('job/listByProject', {
+            'project': project_id,
+            'page': page
+        })
+        return [models.JobPart(job_part) for job_part in jobs]
 
     def preTranslate(self, job_parts: List[int]) -> None:
         """Request pre translate.
