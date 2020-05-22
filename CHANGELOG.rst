@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.4.11] - 2020-05-22
+====================
+
+Add page parameter in `listByProject`
+-----
+- Added `page` parameter for fetching job list in `listByProject`.
+
 [0.4.10] - 2019-11-28
 ====================
 
