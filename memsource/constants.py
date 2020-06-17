@@ -47,3 +47,8 @@ class ApiVersion(enum.Enum):
 class HttpMethod(enum.Enum):
     get = 'get'
     post = 'post'
+
+
+class BaseRest(enum.Enum):
+    url = 'https://cloud.memsource.com/web/api2'
+    timeout = 60

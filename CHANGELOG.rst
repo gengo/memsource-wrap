@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.4.12] - 2020-06-17
+====================
+
+Added
+-----
+- Added a new Base class for Memsource REST transition.
+
 [0.4.11] - 2020-05-22
 ====================
 
