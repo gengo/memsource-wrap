@@ -138,7 +138,7 @@ class BaseApi:
         except requests.exceptions.ConnectionError:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',
-                'errorDescription': 'Could not connect',
+                'errorDescription': 'Could not connect: {}'.format(response.text),
             }, self.last_url, self.last_params)
 
         if BaseApi.is_success(response.status_code):
@@ -185,7 +185,7 @@ class BaseApi:
         return self._get_response(http_method, url, timeout=timeout, **arguments)
 
     @staticmethod
-    def is_success(status_code: int):
+    def is_success(status_code: int) -> bool:
         # if status_code is float type, we will get unexpected result.
         # but I think it is not big deal.
         return 200 <= status_code < 300
