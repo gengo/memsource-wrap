@@ -205,7 +205,8 @@ class TestApiJob(api_test.ApiTestCase):
             '{}/listByProject'.format(self.url_base),
             data={
                 'token': self.job.token,
-                'project': project_id
+                'project': project_id,
+                'page': 0,
             },
             timeout=constants.Base.timeout.value
         )
