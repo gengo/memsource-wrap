@@ -37,7 +37,6 @@ class BaseApi:
             self,
             path: str,
             params: Dict[str, Any]={},
-            *,
             timeout: int=constants.BaseRest.timeout.value
     ) -> Dict[str, Any]:
         return self._request(
