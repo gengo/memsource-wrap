@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file. Dates are i
 Unreleased
 ==========
 
+[0.5.1] - 2020-06-19
+====================
+
+Added
+-----
+- Added a new Auth class for Memsource REST transition.
+- Added a new Client class for Memsource REST transition.
+
 [0.5.0] - 2020-06-17
 ====================
 
