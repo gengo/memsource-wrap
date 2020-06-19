@@ -7,6 +7,12 @@ Memsource API Wrap Library for Python
 
 This library require Python 3.5. If Python 3.5 is not installed on your system, I recommened to use `Pythonz <https://github.com/saghul/pythonz>`_
 
+Note
+=======
+This library still uses the Memsource Legacy API which will be deprecated in September 2020.
+
+We are currently adding support for the new Memsource REST API.
+
 Install
 =======
 
