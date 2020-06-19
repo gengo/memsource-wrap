@@ -10,6 +10,6 @@ class Client(api_rest.BaseApi):
     def get(self, clientID: int):
         return models.Client(self._get("v1/clients/{}".format(clientID)))
 
-    def list(self, page:int=0):
+    def list(self, page: int=0):
         clients = self._get("v1/clients", {"page": page})
         return [models.Client(client) for client in clients.get("content", [])]

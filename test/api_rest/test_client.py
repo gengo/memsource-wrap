@@ -61,7 +61,6 @@ class TestClient(unittest.TestCase):
         self.assertEqual(response, expected)
         self.assertIsInstance(response, models.Client)
 
-
     @patch.object(requests.Session, "request")
     def test_list(self, mock_request: unittest.mock):
         ms_response = unittest.mock.MagicMock(status_code=200)
