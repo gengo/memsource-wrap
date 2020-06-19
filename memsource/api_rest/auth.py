@@ -9,6 +9,6 @@ class Auth(api_rest.BaseApi):
             "userName": user_name,
             "password": password,
         })
-        response["user"] = models.User(response.pop("user"))
+        response["user"] = models.User(response["user"])
 
         return models.Authentication(response)
