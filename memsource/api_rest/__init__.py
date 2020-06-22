@@ -134,10 +134,10 @@ class BaseApi:
                 'errorDescription': 'The request timed out, timeout is {}'.format(
                     kwargs['timeout'] if 'timeout' in kwargs else 'default'),
             }, self.last_url, self.last_params)
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as e:
             raise exceptions.MemsourceApiException(None, {
                 'errorCode': 'Internal',
-                'errorDescription': 'Could not connect: {}'.format(response.text),
+                'errorDescription': 'Could not connect: {}'.format(e),
             }, self.last_url, self.last_params)
 
         if BaseApi.is_success(response.status_code):
