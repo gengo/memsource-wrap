@@ -10,9 +10,7 @@ class TestTermBase(unittest.TestCase):
     @patch("builtins.open")
     @patch.object(requests.Session, "request")
     def test_download(self, mock_request: unittest.mock, mock_open: unittest.mock.MagicMock):
-        x = unittest.mock.MagicMock(status_code=200)
-        x.data = "HELLO"
-        mock_request.return_value = x
+        mock_request.return_value = unittest.mock.MagicMock(status_code=200)
 
         TermBase(token="mock-token").download(1, "mock-local-filepath")
 
