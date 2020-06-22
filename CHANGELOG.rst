@@ -11,6 +11,7 @@ Unreleased
 Added
 -----
 - Added a new Domain class for Memsource REST transition.
+- Added a new Language class for Memsource REST transition.
 
 [0.5.1] - 2020-06-19
 ====================
