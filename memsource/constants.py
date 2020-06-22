@@ -52,3 +52,7 @@ class HttpMethod(enum.Enum):
 class BaseRest(enum.Enum):
     url = 'https://cloud.memsource.com/web/api2'
     timeout = 60
+
+
+CHUNK_SIZE = 1024
+CHAR_SET = "UTF-8"

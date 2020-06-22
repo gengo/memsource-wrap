@@ -9,8 +9,8 @@ class TermBase(api_rest.BaseApi):
         termbase_id: int,
         filepath: str,
         file_format: constants.TermBaseFormat=constants.TermBaseFormat.XLSX,
-        chunk_size: int=1024,
-        charset: str="UTF-8",
+        chunk_size: int=constants.CHUNK_SIZE,
+        charset: str=constants.CHAR_SET,
     ) -> None:
         """Download a term base.
 
@@ -25,6 +25,9 @@ class TermBase(api_rest.BaseApi):
         }
 
         with open(filepath, 'wb') as f:
-            [f.write(chunk) for chunk in
-                self._get_stream("v1/termBases/{}/export".format(termbase_id), params)
-                .iter_content(chunk_size)]
+            data_stream = self._get_stream(
+                "v1/termBases/{}/export".format(termbase_id), params
+            ).iter_content(chunk_size)
+
+            for chunk in data_stream:
+                f.write(chunk)

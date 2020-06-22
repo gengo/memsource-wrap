@@ -17,7 +17,7 @@ class TestTermBase(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/termBases/1/export",
-            params={"format": "XLSX", "charset": "UTF-8", "token": "mock-token"},
+            params={"format": "Xlsx", "charset": "UTF-8", "token": "mock-token"},
             timeout=300,
         )
         mock_open.assert_called_with('mock-local-filepath', 'wb')
