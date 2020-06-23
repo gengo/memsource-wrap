@@ -47,6 +47,7 @@ class ApiVersion(enum.Enum):
 class HttpMethod(enum.Enum):
     get = 'get'
     post = 'post'
+    put = 'put'
 
 
 class BaseRest(enum.Enum):

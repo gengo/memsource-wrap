@@ -5,6 +5,7 @@ from typing import (
     Tuple,
     Union,
 )
+from http import HTTPStatus
 
 import requests
 
@@ -91,8 +92,39 @@ class BaseApi:
         :param timeout: When takes over this time in one request, raise timeout
         :return: parsed response body as JSON
         """
-        return self._request(
+        resp = self._request(
             http_method=constants.HttpMethod.post,
+            path=path,
+            files=files,
+            params={"token": self.token},
+            data=data,
+            timeout=timeout
+        )
+        resp.raise_for_status()
+
+        # Some resources return 204 were there is no response body.
+        # https://cloud.memsource.com/web/docs/api#operation/setProjectStatus
+        if resp.status_code == HTTPStatus.NO_CONTENT:
+            return {}
+        return resp.json()
+
+    def _put(
+            self,
+            path: str,
+            data: Optional[Dict[str, Any]]=None,
+            files: Optional[Dict[str, Any]]=None,
+            timeout: Union[int, float]=constants.BaseRest.timeout.value,
+    ) -> Dict[str, Any]:
+        """Send a put request.
+
+        :param path: Send request to this path
+        :param data: Send request with this parameters
+        :param files: Upload this files. Key is filename, value is file object
+        :param timeout: When takes over this time in one request, raise timeout
+        :return: parsed response body as JSON
+        """
+        return self._request(
+            http_method=constants.HttpMethod.put,
             path=path,
             files=files,
             params={"token": self.token},
