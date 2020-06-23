@@ -132,7 +132,7 @@ class TestProject(unittest.TestCase):
         )
 
     @patch.object(requests.Session, "request")
-    def test_getTransMemories(self, mock_request: unittest.mock):
+    def test_get_trans_memories(self, mock_request: unittest.mock):
         ms_response = unittest.mock.MagicMock(status_code=200)
         ms_response.json.return_value = {
             "transMemories": [
@@ -231,7 +231,7 @@ class TestProject(unittest.TestCase):
             ),
         ]
 
-        response = Project(token="mock-token").getTransMemories(1)
+        response = Project(token="mock-token").get_trans_memories(1)
         for trans_memories, expected_trans_memories in zip(response, expected):
             self.assertEqual(trans_memories, expected_trans_memories)
 
@@ -243,10 +243,10 @@ class TestProject(unittest.TestCase):
         )
 
     @patch.object(requests.Session, "request")
-    def test_setTransMemories(self, mock_request: unittest.mock):
+    def test_set_trans_memories(self, mock_request: unittest.mock):
         mock_request.return_value = unittest.mock.MagicMock(status_code=200)
 
-        Project(token="mock-token").setTransMemories(
+        Project(token="mock-token").set_trans_memories(
             project_id=1,
             translation_memories=[{
                 "transMemory": {"id": "1180298"},
@@ -270,10 +270,10 @@ class TestProject(unittest.TestCase):
         )
 
     @patch.object(requests.Session, "request")
-    def test_setStatus(self, mock_request: unittest.mock):
+    def test_set_status(self, mock_request: unittest.mock):
         mock_request.return_value = unittest.mock.MagicMock(status_code=204)
 
-        Project(token="mock-token").setStatus(
+        Project(token="mock-token").set_status(
             project_id=1,
             status=constants.ProjectStatus.NEW,
         )
@@ -287,7 +287,7 @@ class TestProject(unittest.TestCase):
         )
 
     @patch.object(requests.Session, "request")
-    def test_getTermBases(self, mock_request: unittest.mock):
+    def test_get_term_bases(self, mock_request: unittest.mock):
         ms_response = unittest.mock.MagicMock(status_code=200)
         ms_response.json.return_value = {
             "termBases": [
@@ -354,7 +354,7 @@ class TestProject(unittest.TestCase):
             )
         ]
 
-        term_bases = Project(token="mock-token").getTermBases(1)
+        term_bases = Project(token="mock-token").get_term_bases(1)
         for term_base, expected_term_base in zip(term_bases, expected):
             self.assertEqual(term_base, expected_term_base)
 

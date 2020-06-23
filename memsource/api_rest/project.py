@@ -25,14 +25,14 @@ class Project(api_rest.BaseApi):
         projects = self._get("v1/projects", query)
         return [models.Project(project) for project in projects.get("content", [])]
 
-    def getTransMemories(self, project_id: int) -> List[models.TranslationMemory]:
+    def get_trans_memories(self, project_id: int) -> List[models.TranslationMemory]:
         translation_memories = self._get("v1/projects/{}/transMemories".format(project_id))
         return [
             models.TranslationMemory(tm)
             for tm in translation_memories.get("transMemories", [])
         ]
 
-    def setTransMemories(
+    def set_trans_memories(
         self,
         project_id: int,
         translation_memories: List[Dict[str, Any]],
@@ -56,7 +56,7 @@ class Project(api_rest.BaseApi):
         # This end-point return nothing.
         self._put("v2/projects/{}/transMemories".format(project_id), params)
 
-    def setStatus(self, project_id: int, status: constants.ProjectStatus) -> None:
+    def set_status(self, project_id: int, status: constants.ProjectStatus) -> None:
         """Update project status
 
         ProjectStatus: New, Emailed, Assigned, Declined_By_Linguist,
@@ -70,7 +70,7 @@ class Project(api_rest.BaseApi):
             "status": status.value.upper()
         })
 
-    def getTermBases(self, project_id: int) -> List[models.TermBase]:
+    def get_term_bases(self, project_id: int) -> List[models.TermBase]:
         """Returns the list of term bases belonging to a project.
         :param project_id: ID of the project containing the term bases
         """
