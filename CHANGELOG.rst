@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file. Dates are i
 
 Unreleased
 ==========
+[0.5.2] - 2020-06-22
+====================
+
+Added
+-----
+- Added a new Domain class for Memsource REST transition.
+- Added a new Language class for Memsource REST transition.
+- Added a new TermBase class for Memsource REST transition.
 
 [0.5.1] - 2020-06-19
 ====================
