@@ -48,11 +48,23 @@ class HttpMethod(enum.Enum):
     get = 'get'
     post = 'post'
     put = 'put'
+    delete = "delete"
 
 
 class BaseRest(enum.Enum):
     url = 'https://cloud.memsource.com/web/api2'
     timeout = 60
+
+
+class JobStatusRest(enum.Enum):
+    NEW = "NEW"
+    ACCEPTED = "ACCEPTED"
+    DECLINED = "DECLINED"
+    REJECTED = "REJECTED"
+    DELIVERED = "DELIVERED"
+    EMAILED = "EMAILED"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
 
 
 CHUNK_SIZE = 1024
