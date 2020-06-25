@@ -69,3 +69,4 @@ class JobStatusRest(enum.Enum):
 
 CHUNK_SIZE = 1024
 CHAR_SET = "UTF-8"
+TM_THRESHOLD = 0.7

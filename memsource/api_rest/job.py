@@ -1,7 +1,6 @@
 import io
 import json
 import os
-import types
 import uuid
 from typing import Any, Dict, List
 
@@ -116,7 +115,7 @@ class Job(api_rest.BaseApi):
             self,
             project_id: int,
             job_parts: List[Dict[str, str]],
-            translation_memory_threshold: float=0.7,
+            translation_memory_threshold: float=constants.TM_THRESHOLD,
             callback_url: str=None,
     ) -> models.AsynchronousRequest:
         """Call async pre translate API.
@@ -138,13 +137,13 @@ class Job(api_rest.BaseApi):
 
         :param job_uid: job UID.
         """
-        def get_completed_file_stream() -> types.GeneratorType:
-            return self._get_stream(
-                "v1/projects/{}/jobs/{}/targetFile".format(project_id, job_uid)
-            ).iter_content(constants.CHUNK_SIZE)
+        data_stream = self._get_stream(
+            "v1/projects/{}/jobs/{}/targetFile".format(project_id, job_uid)
+        ).iter_content(constants.CHUNK_SIZE)
 
         buffer = io.BytesIO()
-        [buffer.write(chunk) for chunk in get_completed_file_stream()]
+        for chunk in data_stream:
+            buffer.write(chunk)
 
         return buffer.getvalue()
 
