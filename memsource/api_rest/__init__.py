@@ -132,6 +132,37 @@ class BaseApi:
             timeout=timeout
         ).json()
 
+    def _delete(
+            self,
+            path: str,
+            params: Dict[str, Any]={},
+            data: Optional[Dict[str, Any]]=None,
+            timeout: Union[int, float]=constants.BaseRest.timeout.value,
+    ) -> Dict[str, Any]:
+        """Send a delete request.
+
+        :param path: Send request to this path
+        :param params: Send request with this query parameters
+        :param data: Send request with this body parameters
+        :param timeout: When takes over this time in one request, raise timeout
+        :return: parsed response body as JSON
+        """
+        resp = self._request(
+            http_method=constants.HttpMethod.delete,
+            path=path,
+            files=None,
+            params=params,
+            data=data,
+            timeout=timeout
+        )
+        resp.raise_for_status()
+
+        # Some resources return 204 were there is no response body.
+        # https://cloud.memsource.com/web/docs/api#operation/deleteParts
+        if resp.status_code == HTTPStatus.NO_CONTENT:
+            return {}
+        return resp.json()
+
     def _pre_request(self, path: str, params: Dict[str, Any]) -> Tuple[str,  Dict[str, Any]]:
         """Create request url and extend param with token for authentication.
 

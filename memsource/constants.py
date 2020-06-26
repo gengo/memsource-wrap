@@ -48,6 +48,7 @@ class HttpMethod(enum.Enum):
     get = 'get'
     post = 'post'
     put = 'put'
+    delete = "delete"
 
 
 class BaseRest(enum.Enum):
@@ -55,5 +56,17 @@ class BaseRest(enum.Enum):
     timeout = 60
 
 
+class JobStatusRest(enum.Enum):
+    NEW = "NEW"
+    ACCEPTED = "ACCEPTED"
+    DECLINED = "DECLINED"
+    REJECTED = "REJECTED"
+    DELIVERED = "DELIVERED"
+    EMAILED = "EMAILED"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+
 CHUNK_SIZE = 1024
 CHAR_SET = "UTF-8"
+TM_THRESHOLD = 0.7
