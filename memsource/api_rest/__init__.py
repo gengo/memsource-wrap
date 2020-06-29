@@ -270,8 +270,9 @@ class BaseApi:
     def add_headers(self, headers: Dict[str, Any]) -> None:
         if self.headers is None:
             self.headers = headers
-        else:
-            self.headers.update(headers)
+            return
+
+        self.headers.update(headers)
 
     @staticmethod
     def is_success(status_code: int) -> bool:
