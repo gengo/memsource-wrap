@@ -39,10 +39,7 @@ class Job(api_rest.BaseApi):
             "Content-Disposition": "inline; filename=\"{}\"".format(file_name),
             "Memsource": json.dumps({"targetLangs": target_langs})
         }
-        if self.headers is None:
-            self.headers = job_create_extra_headers
-        else:
-            self.headers.update(job_create_extra_headers)
+        self.add_headers(job_create_extra_headers)
 
         result = self._post("v1/projects/{}/jobs".format(project_id), {
             "targetLangs": target_langs,

@@ -108,6 +108,27 @@ class BaseApi:
             return {}
         return resp.json()
 
+    def _post_stream(
+            self,
+            path: str,
+            data: Dict[str, Any],
+            params: Dict[str, Any]={},
+            files: Optional[Dict[str, Any]]=None,
+            timeout: Union[int, float]=constants.BaseRest.timeout.value,
+    ) -> requests.models.Response:
+        """Send a post request with a raw response in return.
+        """
+        resp = self._request(
+            http_method=constants.HttpMethod.post,
+            path=path,
+            files=files,
+            params=params,
+            data=data,
+            timeout=timeout
+        )
+        resp.raise_for_status()
+        return resp
+
     def _put(
             self,
             path: str,
@@ -245,6 +266,12 @@ class BaseApi:
 
         # If it is successful, returns response json
         return self._get_response(http_method, url, timeout=timeout, **arguments)
+
+    def add_headers(self, headers: Dict[str, Any]) -> None:
+        if self.headers is None:
+            self.headers = headers
+        else:
+            self.headers.update(headers)
 
     @staticmethod
     def is_success(status_code: int) -> bool:
