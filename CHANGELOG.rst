@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. Dates are i
 
 Unreleased
 ==========
+[0.5.6] - 2020-06-29
+====================
+
+Added
+-----
+- Added a new TranslationMemory class for Memsource REST transition.
+
 [0.5.5] - 2020-06-29
 ====================
 
