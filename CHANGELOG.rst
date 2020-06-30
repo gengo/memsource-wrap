@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file. Dates are i
 
 Unreleased
 ==========
+[0.5.7] - 2020-06-30
+====================
+
+Added
+-----
+- Added a new Analysis class for Memsource REST transition.
+- Added a function to upload bilingual files.
+- Added a switch for the REST implementation.
+
+Fix typehints
+-----
+- Some typehints gives an impression that it can accept a string when it should be a list of string.
+
 [0.5.6] - 2020-06-29
 ====================
 

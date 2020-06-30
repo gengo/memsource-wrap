@@ -1,6 +1,7 @@
 import os
 import requests
 import unittest
+import uuid
 from unittest.mock import patch, PropertyMock
 
 from memsource import constants, models
@@ -117,4 +118,26 @@ class TestBilingual(unittest.TestCase):
             },
             json={"jobs": [{"uid": 1}, {"uid": 2}]},
             timeout=60,
+        )
+
+    @patch.object(uuid, "uuid1")
+    @patch.object(requests.Session, "request")
+    def test_upload_bilingual_file_from_xml(
+            self,
+            mock_request: unittest.mock.Mock,
+            mock_uuid1: unittest.mock.Mock
+    ):
+        type(mock_request()).status_code = PropertyMock(return_value=200)
+
+        xml = "<xml>this is test</xml>"
+        mock_uuid1().hex = "test_file"
+
+        Bilingual(token="mock-token").upload_bilingual_file_from_xml(xml)
+
+        mock_request.assert_called_with(
+            constants.HttpMethod.put.value,
+            "https://cloud.memsource.com/web/api2/v1/bilingualFiles",
+            params={"token": "mock-token"},
+            files={"file": ("test_file.mxliff", xml)},
+            timeout=constants.Base.timeout.value
         )

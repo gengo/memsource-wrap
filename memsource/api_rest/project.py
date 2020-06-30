@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 from memsource import constants, models, api_rest
 
 
@@ -9,7 +9,7 @@ class Project(api_rest.BaseApi):
         self,
         name: str,
         source_lang: str,
-        target_langs: Union[List[str], Tuple[str], str],
+        target_langs: List[str],
         client: int=None,
         domain: int=None,
     ) -> int:

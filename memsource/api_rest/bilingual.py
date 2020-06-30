@@ -1,4 +1,5 @@
 import io
+import uuid
 from typing import Iterator, List
 
 from memsource import api_rest, constants, models
@@ -64,3 +65,15 @@ class Bilingual(api_rest.BaseApi):
         :returns: MxliffUnit
         """
         return mxliff.MxliffParser().parse(self.get_bilingual_file_xml(project_id, job_uids))
+
+    def upload_bilingual_file_from_xml(self, xml: str) -> List[models.Job]:
+        """Call uploadBilingualFile API.
+
+        :param xml: Upload this file.
+        """
+        extra_headers = {"Content-Type": "application/octet-stream"}
+        self.add_headers(extra_headers)
+
+        self._put("v1/bilingualFiles", None, {
+            "file": ("{}.mxliff".format(uuid.uuid1().hex), xml),
+        })
