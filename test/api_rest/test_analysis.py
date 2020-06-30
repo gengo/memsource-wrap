@@ -47,7 +47,10 @@ class TestAnalysis(unittest.TestCase):
         }
 
         jobs = [1]
-        self.assertIsInstance(Analysis(token="mock-token").create(jobs), models.AsynchronousRequest)
+        self.assertIsInstance(
+            Analysis(token="mock-token").create(jobs),
+            models.AsynchronousRequest
+        )
 
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
