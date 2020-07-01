@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. Dates are i
 
 Unreleased
 ==========
+[0.5.8] - 2020-07-01
+====================
+
+Fix
+-----
+- Include api_rest directory in setup
+
 [0.5.7] - 2020-06-30
 ====================
 

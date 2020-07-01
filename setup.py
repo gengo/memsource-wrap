@@ -21,6 +21,6 @@ setup(
     author_email='devops@gengo.com',
     url='https://github.com/gengo/memsource-wrap',
     keywords='Memsource API',
-    packages=('memsource', 'memsource.lib'),
+    packages=('memsource', 'memsource.lib', 'memsource.api_rest'),
     install_requires=parse_requirements(),
 )
