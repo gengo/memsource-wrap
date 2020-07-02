@@ -1,5 +1,5 @@
 import unittest
-import uuid
+import tempfile
 from unittest.mock import patch, PropertyMock
 
 import requests
@@ -102,7 +102,6 @@ class TestApiTranslationMemory(unittest.TestCase):
         accepted_segments_count = 100
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = {"acceptedSegmentsCount": accepted_segments_count}
-        mock_open.return_value.__enter__.return_value.name = "this_is_a_test.tmx"
 
         translation_memory_id = 123
         returned_value = TranslationMemory(token="mock-token").upload(
@@ -112,8 +111,6 @@ class TestApiTranslationMemory(unittest.TestCase):
         self.assertTrue(mock_request.called)
         (called_args, called_kwargs) = mock_request.call_args
 
-        # hard to test
-        del called_kwargs["files"]
         self.assertEqual(
             (
                 constants.HttpMethod.post.value,
@@ -125,25 +122,27 @@ class TestApiTranslationMemory(unittest.TestCase):
         print(called_kwargs)
         self.assertEqual({
             "headers": {
-                "Content-Disposition": "inline; filename*=UTF-8''this_is_a_test.tmx",
+                "Content-Disposition": "inline; filename*=UTF-8''{}".format(
+                    mock_open.return_value.__enter__.return_value.name,
+                ),
                 "Content-Type": "application/octet-stream",
             },
+            "data": mock_open.return_value.__enter__.return_value,
             "params": {"token": "mock-token"},
             "timeout": 60,
         }, called_kwargs)
         self.assertEqual(accepted_segments_count, returned_value)
 
-    @patch.object(uuid, "uuid1")
+    @patch.object(tempfile, "NamedTemporaryFile")
     @patch.object(requests.Session, "request")
     def test_upload_from_text(
             self,
             mock_request: unittest.mock.Mock,
-            mock_uuid1: unittest.mock.Mock,
+            mock_tempfile: unittest.mock.Mock,
     ):
         accepted_segments_count = 123
         type(mock_request()).status_code = PropertyMock(return_value=200)
         mock_request().json.return_value = {"acceptedSegmentsCount": accepted_segments_count}
-        mock_uuid1().hex = "file_name"
         translation_memory_id = 1234
         returned_value = TranslationMemory(token="mock-token").upload_from_text(
             translation_memory_id, "<xml/>",
@@ -152,9 +151,6 @@ class TestApiTranslationMemory(unittest.TestCase):
         # Don't use assert_called_with because files has file object. It is difficult to test.
         self.assertTrue(mock_request.called)
         (called_args, called_kwargs) = mock_request.call_args
-
-        # hard to test
-        del called_kwargs["files"]
         self.assertEqual(
             (
                 constants.HttpMethod.post.value,
@@ -165,9 +161,12 @@ class TestApiTranslationMemory(unittest.TestCase):
 
         self.assertEqual({
             "headers": {
-                "Content-Disposition": "inline; filename*=UTF-8''file_name.tmx",
+                "Content-Disposition": "inline; filename*=UTF-8''{}".format(
+                    mock_tempfile.return_value.__enter__.return_value.name,
+                ),
                 "Content-Type": "application/octet-stream",
             },
+            "data": mock_tempfile.return_value.__enter__.return_value,
             "params": {"token": "mock-token"},
             "timeout": 60,
         }, called_kwargs)

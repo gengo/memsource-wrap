@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. Dates are i
 
 Unreleased
 ==========
+[0.5.9] - 2020-07-02
+====================
+
+Fix
+-----
+- TM Import segments bugfix
+
 [0.5.8] - 2020-07-01
 ====================
 
