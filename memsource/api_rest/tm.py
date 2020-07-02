@@ -1,5 +1,5 @@
 import io
-import uuid
+import tempfile
 from typing import Any, Dict, List, Optional, Union
 
 from memsource import api_rest, constants, models
@@ -35,11 +35,7 @@ class TranslationMemory(api_rest.BaseApi):
 
     def _upload(self, translation_memory_id: int, files: Dict[str, Any]) -> int:
         # Casting because acceptedSegmentsCount seems always number, but it string type.
-
-        if isinstance(files["file"], tuple):
-            file_name = files["file"][0]
-        else:
-            file_name = files["file"].name
+        file_name = files["file"].name
 
         tm_create_extra_headers = {
             "Content-Type": "application/octet-stream",
@@ -47,11 +43,30 @@ class TranslationMemory(api_rest.BaseApi):
         }
         self.add_headers(tm_create_extra_headers)
 
-        acceptedSegments = self._post(
-            "v1/transMemories/{}/import".format(translation_memory_id),
-            files=files
+        """An error persists on importing segments to Memsource:
+        memsource.exceptions.MemsourceApiException:
+        http status code: 500
+        description: com.ctc.wstx.exc.WstxUnexpectedCharException: Unexpected character '-'
+        (code 45) in prolog; expected '<' at [row,col {unknown-source}]: [1,1]
+        Sending it via "data" instead of "file" works fine.
+        """
+
+        path = "v1/transMemories/{}/import".format(translation_memory_id)
+        (url, params) = self._pre_request(path, {})
+        arguments = {
+            "params": params,
+            "data": files["file"],
+            "headers": self.headers,
+        }
+        response = self._get_response(
+            http_method=constants.HttpMethod.post,
+            url=url,
+            timeout=constants.BaseRest.timeout.value,
+            **arguments
         )
-        return int(acceptedSegments["acceptedSegmentsCount"])
+        response.raise_for_status()
+
+        return int(response.json()["acceptedSegmentsCount"])
 
     def upload(self, translation_memory_id: int, file_path: str) -> int:
         """Call **import** API.
@@ -74,9 +89,12 @@ class TranslationMemory(api_rest.BaseApi):
         :param tmx: Import this tmx text into the translation memory.
         :return: accepted segments count.
         """
-        return self._upload(translation_memory_id, {
-            "file": ("{}.tmx".format(uuid.uuid1().hex), tmx),
-        })
+        with tempfile.NamedTemporaryFile(suffix=".tmx") as temp_file:
+            temp_file.write(tmx.encode("utf-8"))
+            temp_file.seek(0)
+            return self._upload(translation_memory_id, {
+                "file": temp_file,
+            })
 
     def search_segment_by_job(
             self,
