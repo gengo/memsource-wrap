@@ -96,7 +96,7 @@ class BaseApi:
             http_method=constants.HttpMethod.post,
             path=path,
             files=files,
-            params={"token": self.token},
+            params={},
             data=data,
             timeout=timeout
         )
@@ -148,7 +148,7 @@ class BaseApi:
             http_method=constants.HttpMethod.put,
             path=path,
             files=files,
-            params={"token": self.token},
+            params={},
             data=data,
             timeout=timeout
         ).json()
@@ -193,7 +193,7 @@ class BaseApi:
         :return: Tuple of URL and params with token.
         """
         url = "{}/{}".format(constants.BaseRest.url.value, path)
-        params['token'] = self.token
+        self.add_headers({"Authorization": "ApiToken {}".format(self.token)})
 
         self.last_url = url
         self.last_params = params

@@ -32,6 +32,7 @@ class TestProject(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/projects",
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "sourceLang": "en",
                 "targetLangs": ["ja", "de"],
@@ -39,7 +40,6 @@ class TestProject(unittest.TestCase):
                 "name": "mock-project",
                 "domain": None
             },
-            params={"token": "mock-token"},
             timeout=60,
         )
 
@@ -127,7 +127,8 @@ class TestProject(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/projects",
-            params={"token": "mock-token", "statuses": ["NEW", "ASSIGNED"]},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"statuses": ["NEW", "ASSIGNED"]},
             timeout=60,
         )
 
@@ -238,7 +239,7 @@ class TestProject(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1/transMemories",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )
 
@@ -259,13 +260,13 @@ class TestProject(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.put.value,
             "https://cloud.memsource.com/web/api2/v2/projects/1/transMemories",
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "targetLang": "ja",
                 "transMemories": [
                     {"readMode": True, "transMemory": {"id": "1180298"}, "writeMode": True}
                 ],
             },
-            params={"token": "mock-token"},
             timeout=60,
         )
 
@@ -281,8 +282,8 @@ class TestProject(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1/setStatus",
+            headers={"Authorization": "ApiToken mock-token"},
             json={"status": "NEW"},
-            params={"token": "mock-token"},
             timeout=60,
         )
 
@@ -361,6 +362,6 @@ class TestProject(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1/termBases",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )

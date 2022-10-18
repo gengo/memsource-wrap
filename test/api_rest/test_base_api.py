@@ -49,8 +49,11 @@ class TestBaseApi(unittest.TestCase):
         api = api_rest.BaseApi(token="TEST-TOKEN")
         response = api._get("v1/path", {"jobUID": 1})
         mock_request.assert_called_once_with(
-            "get", "https://cloud.memsource.com/web/api2/v1/path",
-            params={"jobUID": 1, "token": "TEST-TOKEN"}, timeout=60,
+            "get",
+            "https://cloud.memsource.com/web/api2/v1/path",
+            headers={"Authorization": "ApiToken TEST-TOKEN"},
+            params={"jobUID": 1},
+            timeout=60,
         )
         self.assertIsInstance(response, dict)
 
@@ -61,8 +64,11 @@ class TestBaseApi(unittest.TestCase):
         api = api_rest.BaseApi(token="TEST-TOKEN")
         api._get_stream("v1/path", {"jobUID": 1})
         mock_request.assert_called_once_with(
-            "get", "https://cloud.memsource.com/web/api2/v1/path",
-            params={"jobUID": 1, "token": "TEST-TOKEN"}, timeout=300,
+            "get",
+            "https://cloud.memsource.com/web/api2/v1/path",
+            headers={"Authorization": "ApiToken TEST-TOKEN"},
+            params={"jobUID": 1},
+            timeout=300,
         )
 
     @patch.object(requests.Session, "request")
@@ -72,5 +78,5 @@ class TestBaseApi(unittest.TestCase):
         api._post("v2/path", {"jobUID": 1})
         mock_request.assert_called_once_with(
             "post", "https://cloud.memsource.com/web/api2/v2/path",
-            json={"jobUID": 1}, params={"token": "TEST-TOKEN"}, timeout=60,
+            json={"jobUID": 1}, headers={"Authorization": "ApiToken TEST-TOKEN"}, timeout=60,
         )

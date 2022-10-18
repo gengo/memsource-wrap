@@ -3,8 +3,13 @@ Change Log
 ==========
 All notable changes to this project will be documented in this file. Dates are in UTC.
 
-Unreleased
-==========
+[0.6.0] - 2022-10-18
+====================
+
+Changed
+-------
+- Moved the deprecated "token" in the query string to the "Authorization" header
+
 [0.5.9] - 2020-07-02
 ====================
 

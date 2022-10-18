@@ -70,10 +70,10 @@ class TestApiJob(unittest.TestCase):
             "headers": {
                 "Content-Disposition": "inline; filename=\"this_is_a_test.txt\"",
                 "Content-Type": "application/octet-stream",
-                "Memsource": "{\"targetLangs\": [\"ja\"]}"
+                "Memsource": "{\"targetLangs\": [\"ja\"]}",
+                "Authorization": "ApiToken mock-token",
             },
             "json": {"targetLangs": ["ja"]},
-            "params": {"token": "mock-token"},
             "timeout": 60,
         }, called_kwargs)
 
@@ -172,10 +172,10 @@ class TestApiJob(unittest.TestCase):
             "headers": {
                 "Content-Disposition": "inline; filename=\"test-file-uuid1.txt\"",
                 "Content-Type": "application/octet-stream",
-                "Memsource": "{\"targetLangs\": [\"ja\"]}"
+                "Memsource": "{\"targetLangs\": [\"ja\"]}",
+                "Authorization": "ApiToken mock-token",
             },
             "json": {"targetLangs": ["ja"]},
-            "params": {"token": "mock-token"},
             "timeout": 60,
         }, called_kwargs)
 
@@ -231,7 +231,8 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v2/projects/1234/jobs",
-            params={"token": "mock-token", "page": 0},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"page": 0},
             timeout=60,
         )
 
@@ -268,6 +269,7 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/preTranslate",
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "jobs": [
                     {"uid": 1},
@@ -276,7 +278,6 @@ class TestApiJob(unittest.TestCase):
                 "translationMemoryTreshold": 0.7,
                 "callbackUrl": None,
             },
-            params={"token": "mock-token"},
             timeout=60,
         )
 
@@ -292,7 +293,7 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/1/targetFile",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60 * 5,
         )
 
@@ -336,10 +337,10 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/mock-uid/segments",
+            headers={"Authorization": "ApiToken mock-token"},
             params={
                 "beginIndex": 0,
                 "endIndex": 1,
-                "token": "mock-token",
             },
             timeout=60,
         )
@@ -377,7 +378,7 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/06CcWsyrLLTTgylLQ9DSb6",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )
 
@@ -426,7 +427,7 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v2/projects/1234/jobs",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )
 
@@ -442,7 +443,8 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.delete.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/batch",
-            params={"purge": False, "token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"purge": False},
             json={
                 "jobs": [
                     {"uid": 1},
@@ -463,8 +465,8 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/1/setStatus",
+            headers={"Authorization": "ApiToken mock-token"},
             json={"requestedStatus": "DECLINED"},
-            params={"token": "mock-token"},
             timeout=60
         )
 
@@ -476,7 +478,7 @@ class TestApiJob(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.delete.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/translations",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "jobs": [{"uid": "mock-job-uid"}],
             },
