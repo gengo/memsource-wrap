@@ -32,7 +32,7 @@ class TestBilingual(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/bilingualFile",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={"jobs": [{"uid": 1}, {"uid": 2}]},
             timeout=60,
         )
@@ -55,9 +55,7 @@ class TestBilingual(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/bilingualFile",
-            params={
-                "token": "mock-token",
-            },
+            headers={"Authorization": "ApiToken mock-token"},
             json={"jobs": [{"uid": 1}, {"uid": 2}]},
             timeout=60,
         )
@@ -113,9 +111,7 @@ class TestBilingual(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/projects/1234/jobs/bilingualFile",
-            params={
-                "token": "mock-token",
-            },
+            headers={"Authorization": "ApiToken mock-token"},
             json={"jobs": [{"uid": 1}, {"uid": 2}]},
             timeout=60,
         )
@@ -137,7 +133,7 @@ class TestBilingual(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.put.value,
             "https://cloud.memsource.com/web/api2/v1/bilingualFiles",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             files={"file": ("test_file.mxliff", xml)},
             timeout=constants.Base.timeout.value
         )

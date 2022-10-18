@@ -25,7 +25,7 @@ class TestDomain(unittest.TestCase):
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/domains",
             json={"name": "mock-test"},
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60
         )
 
@@ -48,7 +48,7 @@ class TestDomain(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/domains/1",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60
         )
 
@@ -78,7 +78,8 @@ class TestDomain(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/domains",
-            params={"token": "mock-token", "page": 0},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"page": 0},
             timeout=60
         )
 

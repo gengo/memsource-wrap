@@ -16,7 +16,7 @@ class TestAnalysis(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v3/analyses/1",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )
 
@@ -55,7 +55,7 @@ class TestAnalysis(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v2/analyses",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={"jobs": [{"uid": 1}]},
             timeout=60,
         )
@@ -72,7 +72,8 @@ class TestAnalysis(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.delete.value,
             "https://cloud.memsource.com/web/api2/v1/analyses/1234",
-            params={"token": "mock-token", "purge": False},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"purge": False},
             timeout=60,
         )
 
@@ -120,7 +121,7 @@ class TestAnalysis(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v2/projects/1234/analyses",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )
 
@@ -139,6 +140,7 @@ class TestAnalysis(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/analyses/1234/download",
-            params={"token": "mock-token", "format": constants.AnalysisFormat.CSV.value},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"format": constants.AnalysisFormat.CSV.value},
             timeout=300,
         )

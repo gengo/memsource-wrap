@@ -29,7 +29,7 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/transMemories",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "name": name,
                 "sourceLang": source_lang,
@@ -56,7 +56,8 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/transMemories",
-            params={"token": "mock-token", "pageNumber": 0},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"pageNumber": 0},
             timeout=60,
         )
 
@@ -78,7 +79,8 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/transMemories",
-            params={"token": "mock-token", "pageNumber": EXISTING_PAGE_ID},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"pageNumber": EXISTING_PAGE_ID},
             timeout=60,
         )
 
@@ -92,7 +94,8 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/transMemories",
-            params={"token": "mock-token", "pageNumber": EMPTY_PAGE_ID},
+            headers={"Authorization": "ApiToken mock-token"},
+            params={"pageNumber": EMPTY_PAGE_ID},
             timeout=60,
         )
 
@@ -126,9 +129,9 @@ class TestApiTranslationMemory(unittest.TestCase):
                     mock_open.return_value.__enter__.return_value.name,
                 ),
                 "Content-Type": "application/octet-stream",
+                "Authorization": "ApiToken mock-token",
             },
             "data": mock_open.return_value.__enter__.return_value,
-            "params": {"token": "mock-token"},
             "timeout": 60,
         }, called_kwargs)
         self.assertEqual(accepted_segments_count, returned_value)
@@ -165,9 +168,9 @@ class TestApiTranslationMemory(unittest.TestCase):
                     mock_tempfile.return_value.__enter__.return_value.name,
                 ),
                 "Content-Type": "application/octet-stream",
+                "Authorization": "ApiToken mock-token",
             },
             "data": mock_tempfile.return_value.__enter__.return_value,
-            "params": {"token": "mock-token"},
             "timeout": 60,
         }, called_kwargs)
 
@@ -265,7 +268,7 @@ class TestApiTranslationMemory(unittest.TestCase):
                 "https://cloud.memsource.com/web/api2/"
                 "v1/projects/1234/jobs/1/transMemories/searchSegment"
             ),
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "segment": segment,
                 "nextSegment": next_segment,
@@ -368,7 +371,7 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/transMemories/1234/search",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "query": query,
                 "sourceLang": source_lang,
@@ -426,7 +429,7 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v2/transMemories/4567/export",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "exportTargetLangs": target_langs,
                 "callbackUrl": callback_url,
@@ -457,7 +460,7 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.post.value,
             "https://cloud.memsource.com/web/api2/v1/transMemories/1234/segments",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             json={
                 "targetLang": target_lang,
                 "sourceSegment": source_segment,
@@ -481,6 +484,6 @@ class TestApiTranslationMemory(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.delete.value,
             "https://cloud.memsource.com/web/api2/v1/transMemories/1/segments/2",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )

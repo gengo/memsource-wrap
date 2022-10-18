@@ -31,6 +31,6 @@ class TestLanguage(unittest.TestCase):
         mock_request.assert_called_with(
             constants.HttpMethod.get.value,
             "https://cloud.memsource.com/web/api2/v1/languages",
-            params={"token": "mock-token"},
+            headers={"Authorization": "ApiToken mock-token"},
             timeout=60,
         )
