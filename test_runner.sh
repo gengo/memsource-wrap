@@ -4,7 +4,7 @@ EXIT_STATUSES=()
 flake8 .
 EXIT_STATUSES=(${EXIT_STATUSES[@]} $?)
 
-nosetests --with-coverage --cover-package=memsource --rednose
+pytest .
 EXIT_STATUSES=(${EXIT_STATUSES[@]} $?)
 
 for (( I = 0; I < ${#EXIT_STATUSES[@]}; I++ )) do

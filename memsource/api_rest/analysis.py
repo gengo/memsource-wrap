@@ -23,7 +23,7 @@ class Analysis(api_rest.BaseApi):
             "jobs": [{"uid": job} for job in jobs],
         }))
 
-    def delete(self, analysis_id: int, purge: bool=False) -> None:
+    def delete(self, analysis_id: int, purge: bool = False) -> None:
         """Delete an analysis.
 
         :param analysis_id: Analysis ID you want to delete.
@@ -44,7 +44,7 @@ class Analysis(api_rest.BaseApi):
             self,
             analysis_id: int,
             dest_file_path: str,
-            file_format: constants.AnalysisFormat=constants.AnalysisFormat.CSV,
+            file_format: constants.AnalysisFormat = constants.AnalysisFormat.CSV,
     ) -> None:
         """Download analysis into specified file format.
 

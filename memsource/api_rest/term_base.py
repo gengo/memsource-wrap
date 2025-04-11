@@ -8,9 +8,9 @@ class TermBase(api_rest.BaseApi):
         self,
         termbase_id: int,
         filepath: str,
-        file_format: constants.TermBaseFormat=constants.TermBaseFormat.XLSX,
-        chunk_size: int=constants.CHUNK_SIZE,
-        charset: str=constants.CHAR_SET,
+        file_format: constants.TermBaseFormat = constants.TermBaseFormat.XLSX,
+        chunk_size: int = constants.CHUNK_SIZE,
+        charset: str = constants.CHAR_SET,
     ) -> None:
         """Download a term base.
 

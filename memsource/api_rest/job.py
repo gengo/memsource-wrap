@@ -82,7 +82,7 @@ class Job(api_rest.BaseApi):
             project_id: int,
             text: str,
             target_langs: List[str],
-            file_name: str=None,
+            file_name: str = None,
     ) -> List[models.JobPart]:
         """You can create a job without a file.
 
@@ -112,8 +112,8 @@ class Job(api_rest.BaseApi):
             self,
             project_id: int,
             job_parts: List[Dict[str, str]],
-            translation_memory_threshold: float=constants.TM_THRESHOLD,
-            callback_url: str=None,
+            translation_memory_threshold: float = constants.TM_THRESHOLD,
+            callback_url: str = None,
     ) -> models.AsynchronousRequest:
         """Call async pre translate API.
 
@@ -148,8 +148,8 @@ class Job(api_rest.BaseApi):
             self,
             project_id: int,
             job_uid: str,
-            begin_index: int=0,
-            end_index: int=0,
+            begin_index: int = 0,
+            end_index: int = 0,
     ) -> List[models.Segment]:
         """Call get segments API.
 
@@ -195,7 +195,7 @@ class Job(api_rest.BaseApi):
             self,
             project_id: int,
             job_uids: List[int],
-            purge: bool=False
+            purge: bool = False
     ) -> None:
         """Delete a job
 

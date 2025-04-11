@@ -58,13 +58,13 @@ class BaseApi:
         return kwargs.get('format', '{base}/{api_version}/{path}').format(**kwargs)
 
     def _get(
-            self, path: str, params: dict={}, *, timeout: int=constants.Base.timeout.value
+            self, path: str, params: dict = {}, *, timeout: int = constants.Base.timeout.value
     ) -> str:
         return self._request(constants.HttpMethod.get, path,
                              files=None, params=params, data=None, timeout=timeout)
 
-    def _post(self, path: str, data: dict=None, files: dict=None,
-              timeout: Union[int, float]=constants.Base.timeout.value) -> dict:
+    def _post(self, path: str, data: dict = None, files: dict = None,
+              timeout: Union[int, float] = constants.Base.timeout.value) -> dict:
         """Send a post request.
 
         If you want to raw response, you can use _get_stream method.
@@ -79,8 +79,8 @@ class BaseApi:
                              files=files, params=None, data=data, timeout=timeout)
 
     def _get_stream(
-            self, path: str, params: dict={}, files: dict=None,
-            timeout: Union[int, float]=constants.Base.timeout.value * 5
+            self, path: str, params: dict = {}, files: dict = None,
+            timeout: Union[int, float] = constants.Base.timeout.value * 5
     ) -> requests.models.Response:
         """
         This method returns response object of requests library,
@@ -297,7 +297,7 @@ class Project(BaseApi):
     api_version = constants.ApiVersion.v3
 
     def create(self, name: str, source_lang: str, target_langs: Union[List[str], Tuple[str], str],
-               client: int=None, domain: int=None) -> int:
+               client: int = None, domain: int = None) -> int:
         """Create new project.
 
         :param name: project name
@@ -327,9 +327,9 @@ class Project(BaseApi):
             })
         ]
 
-    def setTransMemories(self, project_id, read_trans_memory_ids: List[int]=[],
-                         write_trans_memory_id: int=None, penalties: List[float]=[],
-                         target_lang: str=None) -> None:
+    def setTransMemories(self, project_id, read_trans_memory_ids: List[int] = [],
+                         write_trans_memory_id: int = None, penalties: List[float] = [],
+                         target_lang: str = None) -> None:
         """You can set translation memory to a project.
 
         :param project_id: set translation memory to this id of project
@@ -407,7 +407,7 @@ class Job(BaseApi):
             })
 
     def createFromText(
-            self, project_id: int, text: str, target_langs: List[str], file_name: str=None
+            self, project_id: int, text: str, target_langs: List[str], file_name: str = None
     ) -> List[models.JobPart]:
         """You can create a job without a file.
 
@@ -588,7 +588,7 @@ class Job(BaseApi):
 
         return [models.Job(i) for i in response]
 
-    def delete(self, job_part_id: int, purge: bool=False) -> None:
+    def delete(self, job_part_id: int, purge: bool = False) -> None:
         """Delete a job
 
         :param job_part_id: id of job you want to delete.
@@ -642,7 +642,7 @@ class TranslationMemory(BaseApi):
             'targetLang': target_langs,
         })['id']
 
-    def list(self, page: int=0) -> List[models.TranslationMemory]:
+    def list(self, page: int = 0) -> List[models.TranslationMemory]:
         """List translation memories.
 
         :page: index of pager.
@@ -686,8 +686,8 @@ class TranslationMemory(BaseApi):
         })
 
     def searchSegmentByTask(
-            self, task: str, segment: str, *, next_segment: str=None,
-            previous_segment: str=None, score_threshold: float=0.6, **kwargs
+            self, task: str, segment: str, *, next_segment: str = None,
+            previous_segment: str = None, score_threshold: float = 0.6, **kwargs
     ) -> List[models.SegmentSearchResult]:
         """Get translation matches.
 
@@ -716,7 +716,7 @@ class TranslationMemory(BaseApi):
     def search(
             self, translation_memory_id: int, query: str,
             source_lang: str, target_langs: Union[List[str], str],
-            next_segment: str=None, previous_segment: str=None, **kwargs
+            next_segment: str = None, previous_segment: str = None, **kwargs
     ) -> List[models.SegmentSearchResult]:
         """Get translation matches.
 
@@ -750,7 +750,7 @@ class TranslationMemory(BaseApi):
         ]
 
     def export(self, translation_memory_id: int, target_langs: Union[List[str], str],
-               file_path: str, file_format: str='TMX', chunk_size: int=1024) -> None:
+               file_path: str, file_format: str = 'TMX', chunk_size: int = 1024) -> None:
         """Get translation memory exported data
 
         :param translation_memory_id: translation memory id for target of exporitng data.
@@ -833,8 +833,8 @@ class Asynchronous(BaseApi):
 
         return super(Asynchronous, self)._make_url(**kwargs)
 
-    def preTranslate(self, job_parts: List[int], translation_memory_threshold: float=0.7,
-                     callback_url: str=None) -> models.AsynchronousRequest:
+    def preTranslate(self, job_parts: List[int], translation_memory_threshold: float = 0.7,
+                     callback_url: str = None) -> models.AsynchronousRequest:
         """Call async pre translate API.
 
         :param job_parts: List of job_part id.
@@ -848,7 +848,7 @@ class Asynchronous(BaseApi):
         })['asyncRequest'])
 
     def createAnalysis(
-            self, job_parts: int, callback_url: str=None, **kwargs) -> models.AsynchronousRequest:
+            self, job_parts: int, callback_url: str = None, **kwargs) -> models.AsynchronousRequest:
         """Create analysis asynchronously.
 
         :param job_parts: Make analysis for these job_part ids.
@@ -954,8 +954,8 @@ class Asynchronous(BaseApi):
                 'callbackUrl': callback_url,
             }))['asyncRequest'])
 
-    def downloadExport(self, async_request_id: int, file_path: str, *, file_format: str='TMX',
-                       chunk_size: int=1024) -> None:
+    def downloadExport(self, async_request_id: int, file_path: str, *, file_format: str = 'TMX',
+                       chunk_size: int = 1024) -> None:
         """Download the completed export of a translation memory.
 
         :param async_request_id: ID of the export request - e.g. requested via exportByQuery()
@@ -972,7 +972,7 @@ class Asynchronous(BaseApi):
             [f.write(chunk) for chunk in
                 self._get_stream('transMemory/downloadExport', params).iter_content(chunk_size)]
 
-    def make_download_url(self, async_request_id: int, *, file_format: str=None) -> str:
+    def make_download_url(self, async_request_id: int, *, file_format: str = None) -> str:
         """Returns the download link of a previously-requested TM export.
 
         :param async_request_id: ID of the Memsource asynchronous request.
@@ -1023,7 +1023,7 @@ class Analysis(BaseApi):
             'jobPart': job_part_ids,
         }))
 
-    def delete(self, analysis_id: int, purge: bool=False) -> None:
+    def delete(self, analysis_id: int, purge: bool = False) -> None:
         """Delete an analysis.
 
         :param analysis_id: Analysis ID you want to delete.
@@ -1047,7 +1047,7 @@ class Analysis(BaseApi):
         ]
 
     def download(self, analysis_id: int, dest_file_path: str,
-                 file_format: constants.AnalysisFormat=constants.AnalysisFormat.CSV) -> None:
+                 file_format: constants.AnalysisFormat = constants.AnalysisFormat.CSV) -> None:
         """Download analysis into specified file format.
 
         :param analysis_id: Anaylsis ID for which you download.
@@ -1082,9 +1082,9 @@ class TermBase(BaseApi):
             termbase_id: int,
             filepath: str,
             *,
-            file_format: constants.TermBaseFormat=constants.TermBaseFormat.XLSX,
-            chunk_size: int=1024,
-            project_id: Optional[int]= None) -> None:
+            file_format: constants.TermBaseFormat = constants.TermBaseFormat.XLSX,
+            chunk_size: int = 1024,
+            project_id: Optional[int] = None) -> None:
         """Download a term base.
 
         :param termbase_id: ID of the term base to be downloaded.

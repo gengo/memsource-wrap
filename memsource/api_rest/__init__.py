@@ -37,8 +37,8 @@ class BaseApi:
     def _get(
             self,
             path: str,
-            params: Dict[str, Any]={},
-            timeout: int=constants.BaseRest.timeout.value
+            params: Dict[str, Any] = {},
+            timeout: int = constants.BaseRest.timeout.value
     ) -> Dict[str, Any]:
         return self._request(
             http_method=constants.HttpMethod.get,
@@ -50,8 +50,8 @@ class BaseApi:
         ).json()
 
     def _get_stream(
-            self, path: str, params: Dict[str, Any]={}, files: Optional[Dict[str, Any]]=None,
-            timeout: Union[int, float]=constants.BaseRest.timeout.value * 5
+            self, path: str, params: Dict[str, Any] = {}, files: Optional[Dict[str, Any]] = None,
+            timeout: Union[int, float] = constants.BaseRest.timeout.value * 5
     ) -> requests.models.Response:
         """
         This method returns response object of requests library,
@@ -78,9 +78,9 @@ class BaseApi:
     def _post(
             self,
             path: str,
-            data: Optional[Dict[str, Any]]=None,
-            files: Optional[Dict[str, Any]]=None,
-            timeout: Union[int, float]=constants.BaseRest.timeout.value,
+            data: Optional[Dict[str, Any]] = None,
+            files: Optional[Dict[str, Any]] = None,
+            timeout: Union[int, float] = constants.BaseRest.timeout.value,
     ) -> Dict[str, Any]:
         """Send a post request.
 
@@ -112,9 +112,9 @@ class BaseApi:
             self,
             path: str,
             data: Dict[str, Any],
-            params: Dict[str, Any]={},
-            files: Optional[Dict[str, Any]]=None,
-            timeout: Union[int, float]=constants.BaseRest.timeout.value,
+            params: Dict[str, Any] = {},
+            files: Optional[Dict[str, Any]] = None,
+            timeout: Union[int, float] = constants.BaseRest.timeout.value,
     ) -> requests.models.Response:
         """Send a post request with a raw response in return.
         """
@@ -132,9 +132,9 @@ class BaseApi:
     def _put(
             self,
             path: str,
-            data: Optional[Dict[str, Any]]=None,
-            files: Optional[Dict[str, Any]]=None,
-            timeout: Union[int, float]=constants.BaseRest.timeout.value,
+            data: Optional[Dict[str, Any]] = None,
+            files: Optional[Dict[str, Any]] = None,
+            timeout: Union[int, float] = constants.BaseRest.timeout.value,
     ) -> Dict[str, Any]:
         """Send a put request.
 
@@ -156,9 +156,9 @@ class BaseApi:
     def _delete(
             self,
             path: str,
-            params: Dict[str, Any]={},
-            data: Optional[Dict[str, Any]]=None,
-            timeout: Union[int, float]=constants.BaseRest.timeout.value,
+            params: Dict[str, Any] = {},
+            data: Optional[Dict[str, Any]] = None,
+            timeout: Union[int, float] = constants.BaseRest.timeout.value,
     ) -> Dict[str, Any]:
         """Send a delete request.
 

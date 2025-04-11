@@ -4,7 +4,7 @@ import memsource
 
 def parse_requirements():
     with open('requirements.txt') as f:
-        return [l.strip() for l in f.readlines() if not l.startswith('#')]
+        return [line.strip() for line in f.readlines() if not line.startswith('#')]
 
 
 def readme():

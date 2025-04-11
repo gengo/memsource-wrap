@@ -21,7 +21,7 @@ class TranslationMemory(api_rest.BaseApi):
             "targetLangs": target_langs,
         })["id"]
 
-    def list(self, page: int=0) -> List[models.TranslationMemory]:
+    def list(self, page: int = 0) -> List[models.TranslationMemory]:
         """List translation memories.
 
         :page: index of pager.
@@ -101,9 +101,9 @@ class TranslationMemory(api_rest.BaseApi):
             project_id: int,
             job_uid: str,
             segment: str,
-            next_segment: Optional[str]=None,
-            previous_segment: Optional[str]=None,
-            score_threshold: float=constants.TM_THRESHOLD,
+            next_segment: Optional[str] = None,
+            previous_segment: Optional[str] = None,
+            score_threshold: float = constants.TM_THRESHOLD,
             **kwargs
     ) -> List[models.SegmentSearchResult]:
         """Get translation matches.
@@ -144,8 +144,8 @@ class TranslationMemory(api_rest.BaseApi):
             query: str,
             source_lang: str,
             target_langs: Union[List[str], str],
-            next_segment: Optional[str]=None,
-            previous_segment: Optional[str]=None,
+            next_segment: Optional[str] = None,
+            previous_segment: Optional[str] = None,
             **kwargs
     ) -> List[models.SegmentSearchResult]:
         """Get translation matches.
@@ -186,7 +186,7 @@ class TranslationMemory(api_rest.BaseApi):
             self,
             translation_memory_id: int,
             target_langs: List[str],
-            callback_url: Optional[str]=None,
+            callback_url: Optional[str] = None,
     ) -> models.AsynchronousRequest:
         """Get translation memory exported data
 
@@ -222,8 +222,8 @@ class TranslationMemory(api_rest.BaseApi):
             target_lang: str,
             source_segment: str,
             target_segment: str,
-            previous_source_segment: Optional[str]=None,
-            next_source_segment: Optional[str]=None,
+            previous_source_segment: Optional[str] = None,
+            next_source_segment: Optional[str] = None,
     ) -> None:
         """
         :param translation_memory_id :Insert new translation to this translation memory :int

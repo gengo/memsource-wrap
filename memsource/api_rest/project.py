@@ -10,8 +10,8 @@ class Project(api_rest.BaseApi):
         name: str,
         source_lang: str,
         target_langs: List[str],
-        client: int=None,
-        domain: int=None,
+        client: int = None,
+        domain: int = None,
     ) -> int:
         return self._post("v1/projects", {
             "name": name,
@@ -36,8 +36,8 @@ class Project(api_rest.BaseApi):
         self,
         project_id: int,
         translation_memories: List[Dict[str, Any]],
-        target_lang: str=None,
-        workflow_step: Optional[Dict[str, str]]=None,
+        target_lang: str = None,
+        workflow_step: Optional[Dict[str, str]] = None,
     ) -> None:
         """You can set translation memory to a project.
 

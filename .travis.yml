@@ -9,3 +9,6 @@ install:
   - pip install -r requirements.txt
 
 script: bash test_runner.sh
+
+env:
+  - PYTHONPATH=.

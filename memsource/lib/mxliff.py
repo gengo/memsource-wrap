@@ -7,7 +7,8 @@ class MxliffParser(object):
     Parse xliff file of Memsource.
     """
 
-    def parse(self, resource: {'XML file content as bytes': bytes}):
+    def parse(self, resource: bytes):
+        # resource : XML file content as bytes
         root = objectify.fromstring(resource)
         memsource_namespace = root.nsmap['m']
 

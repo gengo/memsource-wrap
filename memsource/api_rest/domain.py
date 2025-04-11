@@ -11,6 +11,6 @@ class Domain(api_rest.BaseApi):
     def get(self, domainID: int) -> models.Domain:
         return models.Domain(self._get("v1/domains/{}".format(domainID)))
 
-    def list(self, page: int=0) -> List[models.Domain]:
+    def list(self, page: int = 0) -> List[models.Domain]:
         domains = self._get("v1/domains", {"page": page})
         return [models.Domain(domain) for domain in domains.get("content", [])]
