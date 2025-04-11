@@ -1,6 +1,7 @@
 language: python
+dist: jammy
 python:
-  - "3.5"
+  - "3.12"
 
 sudo: false
 
