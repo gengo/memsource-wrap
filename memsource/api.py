@@ -848,7 +848,8 @@ class Asynchronous(BaseApi):
         })['asyncRequest'])
 
     def createAnalysis(
-            self, job_parts: int, callback_url: str = None, **kwargs) -> models.AsynchronousRequest:
+            self, job_parts: int, callback_url: str = None, **kwargs
+        ) -> models.AsynchronousRequest:
         """Create analysis asynchronously.
 
         :param job_parts: Make analysis for these job_part ids.

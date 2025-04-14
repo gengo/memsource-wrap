@@ -16,8 +16,9 @@ class TestApiJob(unittest.TestCase):
         mock_request: unittest.mock.Mock,
         mock_open: unittest.mock.Mock,
     ):
-        type(mock_request()).status_code = PropertyMock(return_value=200)
-        mock_request().json.return_value = {
+        mock_response = unittest.mock.Mock()
+        mock_response.status_code = 200  # Use actual int, not PropertyMock
+        mock_response.json.return_value = {
             "unsupportedFiles": [],
             "jobs": [
                 {
@@ -43,6 +44,7 @@ class TestApiJob(unittest.TestCase):
                 "dateCreated": "2020-06-24T03:40:53+0000"
             }
         }
+        mock_request.side_effect = lambda *args, **kwargs: mock_response
 
         mock_open.return_value.__enter__.return_value.name = "this_is_a_test.txt"
         returned_value = Job(token="mock-token").create(
