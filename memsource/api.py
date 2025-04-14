@@ -848,7 +848,7 @@ class Asynchronous(BaseApi):
         })['asyncRequest'])
 
     def createAnalysis(
-            self, job_parts: int, callback_url: str=None, **kwargs) -> models.AsynchronousRequest:
+            self, job_parts: int, callback_url: str=None, **kwargs) -> Tuple[models.AsynchronousRequest, models.Analysis]:
         """Create analysis asynchronously.
 
         :param job_parts: Make analysis for these job_part ids.
@@ -896,7 +896,7 @@ class Asynchronous(BaseApi):
     def createJob(
             self, project_id: int, file_path: str, target_langs: (str, list), *, callback_url=None,
             **kwargs: dict
-    ) -> Tuple[models.AsynchronousResponse, List[models.JobPart]]:
+    ) -> Tuple[models.AsynchronousRequest, List[models.JobPart]]:
         """Create new Job on Memsource asynchronously.
 
         :param project_id: Project ID of target project.
